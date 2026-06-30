@@ -6,7 +6,7 @@ void main() {
   testWidgets('app starts with shared theme', (WidgetTester tester) async {
     await tester.pumpWidget(const JinXiaoCunApp());
 
-    expect(find.text('JinXiaoCun 2026'), findsOneWidget);
-    expect(find.text('UI theme foundation is ready.'), findsOneWidget);
+    expect(find.text('首页'), findsOneWidget);
+    expect(find.text('基础界面已就绪'), findsOneWidget);
   });
 }

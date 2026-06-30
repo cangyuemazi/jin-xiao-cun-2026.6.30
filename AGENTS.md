@@ -837,3 +837,81 @@ When completing a task, always respond with:
 6. What should be done next
 
 Keep the implementation incremental and maintainable.
+
+---
+
+## Stage Completion Protocol
+
+This protocol applies to every development stage in this project, including Stage 0 through Stage 20 and any future stage, hotfix, refactor, UI redesign, database migration, or maintenance task.
+
+After every development stage, Codex must automatically perform the following completion workflow without waiting for the user to remind it again.
+
+This protocol applies even if the individual stage prompt does not explicitly mention Git commit or Git push.
+
+1. Run `flutter analyze`.
+
+2. If `flutter analyze` reports serious errors:
+   - Stop the stage completion workflow.
+   - Fix the errors if they are within the current stage scope.
+   - Run `flutter analyze` again.
+   - Do not commit or push until `flutter analyze` passes.
+
+3. Only when `flutter analyze` passes, run:
+   - `git status`
+   - `git add .`
+   - `git commit -m "<stage commit message>"`
+   - `git push`
+
+4. The commit message must be clear and stage-based.
+
+Examples:
+   - `stage-00: add project planning documents`
+   - `stage-01: initialize Flutter Windows project`
+   - `stage-02: add project structure and base dependencies`
+   - `stage-03: add shared theme system`
+   - `stage-04: add shared widgets and desktop layout`
+   - `stage-05: integrate SQLite and Drift foundation`
+   - `stage-06: add core database tables`
+   - `stage-07: add repository layer`
+   - `stage-08: add service layer foundation`
+   - `stage-09: add order management module`
+   - `stage-10: add customer management module`
+   - `stage-11: add product management module`
+   - `stage-12: add supplier management module`
+   - `stage-13: add shipment and batch delivery module`
+   - `stage-14: add finance and profit calculation module`
+   - `stage-15: add dashboard overview`
+   - `stage-16: add Excel import workflow`
+   - `stage-17: add Excel export workflow`
+   - `stage-18: add local backup and restore`
+   - `stage-19: add data quality checks`
+   - `stage-20: finalize testing and documentation`
+
+5. Do not commit secrets, passwords, tokens, local database files, backup files, build outputs, `.dart_tool`, or generated runtime data.
+
+6. Do not change the Git remote URL unless explicitly instructed.
+
+7. If GitHub authentication fails:
+   - Stop.
+   - Ask the user to authenticate locally.
+   - Never ask the user to paste a token into chat.
+
+8. If there are no file changes after a stage:
+   - Do not create an empty commit.
+   - Report that the working tree is clean.
+   - Do not push an empty commit.
+
+9. Do not start the next stage automatically after committing and pushing.
+
+10. At the end of every stage, report:
+    - stage name
+    - analyze result
+    - commit message
+    - push result
+    - current branch
+    - whether the working tree is clean
+
+11. Prefer using the helper script `scripts/stage_finish.ps1` for stage completion when available.
+
+Current GitHub remote repository:
+https://github.com/cangyuemazi/jin-xiao-cun-2026.6.30.git

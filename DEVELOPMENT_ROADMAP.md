@@ -35,6 +35,12 @@
 - 不破坏已经完成的模块。
 - 每次改代码前先阅读 `PROJECT_RULES.md`、`ARCHITECTURE.md`、`DATABASE_SCHEMA.md`、`DEVELOPMENT_ROADMAP.md`、`UI_GUIDE.md`。
 
+## 阶段收尾协议
+
+每个阶段完成后都必须自动执行 `AGENTS.md` 中的 Stage Completion Protocol。该规则适用于第 0 阶段至第 20 阶段，也适用于未来新增的开发阶段、修复阶段、UI 优化阶段、重构阶段和维护任务。
+
+每阶段完成后必须先运行 `flutter analyze`。只有在 analyze 通过后，才允许执行 `git status`、`git add`、`git commit` 和 `git push`。如果没有任何文件变更，不创建空 commit，也不执行空 push。完成当前阶段的收尾后，不允许自动进入下一阶段。
+
 ## 第 1 阶段目标
 
 初始化 Flutter Windows 项目，项目根目录仍必须是当前目录。推荐命令：

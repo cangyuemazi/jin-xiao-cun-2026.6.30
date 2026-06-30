@@ -84,6 +84,22 @@ class FinanceRepository extends RepositoryBase<ExpenseItems, ExpenseItem> {
     return query.get();
   }
 
+  Future<List<ExpenseItem>> listExpensesByOrderUuid(
+    String orderUuid, {
+    bool includeDeleted = false,
+  }) {
+    final query = db.select(db.expenseItems)
+      ..where((expense) {
+        final byOrder =
+            expense.orderUuid.equals(orderUuid) |
+            expense.relatedUuid.equals(orderUuid);
+        return includeDeleted ? byOrder : byOrder & expense.deletedAt.isNull();
+      })
+      ..orderBy([(expense) => OrderingTerm.desc(expense.createdAt)]);
+
+    return query.get();
+  }
+
   Future<int> createPayment(PaymentsCompanion payment) {
     return db.into(db.payments).insert(payment);
   }

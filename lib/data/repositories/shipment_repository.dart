@@ -69,6 +69,20 @@ class ShipmentRepository extends RepositoryBase<Shipments, Shipment> {
     );
   }
 
+  Future<List<Shipment>> listByOrderUuid(
+    String orderUuid, {
+    bool includeDeleted = false,
+  }) {
+    final query = db.select(db.shipments)
+      ..where((shipment) {
+        final byOrder = shipment.orderUuid.equals(orderUuid);
+        return includeDeleted ? byOrder : byOrder & shipment.deletedAt.isNull();
+      })
+      ..orderBy([(shipment) => OrderingTerm.desc(shipment.createdAt)]);
+
+    return query.get();
+  }
+
   Future<List<ShipmentItem>> listItemsByShipmentUuid(
     String shipmentUuid, {
     bool includeDeleted = false,
@@ -79,6 +93,20 @@ class ShipmentRepository extends RepositoryBase<Shipments, Shipment> {
         return includeDeleted
             ? byShipment
             : byShipment & item.deletedAt.isNull();
+      })
+      ..orderBy([(item) => OrderingTerm.desc(item.createdAt)]);
+
+    return query.get();
+  }
+
+  Future<List<ShipmentItem>> listItemsByOrderUuid(
+    String orderUuid, {
+    bool includeDeleted = false,
+  }) {
+    final query = db.select(db.shipmentItems)
+      ..where((item) {
+        final byOrder = item.orderUuid.equals(orderUuid);
+        return includeDeleted ? byOrder : byOrder & item.deletedAt.isNull();
       })
       ..orderBy([(item) => OrderingTerm.desc(item.createdAt)]);
 

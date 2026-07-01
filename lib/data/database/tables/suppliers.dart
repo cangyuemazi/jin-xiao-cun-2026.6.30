@@ -12,6 +12,11 @@ class Suppliers extends Table with CoreTableColumns {
       text().named('supplier_type').withDefault(const Constant('default'))();
   TextColumn get contactName => text().named('contact_name').nullable()();
   TextColumn get phone => text().nullable()();
+  TextColumn get wechat => text().nullable()();
   TextColumn get email => text().nullable()();
   TextColumn get address => text().nullable()();
+  TextColumn get specialtyProducts =>
+      text().named('specialty_products').nullable()();
+  IntColumn get defaultLeadDays =>
+      integer().named('default_lead_days').nullable()();
 }

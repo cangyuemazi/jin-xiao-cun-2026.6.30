@@ -4099,6 +4099,15 @@ class $SuppliersTable extends Suppliers
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _wechatMeta = const VerificationMeta('wechat');
+  @override
+  late final GeneratedColumn<String> wechat = GeneratedColumn<String>(
+    'wechat',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _emailMeta = const VerificationMeta('email');
   @override
   late final GeneratedColumn<String> email = GeneratedColumn<String>(
@@ -4119,6 +4128,29 @@ class $SuppliersTable extends Suppliers
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _specialtyProductsMeta = const VerificationMeta(
+    'specialtyProducts',
+  );
+  @override
+  late final GeneratedColumn<String> specialtyProducts =
+      GeneratedColumn<String>(
+        'specialty_products',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _defaultLeadDaysMeta = const VerificationMeta(
+    'defaultLeadDays',
+  );
+  @override
+  late final GeneratedColumn<int> defaultLeadDays = GeneratedColumn<int>(
+    'default_lead_days',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -4134,8 +4166,11 @@ class $SuppliersTable extends Suppliers
     supplierType,
     contactName,
     phone,
+    wechat,
     email,
     address,
+    specialtyProducts,
+    defaultLeadDays,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -4237,6 +4272,12 @@ class $SuppliersTable extends Suppliers
         phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta),
       );
     }
+    if (data.containsKey('wechat')) {
+      context.handle(
+        _wechatMeta,
+        wechat.isAcceptableOrUnknown(data['wechat']!, _wechatMeta),
+      );
+    }
     if (data.containsKey('email')) {
       context.handle(
         _emailMeta,
@@ -4247,6 +4288,24 @@ class $SuppliersTable extends Suppliers
       context.handle(
         _addressMeta,
         address.isAcceptableOrUnknown(data['address']!, _addressMeta),
+      );
+    }
+    if (data.containsKey('specialty_products')) {
+      context.handle(
+        _specialtyProductsMeta,
+        specialtyProducts.isAcceptableOrUnknown(
+          data['specialty_products']!,
+          _specialtyProductsMeta,
+        ),
+      );
+    }
+    if (data.containsKey('default_lead_days')) {
+      context.handle(
+        _defaultLeadDaysMeta,
+        defaultLeadDays.isAcceptableOrUnknown(
+          data['default_lead_days']!,
+          _defaultLeadDaysMeta,
+        ),
       );
     }
     return context;
@@ -4310,6 +4369,10 @@ class $SuppliersTable extends Suppliers
         DriftSqlType.string,
         data['${effectivePrefix}phone'],
       ),
+      wechat: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}wechat'],
+      ),
       email: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}email'],
@@ -4317,6 +4380,14 @@ class $SuppliersTable extends Suppliers
       address: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}address'],
+      ),
+      specialtyProducts: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}specialty_products'],
+      ),
+      defaultLeadDays: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}default_lead_days'],
       ),
     );
   }
@@ -4341,8 +4412,11 @@ class Supplier extends DataClass implements Insertable<Supplier> {
   final String supplierType;
   final String? contactName;
   final String? phone;
+  final String? wechat;
   final String? email;
   final String? address;
+  final String? specialtyProducts;
+  final int? defaultLeadDays;
   const Supplier({
     required this.id,
     required this.uuid,
@@ -4357,8 +4431,11 @@ class Supplier extends DataClass implements Insertable<Supplier> {
     required this.supplierType,
     this.contactName,
     this.phone,
+    this.wechat,
     this.email,
     this.address,
+    this.specialtyProducts,
+    this.defaultLeadDays,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -4386,11 +4463,20 @@ class Supplier extends DataClass implements Insertable<Supplier> {
     if (!nullToAbsent || phone != null) {
       map['phone'] = Variable<String>(phone);
     }
+    if (!nullToAbsent || wechat != null) {
+      map['wechat'] = Variable<String>(wechat);
+    }
     if (!nullToAbsent || email != null) {
       map['email'] = Variable<String>(email);
     }
     if (!nullToAbsent || address != null) {
       map['address'] = Variable<String>(address);
+    }
+    if (!nullToAbsent || specialtyProducts != null) {
+      map['specialty_products'] = Variable<String>(specialtyProducts);
+    }
+    if (!nullToAbsent || defaultLeadDays != null) {
+      map['default_lead_days'] = Variable<int>(defaultLeadDays);
     }
     return map;
   }
@@ -4420,12 +4506,21 @@ class Supplier extends DataClass implements Insertable<Supplier> {
       phone: phone == null && nullToAbsent
           ? const Value.absent()
           : Value(phone),
+      wechat: wechat == null && nullToAbsent
+          ? const Value.absent()
+          : Value(wechat),
       email: email == null && nullToAbsent
           ? const Value.absent()
           : Value(email),
       address: address == null && nullToAbsent
           ? const Value.absent()
           : Value(address),
+      specialtyProducts: specialtyProducts == null && nullToAbsent
+          ? const Value.absent()
+          : Value(specialtyProducts),
+      defaultLeadDays: defaultLeadDays == null && nullToAbsent
+          ? const Value.absent()
+          : Value(defaultLeadDays),
     );
   }
 
@@ -4448,8 +4543,13 @@ class Supplier extends DataClass implements Insertable<Supplier> {
       supplierType: serializer.fromJson<String>(json['supplierType']),
       contactName: serializer.fromJson<String?>(json['contactName']),
       phone: serializer.fromJson<String?>(json['phone']),
+      wechat: serializer.fromJson<String?>(json['wechat']),
       email: serializer.fromJson<String?>(json['email']),
       address: serializer.fromJson<String?>(json['address']),
+      specialtyProducts: serializer.fromJson<String?>(
+        json['specialtyProducts'],
+      ),
+      defaultLeadDays: serializer.fromJson<int?>(json['defaultLeadDays']),
     );
   }
   @override
@@ -4469,8 +4569,11 @@ class Supplier extends DataClass implements Insertable<Supplier> {
       'supplierType': serializer.toJson<String>(supplierType),
       'contactName': serializer.toJson<String?>(contactName),
       'phone': serializer.toJson<String?>(phone),
+      'wechat': serializer.toJson<String?>(wechat),
       'email': serializer.toJson<String?>(email),
       'address': serializer.toJson<String?>(address),
+      'specialtyProducts': serializer.toJson<String?>(specialtyProducts),
+      'defaultLeadDays': serializer.toJson<int?>(defaultLeadDays),
     };
   }
 
@@ -4488,8 +4591,11 @@ class Supplier extends DataClass implements Insertable<Supplier> {
     String? supplierType,
     Value<String?> contactName = const Value.absent(),
     Value<String?> phone = const Value.absent(),
+    Value<String?> wechat = const Value.absent(),
     Value<String?> email = const Value.absent(),
     Value<String?> address = const Value.absent(),
+    Value<String?> specialtyProducts = const Value.absent(),
+    Value<int?> defaultLeadDays = const Value.absent(),
   }) => Supplier(
     id: id ?? this.id,
     uuid: uuid ?? this.uuid,
@@ -4504,8 +4610,15 @@ class Supplier extends DataClass implements Insertable<Supplier> {
     supplierType: supplierType ?? this.supplierType,
     contactName: contactName.present ? contactName.value : this.contactName,
     phone: phone.present ? phone.value : this.phone,
+    wechat: wechat.present ? wechat.value : this.wechat,
     email: email.present ? email.value : this.email,
     address: address.present ? address.value : this.address,
+    specialtyProducts: specialtyProducts.present
+        ? specialtyProducts.value
+        : this.specialtyProducts,
+    defaultLeadDays: defaultLeadDays.present
+        ? defaultLeadDays.value
+        : this.defaultLeadDays,
   );
   Supplier copyWithCompanion(SuppliersCompanion data) {
     return Supplier(
@@ -4530,8 +4643,15 @@ class Supplier extends DataClass implements Insertable<Supplier> {
           ? data.contactName.value
           : this.contactName,
       phone: data.phone.present ? data.phone.value : this.phone,
+      wechat: data.wechat.present ? data.wechat.value : this.wechat,
       email: data.email.present ? data.email.value : this.email,
       address: data.address.present ? data.address.value : this.address,
+      specialtyProducts: data.specialtyProducts.present
+          ? data.specialtyProducts.value
+          : this.specialtyProducts,
+      defaultLeadDays: data.defaultLeadDays.present
+          ? data.defaultLeadDays.value
+          : this.defaultLeadDays,
     );
   }
 
@@ -4551,8 +4671,11 @@ class Supplier extends DataClass implements Insertable<Supplier> {
           ..write('supplierType: $supplierType, ')
           ..write('contactName: $contactName, ')
           ..write('phone: $phone, ')
+          ..write('wechat: $wechat, ')
           ..write('email: $email, ')
-          ..write('address: $address')
+          ..write('address: $address, ')
+          ..write('specialtyProducts: $specialtyProducts, ')
+          ..write('defaultLeadDays: $defaultLeadDays')
           ..write(')'))
         .toString();
   }
@@ -4572,8 +4695,11 @@ class Supplier extends DataClass implements Insertable<Supplier> {
     supplierType,
     contactName,
     phone,
+    wechat,
     email,
     address,
+    specialtyProducts,
+    defaultLeadDays,
   );
   @override
   bool operator ==(Object other) =>
@@ -4592,8 +4718,11 @@ class Supplier extends DataClass implements Insertable<Supplier> {
           other.supplierType == this.supplierType &&
           other.contactName == this.contactName &&
           other.phone == this.phone &&
+          other.wechat == this.wechat &&
           other.email == this.email &&
-          other.address == this.address);
+          other.address == this.address &&
+          other.specialtyProducts == this.specialtyProducts &&
+          other.defaultLeadDays == this.defaultLeadDays);
 }
 
 class SuppliersCompanion extends UpdateCompanion<Supplier> {
@@ -4610,8 +4739,11 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
   final Value<String> supplierType;
   final Value<String?> contactName;
   final Value<String?> phone;
+  final Value<String?> wechat;
   final Value<String?> email;
   final Value<String?> address;
+  final Value<String?> specialtyProducts;
+  final Value<int?> defaultLeadDays;
   const SuppliersCompanion({
     this.id = const Value.absent(),
     this.uuid = const Value.absent(),
@@ -4626,8 +4758,11 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
     this.supplierType = const Value.absent(),
     this.contactName = const Value.absent(),
     this.phone = const Value.absent(),
+    this.wechat = const Value.absent(),
     this.email = const Value.absent(),
     this.address = const Value.absent(),
+    this.specialtyProducts = const Value.absent(),
+    this.defaultLeadDays = const Value.absent(),
   });
   SuppliersCompanion.insert({
     this.id = const Value.absent(),
@@ -4643,8 +4778,11 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
     this.supplierType = const Value.absent(),
     this.contactName = const Value.absent(),
     this.phone = const Value.absent(),
+    this.wechat = const Value.absent(),
     this.email = const Value.absent(),
     this.address = const Value.absent(),
+    this.specialtyProducts = const Value.absent(),
+    this.defaultLeadDays = const Value.absent(),
   }) : uuid = Value(uuid),
        supplierName = Value(supplierName);
   static Insertable<Supplier> custom({
@@ -4661,8 +4799,11 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
     Expression<String>? supplierType,
     Expression<String>? contactName,
     Expression<String>? phone,
+    Expression<String>? wechat,
     Expression<String>? email,
     Expression<String>? address,
+    Expression<String>? specialtyProducts,
+    Expression<int>? defaultLeadDays,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -4678,8 +4819,11 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
       if (supplierType != null) 'supplier_type': supplierType,
       if (contactName != null) 'contact_name': contactName,
       if (phone != null) 'phone': phone,
+      if (wechat != null) 'wechat': wechat,
       if (email != null) 'email': email,
       if (address != null) 'address': address,
+      if (specialtyProducts != null) 'specialty_products': specialtyProducts,
+      if (defaultLeadDays != null) 'default_lead_days': defaultLeadDays,
     });
   }
 
@@ -4697,8 +4841,11 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
     Value<String>? supplierType,
     Value<String?>? contactName,
     Value<String?>? phone,
+    Value<String?>? wechat,
     Value<String?>? email,
     Value<String?>? address,
+    Value<String?>? specialtyProducts,
+    Value<int?>? defaultLeadDays,
   }) {
     return SuppliersCompanion(
       id: id ?? this.id,
@@ -4714,8 +4861,11 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
       supplierType: supplierType ?? this.supplierType,
       contactName: contactName ?? this.contactName,
       phone: phone ?? this.phone,
+      wechat: wechat ?? this.wechat,
       email: email ?? this.email,
       address: address ?? this.address,
+      specialtyProducts: specialtyProducts ?? this.specialtyProducts,
+      defaultLeadDays: defaultLeadDays ?? this.defaultLeadDays,
     );
   }
 
@@ -4761,11 +4911,20 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
     if (phone.present) {
       map['phone'] = Variable<String>(phone.value);
     }
+    if (wechat.present) {
+      map['wechat'] = Variable<String>(wechat.value);
+    }
     if (email.present) {
       map['email'] = Variable<String>(email.value);
     }
     if (address.present) {
       map['address'] = Variable<String>(address.value);
+    }
+    if (specialtyProducts.present) {
+      map['specialty_products'] = Variable<String>(specialtyProducts.value);
+    }
+    if (defaultLeadDays.present) {
+      map['default_lead_days'] = Variable<int>(defaultLeadDays.value);
     }
     return map;
   }
@@ -4786,8 +4945,11 @@ class SuppliersCompanion extends UpdateCompanion<Supplier> {
           ..write('supplierType: $supplierType, ')
           ..write('contactName: $contactName, ')
           ..write('phone: $phone, ')
+          ..write('wechat: $wechat, ')
           ..write('email: $email, ')
-          ..write('address: $address')
+          ..write('address: $address, ')
+          ..write('specialtyProducts: $specialtyProducts, ')
+          ..write('defaultLeadDays: $defaultLeadDays')
           ..write(')'))
         .toString();
   }
@@ -21459,8 +21621,11 @@ typedef $$SuppliersTableCreateCompanionBuilder =
       Value<String> supplierType,
       Value<String?> contactName,
       Value<String?> phone,
+      Value<String?> wechat,
       Value<String?> email,
       Value<String?> address,
+      Value<String?> specialtyProducts,
+      Value<int?> defaultLeadDays,
     });
 typedef $$SuppliersTableUpdateCompanionBuilder =
     SuppliersCompanion Function({
@@ -21477,8 +21642,11 @@ typedef $$SuppliersTableUpdateCompanionBuilder =
       Value<String> supplierType,
       Value<String?> contactName,
       Value<String?> phone,
+      Value<String?> wechat,
       Value<String?> email,
       Value<String?> address,
+      Value<String?> specialtyProducts,
+      Value<int?> defaultLeadDays,
     });
 
 class $$SuppliersTableFilterComposer
@@ -21555,6 +21723,11 @@ class $$SuppliersTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get wechat => $composableBuilder(
+    column: $table.wechat,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get email => $composableBuilder(
     column: $table.email,
     builder: (column) => ColumnFilters(column),
@@ -21562,6 +21735,16 @@ class $$SuppliersTableFilterComposer
 
   ColumnFilters<String> get address => $composableBuilder(
     column: $table.address,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get specialtyProducts => $composableBuilder(
+    column: $table.specialtyProducts,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get defaultLeadDays => $composableBuilder(
+    column: $table.defaultLeadDays,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -21640,6 +21823,11 @@ class $$SuppliersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get wechat => $composableBuilder(
+    column: $table.wechat,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get email => $composableBuilder(
     column: $table.email,
     builder: (column) => ColumnOrderings(column),
@@ -21647,6 +21835,16 @@ class $$SuppliersTableOrderingComposer
 
   ColumnOrderings<String> get address => $composableBuilder(
     column: $table.address,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get specialtyProducts => $composableBuilder(
+    column: $table.specialtyProducts,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get defaultLeadDays => $composableBuilder(
+    column: $table.defaultLeadDays,
     builder: (column) => ColumnOrderings(column),
   );
 }
@@ -21707,11 +21905,24 @@ class $$SuppliersTableAnnotationComposer
   GeneratedColumn<String> get phone =>
       $composableBuilder(column: $table.phone, builder: (column) => column);
 
+  GeneratedColumn<String> get wechat =>
+      $composableBuilder(column: $table.wechat, builder: (column) => column);
+
   GeneratedColumn<String> get email =>
       $composableBuilder(column: $table.email, builder: (column) => column);
 
   GeneratedColumn<String> get address =>
       $composableBuilder(column: $table.address, builder: (column) => column);
+
+  GeneratedColumn<String> get specialtyProducts => $composableBuilder(
+    column: $table.specialtyProducts,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get defaultLeadDays => $composableBuilder(
+    column: $table.defaultLeadDays,
+    builder: (column) => column,
+  );
 }
 
 class $$SuppliersTableTableManager
@@ -21755,8 +21966,11 @@ class $$SuppliersTableTableManager
                 Value<String> supplierType = const Value.absent(),
                 Value<String?> contactName = const Value.absent(),
                 Value<String?> phone = const Value.absent(),
+                Value<String?> wechat = const Value.absent(),
                 Value<String?> email = const Value.absent(),
                 Value<String?> address = const Value.absent(),
+                Value<String?> specialtyProducts = const Value.absent(),
+                Value<int?> defaultLeadDays = const Value.absent(),
               }) => SuppliersCompanion(
                 id: id,
                 uuid: uuid,
@@ -21771,8 +21985,11 @@ class $$SuppliersTableTableManager
                 supplierType: supplierType,
                 contactName: contactName,
                 phone: phone,
+                wechat: wechat,
                 email: email,
                 address: address,
+                specialtyProducts: specialtyProducts,
+                defaultLeadDays: defaultLeadDays,
               ),
           createCompanionCallback:
               ({
@@ -21789,8 +22006,11 @@ class $$SuppliersTableTableManager
                 Value<String> supplierType = const Value.absent(),
                 Value<String?> contactName = const Value.absent(),
                 Value<String?> phone = const Value.absent(),
+                Value<String?> wechat = const Value.absent(),
                 Value<String?> email = const Value.absent(),
                 Value<String?> address = const Value.absent(),
+                Value<String?> specialtyProducts = const Value.absent(),
+                Value<int?> defaultLeadDays = const Value.absent(),
               }) => SuppliersCompanion.insert(
                 id: id,
                 uuid: uuid,
@@ -21805,8 +22025,11 @@ class $$SuppliersTableTableManager
                 supplierType: supplierType,
                 contactName: contactName,
                 phone: phone,
+                wechat: wechat,
                 email: email,
                 address: address,
+                specialtyProducts: specialtyProducts,
+                defaultLeadDays: defaultLeadDays,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

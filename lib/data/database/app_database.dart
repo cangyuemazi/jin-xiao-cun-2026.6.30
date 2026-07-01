@@ -49,7 +49,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forExecutor(super.executor);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration {
@@ -85,6 +85,10 @@ class AppDatabase extends _$AppDatabase {
 
     if (from >= 2 && from < 4) {
       await _upgradeFromV3ToV4(migrator);
+    }
+
+    if (from >= 2 && from < 5) {
+      await _upgradeFromV4ToV5(migrator);
     }
 
     await _createIndexes();
@@ -168,6 +172,12 @@ class AppDatabase extends _$AppDatabase {
     await migrator.addColumn(products, products.defaultSupplierUuid);
     await migrator.addColumn(products, products.isCustomProduct);
     await migrator.addColumn(products, products.trackInventory);
+  }
+
+  Future<void> _upgradeFromV4ToV5(Migrator migrator) async {
+    await migrator.addColumn(suppliers, suppliers.wechat);
+    await migrator.addColumn(suppliers, suppliers.specialtyProducts);
+    await migrator.addColumn(suppliers, suppliers.defaultLeadDays);
   }
 
   Future<void> _createIndexes() async {

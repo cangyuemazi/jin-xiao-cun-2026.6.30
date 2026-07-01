@@ -14,6 +14,10 @@ import '../features/products/presentation/product_detail_page.dart';
 import '../features/products/presentation/product_form_page.dart';
 import '../features/products/presentation/product_list_page.dart';
 import '../features/products/view_models/product_list_view_model.dart';
+import '../features/suppliers/presentation/supplier_detail_page.dart';
+import '../features/suppliers/presentation/supplier_form_page.dart';
+import '../features/suppliers/presentation/supplier_list_page.dart';
+import '../features/suppliers/view_models/supplier_list_view_model.dart';
 import '../shared/theme/app_spacing.dart';
 import '../shared/theme/app_theme.dart';
 import '../shared/layout/desktop_shell.dart';
@@ -43,7 +47,7 @@ class _DesktopWorkspacePage extends ConsumerStatefulWidget {
 }
 
 class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
-  int _selectedIndex = 3;
+  int _selectedIndex = 4;
 
   @override
   Widget build(BuildContext context) {
@@ -64,6 +68,10 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   String get _title {
+    if (_selectedIndex == 4) {
+      return '厂家';
+    }
+
     return switch (_selectedIndex) {
       1 => '订单',
       2 => '客户',
@@ -73,6 +81,10 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   String? get _subtitle {
+    if (_selectedIndex == 4) {
+      return '厂家资料、加工能力和默认交期管理';
+    }
+
     return switch (_selectedIndex) {
       1 => '订单列表、录入、编辑和软删除',
       2 => '客户资料、联系方式和收货地址管理',
@@ -82,6 +94,10 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   String? get _searchHint {
+    if (_selectedIndex == 4) {
+      return '搜索厂家名称、联系人或擅长产品';
+    }
+
     return switch (_selectedIndex) {
       1 => '搜索订单号、客户或状态',
       2 => '搜索姓名、手机号或单位',
@@ -91,6 +107,12 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   void Function(String)? get _onSearchChanged {
+    if (_selectedIndex == 4) {
+      return (keyword) => ref
+          .read(supplierListViewModelProvider.notifier)
+          .setSearchKeyword(keyword);
+    }
+
     return switch (_selectedIndex) {
       1 =>
         (keyword) => ref
@@ -109,6 +131,16 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   List<Widget> _actions(BuildContext context) {
+    if (_selectedIndex == 4) {
+      return [
+        AppButton(
+          label: '新增厂家',
+          icon: Icons.factory_outlined,
+          onPressed: () => _openSupplierForm(context),
+        ),
+      ];
+    }
+
     return switch (_selectedIndex) {
       1 => [
         AppButton(
@@ -136,6 +168,16 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   Widget _child(BuildContext context) {
+    if (_selectedIndex == 4) {
+      return SupplierListPage(
+        onCreateSupplier: () => _openSupplierForm(context),
+        onEditSupplier: (supplierUuid) =>
+            _openSupplierForm(context, supplierUuid),
+        onOpenSupplier: (supplierUuid) =>
+            _openSupplierDetail(context, supplierUuid),
+      );
+    }
+
     return switch (_selectedIndex) {
       1 => OrderListPage(
         onCreateOrder: () => _openOrderForm(context),
@@ -278,6 +320,36 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
           onEdit: (selectedProductUuid) {
             Navigator.of(pageContext).pop();
             _openProductForm(context, selectedProductUuid);
+          },
+        ),
+      ),
+    );
+  }
+
+  void _openSupplierForm(BuildContext context, [String? supplierUuid]) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (pageContext) => SupplierFormPage(
+          supplierUuid: supplierUuid,
+          onCancel: () => Navigator.of(pageContext).pop(),
+          onSaved: (_) {
+            ref.invalidate(supplierListViewModelProvider);
+            Navigator.of(pageContext).pop();
+          },
+        ),
+      ),
+    );
+  }
+
+  void _openSupplierDetail(BuildContext context, String supplierUuid) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (pageContext) => SupplierDetailPage(
+          supplierUuid: supplierUuid,
+          onBack: () => Navigator.of(pageContext).pop(),
+          onEdit: (selectedSupplierUuid) {
+            Navigator.of(pageContext).pop();
+            _openSupplierForm(context, selectedSupplierUuid);
           },
         ),
       ),

@@ -2264,6 +2264,47 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _defaultSupplierUuidMeta =
+      const VerificationMeta('defaultSupplierUuid');
+  @override
+  late final GeneratedColumn<String> defaultSupplierUuid =
+      GeneratedColumn<String>(
+        'default_supplier_uuid',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
+  static const VerificationMeta _isCustomProductMeta = const VerificationMeta(
+    'isCustomProduct',
+  );
+  @override
+  late final GeneratedColumn<bool> isCustomProduct = GeneratedColumn<bool>(
+    'is_custom_product',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_custom_product" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _trackInventoryMeta = const VerificationMeta(
+    'trackInventory',
+  );
+  @override
+  late final GeneratedColumn<bool> trackInventory = GeneratedColumn<bool>(
+    'track_inventory',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("track_inventory" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -2281,6 +2322,9 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
     specification,
     quantityUnit,
     materialCategory,
+    defaultSupplierUuid,
+    isCustomProduct,
+    trackInventory,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -2403,6 +2447,33 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
         ),
       );
     }
+    if (data.containsKey('default_supplier_uuid')) {
+      context.handle(
+        _defaultSupplierUuidMeta,
+        defaultSupplierUuid.isAcceptableOrUnknown(
+          data['default_supplier_uuid']!,
+          _defaultSupplierUuidMeta,
+        ),
+      );
+    }
+    if (data.containsKey('is_custom_product')) {
+      context.handle(
+        _isCustomProductMeta,
+        isCustomProduct.isAcceptableOrUnknown(
+          data['is_custom_product']!,
+          _isCustomProductMeta,
+        ),
+      );
+    }
+    if (data.containsKey('track_inventory')) {
+      context.handle(
+        _trackInventoryMeta,
+        trackInventory.isAcceptableOrUnknown(
+          data['track_inventory']!,
+          _trackInventoryMeta,
+        ),
+      );
+    }
     return context;
   }
 
@@ -2472,6 +2543,18 @@ class $ProductsTable extends Products with TableInfo<$ProductsTable, Product> {
         DriftSqlType.string,
         data['${effectivePrefix}material_category'],
       ),
+      defaultSupplierUuid: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}default_supplier_uuid'],
+      ),
+      isCustomProduct: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_custom_product'],
+      )!,
+      trackInventory: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}track_inventory'],
+      )!,
     );
   }
 
@@ -2497,6 +2580,9 @@ class Product extends DataClass implements Insertable<Product> {
   final String? specification;
   final String? quantityUnit;
   final String? materialCategory;
+  final String? defaultSupplierUuid;
+  final bool isCustomProduct;
+  final bool trackInventory;
   const Product({
     required this.id,
     required this.uuid,
@@ -2513,6 +2599,9 @@ class Product extends DataClass implements Insertable<Product> {
     this.specification,
     this.quantityUnit,
     this.materialCategory,
+    this.defaultSupplierUuid,
+    required this.isCustomProduct,
+    required this.trackInventory,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -2546,6 +2635,11 @@ class Product extends DataClass implements Insertable<Product> {
     if (!nullToAbsent || materialCategory != null) {
       map['material_category'] = Variable<String>(materialCategory);
     }
+    if (!nullToAbsent || defaultSupplierUuid != null) {
+      map['default_supplier_uuid'] = Variable<String>(defaultSupplierUuid);
+    }
+    map['is_custom_product'] = Variable<bool>(isCustomProduct);
+    map['track_inventory'] = Variable<bool>(trackInventory);
     return map;
   }
 
@@ -2580,6 +2674,11 @@ class Product extends DataClass implements Insertable<Product> {
       materialCategory: materialCategory == null && nullToAbsent
           ? const Value.absent()
           : Value(materialCategory),
+      defaultSupplierUuid: defaultSupplierUuid == null && nullToAbsent
+          ? const Value.absent()
+          : Value(defaultSupplierUuid),
+      isCustomProduct: Value(isCustomProduct),
+      trackInventory: Value(trackInventory),
     );
   }
 
@@ -2604,6 +2703,11 @@ class Product extends DataClass implements Insertable<Product> {
       specification: serializer.fromJson<String?>(json['specification']),
       quantityUnit: serializer.fromJson<String?>(json['quantityUnit']),
       materialCategory: serializer.fromJson<String?>(json['materialCategory']),
+      defaultSupplierUuid: serializer.fromJson<String?>(
+        json['defaultSupplierUuid'],
+      ),
+      isCustomProduct: serializer.fromJson<bool>(json['isCustomProduct']),
+      trackInventory: serializer.fromJson<bool>(json['trackInventory']),
     );
   }
   @override
@@ -2625,6 +2729,9 @@ class Product extends DataClass implements Insertable<Product> {
       'specification': serializer.toJson<String?>(specification),
       'quantityUnit': serializer.toJson<String?>(quantityUnit),
       'materialCategory': serializer.toJson<String?>(materialCategory),
+      'defaultSupplierUuid': serializer.toJson<String?>(defaultSupplierUuid),
+      'isCustomProduct': serializer.toJson<bool>(isCustomProduct),
+      'trackInventory': serializer.toJson<bool>(trackInventory),
     };
   }
 
@@ -2644,6 +2751,9 @@ class Product extends DataClass implements Insertable<Product> {
     Value<String?> specification = const Value.absent(),
     Value<String?> quantityUnit = const Value.absent(),
     Value<String?> materialCategory = const Value.absent(),
+    Value<String?> defaultSupplierUuid = const Value.absent(),
+    bool? isCustomProduct,
+    bool? trackInventory,
   }) => Product(
     id: id ?? this.id,
     uuid: uuid ?? this.uuid,
@@ -2664,6 +2774,11 @@ class Product extends DataClass implements Insertable<Product> {
     materialCategory: materialCategory.present
         ? materialCategory.value
         : this.materialCategory,
+    defaultSupplierUuid: defaultSupplierUuid.present
+        ? defaultSupplierUuid.value
+        : this.defaultSupplierUuid,
+    isCustomProduct: isCustomProduct ?? this.isCustomProduct,
+    trackInventory: trackInventory ?? this.trackInventory,
   );
   Product copyWithCompanion(ProductsCompanion data) {
     return Product(
@@ -2696,6 +2811,15 @@ class Product extends DataClass implements Insertable<Product> {
       materialCategory: data.materialCategory.present
           ? data.materialCategory.value
           : this.materialCategory,
+      defaultSupplierUuid: data.defaultSupplierUuid.present
+          ? data.defaultSupplierUuid.value
+          : this.defaultSupplierUuid,
+      isCustomProduct: data.isCustomProduct.present
+          ? data.isCustomProduct.value
+          : this.isCustomProduct,
+      trackInventory: data.trackInventory.present
+          ? data.trackInventory.value
+          : this.trackInventory,
     );
   }
 
@@ -2716,7 +2840,10 @@ class Product extends DataClass implements Insertable<Product> {
           ..write('productType: $productType, ')
           ..write('specification: $specification, ')
           ..write('quantityUnit: $quantityUnit, ')
-          ..write('materialCategory: $materialCategory')
+          ..write('materialCategory: $materialCategory, ')
+          ..write('defaultSupplierUuid: $defaultSupplierUuid, ')
+          ..write('isCustomProduct: $isCustomProduct, ')
+          ..write('trackInventory: $trackInventory')
           ..write(')'))
         .toString();
   }
@@ -2738,6 +2865,9 @@ class Product extends DataClass implements Insertable<Product> {
     specification,
     quantityUnit,
     materialCategory,
+    defaultSupplierUuid,
+    isCustomProduct,
+    trackInventory,
   );
   @override
   bool operator ==(Object other) =>
@@ -2757,7 +2887,10 @@ class Product extends DataClass implements Insertable<Product> {
           other.productType == this.productType &&
           other.specification == this.specification &&
           other.quantityUnit == this.quantityUnit &&
-          other.materialCategory == this.materialCategory);
+          other.materialCategory == this.materialCategory &&
+          other.defaultSupplierUuid == this.defaultSupplierUuid &&
+          other.isCustomProduct == this.isCustomProduct &&
+          other.trackInventory == this.trackInventory);
 }
 
 class ProductsCompanion extends UpdateCompanion<Product> {
@@ -2776,6 +2909,9 @@ class ProductsCompanion extends UpdateCompanion<Product> {
   final Value<String?> specification;
   final Value<String?> quantityUnit;
   final Value<String?> materialCategory;
+  final Value<String?> defaultSupplierUuid;
+  final Value<bool> isCustomProduct;
+  final Value<bool> trackInventory;
   const ProductsCompanion({
     this.id = const Value.absent(),
     this.uuid = const Value.absent(),
@@ -2792,6 +2928,9 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     this.specification = const Value.absent(),
     this.quantityUnit = const Value.absent(),
     this.materialCategory = const Value.absent(),
+    this.defaultSupplierUuid = const Value.absent(),
+    this.isCustomProduct = const Value.absent(),
+    this.trackInventory = const Value.absent(),
   });
   ProductsCompanion.insert({
     this.id = const Value.absent(),
@@ -2809,6 +2948,9 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     this.specification = const Value.absent(),
     this.quantityUnit = const Value.absent(),
     this.materialCategory = const Value.absent(),
+    this.defaultSupplierUuid = const Value.absent(),
+    this.isCustomProduct = const Value.absent(),
+    this.trackInventory = const Value.absent(),
   }) : uuid = Value(uuid),
        productName = Value(productName);
   static Insertable<Product> custom({
@@ -2827,6 +2969,9 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     Expression<String>? specification,
     Expression<String>? quantityUnit,
     Expression<String>? materialCategory,
+    Expression<String>? defaultSupplierUuid,
+    Expression<bool>? isCustomProduct,
+    Expression<bool>? trackInventory,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -2844,6 +2989,10 @@ class ProductsCompanion extends UpdateCompanion<Product> {
       if (specification != null) 'specification': specification,
       if (quantityUnit != null) 'quantity_unit': quantityUnit,
       if (materialCategory != null) 'material_category': materialCategory,
+      if (defaultSupplierUuid != null)
+        'default_supplier_uuid': defaultSupplierUuid,
+      if (isCustomProduct != null) 'is_custom_product': isCustomProduct,
+      if (trackInventory != null) 'track_inventory': trackInventory,
     });
   }
 
@@ -2863,6 +3012,9 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     Value<String?>? specification,
     Value<String?>? quantityUnit,
     Value<String?>? materialCategory,
+    Value<String?>? defaultSupplierUuid,
+    Value<bool>? isCustomProduct,
+    Value<bool>? trackInventory,
   }) {
     return ProductsCompanion(
       id: id ?? this.id,
@@ -2880,6 +3032,9 @@ class ProductsCompanion extends UpdateCompanion<Product> {
       specification: specification ?? this.specification,
       quantityUnit: quantityUnit ?? this.quantityUnit,
       materialCategory: materialCategory ?? this.materialCategory,
+      defaultSupplierUuid: defaultSupplierUuid ?? this.defaultSupplierUuid,
+      isCustomProduct: isCustomProduct ?? this.isCustomProduct,
+      trackInventory: trackInventory ?? this.trackInventory,
     );
   }
 
@@ -2931,6 +3086,17 @@ class ProductsCompanion extends UpdateCompanion<Product> {
     if (materialCategory.present) {
       map['material_category'] = Variable<String>(materialCategory.value);
     }
+    if (defaultSupplierUuid.present) {
+      map['default_supplier_uuid'] = Variable<String>(
+        defaultSupplierUuid.value,
+      );
+    }
+    if (isCustomProduct.present) {
+      map['is_custom_product'] = Variable<bool>(isCustomProduct.value);
+    }
+    if (trackInventory.present) {
+      map['track_inventory'] = Variable<bool>(trackInventory.value);
+    }
     return map;
   }
 
@@ -2951,7 +3117,10 @@ class ProductsCompanion extends UpdateCompanion<Product> {
           ..write('productType: $productType, ')
           ..write('specification: $specification, ')
           ..write('quantityUnit: $quantityUnit, ')
-          ..write('materialCategory: $materialCategory')
+          ..write('materialCategory: $materialCategory, ')
+          ..write('defaultSupplierUuid: $defaultSupplierUuid, ')
+          ..write('isCustomProduct: $isCustomProduct, ')
+          ..write('trackInventory: $trackInventory')
           ..write(')'))
         .toString();
   }
@@ -20458,6 +20627,9 @@ typedef $$ProductsTableCreateCompanionBuilder =
       Value<String?> specification,
       Value<String?> quantityUnit,
       Value<String?> materialCategory,
+      Value<String?> defaultSupplierUuid,
+      Value<bool> isCustomProduct,
+      Value<bool> trackInventory,
     });
 typedef $$ProductsTableUpdateCompanionBuilder =
     ProductsCompanion Function({
@@ -20476,6 +20648,9 @@ typedef $$ProductsTableUpdateCompanionBuilder =
       Value<String?> specification,
       Value<String?> quantityUnit,
       Value<String?> materialCategory,
+      Value<String?> defaultSupplierUuid,
+      Value<bool> isCustomProduct,
+      Value<bool> trackInventory,
     });
 
 class $$ProductsTableFilterComposer
@@ -20559,6 +20734,21 @@ class $$ProductsTableFilterComposer
 
   ColumnFilters<String> get materialCategory => $composableBuilder(
     column: $table.materialCategory,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get defaultSupplierUuid => $composableBuilder(
+    column: $table.defaultSupplierUuid,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isCustomProduct => $composableBuilder(
+    column: $table.isCustomProduct,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get trackInventory => $composableBuilder(
+    column: $table.trackInventory,
     builder: (column) => ColumnFilters(column),
   );
 }
@@ -20646,6 +20836,21 @@ class $$ProductsTableOrderingComposer
     column: $table.materialCategory,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get defaultSupplierUuid => $composableBuilder(
+    column: $table.defaultSupplierUuid,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isCustomProduct => $composableBuilder(
+    column: $table.isCustomProduct,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get trackInventory => $composableBuilder(
+    column: $table.trackInventory,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$ProductsTableAnnotationComposer
@@ -20715,6 +20920,21 @@ class $$ProductsTableAnnotationComposer
     column: $table.materialCategory,
     builder: (column) => column,
   );
+
+  GeneratedColumn<String> get defaultSupplierUuid => $composableBuilder(
+    column: $table.defaultSupplierUuid,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get isCustomProduct => $composableBuilder(
+    column: $table.isCustomProduct,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get trackInventory => $composableBuilder(
+    column: $table.trackInventory,
+    builder: (column) => column,
+  );
 }
 
 class $$ProductsTableTableManager
@@ -20760,6 +20980,9 @@ class $$ProductsTableTableManager
                 Value<String?> specification = const Value.absent(),
                 Value<String?> quantityUnit = const Value.absent(),
                 Value<String?> materialCategory = const Value.absent(),
+                Value<String?> defaultSupplierUuid = const Value.absent(),
+                Value<bool> isCustomProduct = const Value.absent(),
+                Value<bool> trackInventory = const Value.absent(),
               }) => ProductsCompanion(
                 id: id,
                 uuid: uuid,
@@ -20776,6 +20999,9 @@ class $$ProductsTableTableManager
                 specification: specification,
                 quantityUnit: quantityUnit,
                 materialCategory: materialCategory,
+                defaultSupplierUuid: defaultSupplierUuid,
+                isCustomProduct: isCustomProduct,
+                trackInventory: trackInventory,
               ),
           createCompanionCallback:
               ({
@@ -20794,6 +21020,9 @@ class $$ProductsTableTableManager
                 Value<String?> specification = const Value.absent(),
                 Value<String?> quantityUnit = const Value.absent(),
                 Value<String?> materialCategory = const Value.absent(),
+                Value<String?> defaultSupplierUuid = const Value.absent(),
+                Value<bool> isCustomProduct = const Value.absent(),
+                Value<bool> trackInventory = const Value.absent(),
               }) => ProductsCompanion.insert(
                 id: id,
                 uuid: uuid,
@@ -20810,6 +21039,9 @@ class $$ProductsTableTableManager
                 specification: specification,
                 quantityUnit: quantityUnit,
                 materialCategory: materialCategory,
+                defaultSupplierUuid: defaultSupplierUuid,
+                isCustomProduct: isCustomProduct,
+                trackInventory: trackInventory,
               ),
           withReferenceMapper: (p0) => p0
               .map((e) => (e.readTable(table), BaseReferences(db, table, e)))

@@ -60,6 +60,7 @@ class ProductRepository extends RepositoryBase<Products, Product> {
         db.products.productType,
         db.products.specification,
         db.products.materialCategory,
+        db.products.defaultSupplierUuid,
         db.products.remark,
       ],
       limit: limit,

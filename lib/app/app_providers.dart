@@ -19,6 +19,7 @@ import '../domain/services/finance_service.dart';
 import '../domain/services/import_service.dart';
 import '../domain/services/inventory_service.dart';
 import '../domain/services/order_service.dart';
+import '../domain/services/product_service.dart';
 import '../domain/services/shipment_service.dart';
 
 final appDatabaseProvider = Provider<AppDatabase>((ref) {
@@ -112,6 +113,14 @@ final inventoryServiceProvider = Provider<InventoryService>((ref) {
 final dictionaryServiceProvider = Provider<DictionaryService>((ref) {
   return DictionaryService(
     dictionaryRepository: ref.watch(dictionaryRepositoryProvider),
+  );
+});
+
+final productServiceProvider = Provider<ProductService>((ref) {
+  return ProductService(
+    productRepository: ref.watch(productRepositoryProvider),
+    dictionaryService: ref.watch(dictionaryServiceProvider),
+    auditLogService: ref.watch(auditLogServiceProvider),
   );
 });
 

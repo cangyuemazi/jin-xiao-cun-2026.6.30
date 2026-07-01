@@ -10,6 +10,10 @@ import '../features/orders/presentation/order_detail_page.dart';
 import '../features/orders/presentation/order_form_page.dart';
 import '../features/orders/presentation/order_list_page.dart';
 import '../features/orders/view_models/order_list_view_model.dart';
+import '../features/products/presentation/product_detail_page.dart';
+import '../features/products/presentation/product_form_page.dart';
+import '../features/products/presentation/product_list_page.dart';
+import '../features/products/view_models/product_list_view_model.dart';
 import '../shared/theme/app_spacing.dart';
 import '../shared/theme/app_theme.dart';
 import '../shared/layout/desktop_shell.dart';
@@ -39,7 +43,7 @@ class _DesktopWorkspacePage extends ConsumerStatefulWidget {
 }
 
 class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
-  int _selectedIndex = 2;
+  int _selectedIndex = 3;
 
   @override
   Widget build(BuildContext context) {
@@ -63,6 +67,7 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
     return switch (_selectedIndex) {
       1 => '订单',
       2 => '客户',
+      3 => '产品',
       _ => '模块占位',
     };
   }
@@ -71,6 +76,7 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
     return switch (_selectedIndex) {
       1 => '订单列表、录入、编辑和软删除',
       2 => '客户资料、联系方式和收货地址管理',
+      3 => '产品资料、材料体系和默认配置管理',
       _ => '该模块将在后续阶段逐步接入。',
     };
   }
@@ -79,6 +85,7 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
     return switch (_selectedIndex) {
       1 => '搜索订单号、客户或状态',
       2 => '搜索姓名、手机号或单位',
+      3 => '搜索产品名称、货号或材料体系',
       _ => null,
     };
   }
@@ -92,6 +99,10 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
       2 =>
         (keyword) => ref
             .read(customerListViewModelProvider.notifier)
+            .setSearchKeyword(keyword),
+      3 =>
+        (keyword) => ref
+            .read(productListViewModelProvider.notifier)
             .setSearchKeyword(keyword),
       _ => null,
     };
@@ -113,6 +124,13 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
           onPressed: () => _openCustomerForm(context),
         ),
       ],
+      3 => [
+        AppButton(
+          label: '新增产品',
+          icon: Icons.add_box_outlined,
+          onPressed: () => _openProductForm(context),
+        ),
+      ],
       _ => const [],
     };
   }
@@ -131,12 +149,18 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
         onOpenCustomer: (customerUuid) =>
             _openCustomerDetail(context, customerUuid),
       ),
+      3 => ProductListPage(
+        onCreateProduct: () => _openProductForm(context),
+        onEditProduct: (productUuid) => _openProductForm(context, productUuid),
+        onOpenProduct: (productUuid) =>
+            _openProductDetail(context, productUuid),
+      ),
       _ => const Padding(
         padding: EdgeInsets.all(AppSpacing.xxl),
         child: EmptyState(
           icon: Icons.widgets_outlined,
           title: '模块待开发',
-          description: '当前阶段只接入订单和客户模块。',
+          description: '当前阶段只接入订单、客户和产品模块。',
         ),
       ),
     };
@@ -224,6 +248,36 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
           onSaved: (_) {
             ref.invalidate(customerListViewModelProvider);
             Navigator.of(pageContext).pop();
+          },
+        ),
+      ),
+    );
+  }
+
+  void _openProductForm(BuildContext context, [String? productUuid]) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (pageContext) => ProductFormPage(
+          productUuid: productUuid,
+          onCancel: () => Navigator.of(pageContext).pop(),
+          onSaved: (_) {
+            ref.invalidate(productListViewModelProvider);
+            Navigator.of(pageContext).pop();
+          },
+        ),
+      ),
+    );
+  }
+
+  void _openProductDetail(BuildContext context, String productUuid) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (pageContext) => ProductDetailPage(
+          productUuid: productUuid,
+          onBack: () => Navigator.of(pageContext).pop(),
+          onEdit: (selectedProductUuid) {
+            Navigator.of(pageContext).pop();
+            _openProductForm(context, selectedProductUuid);
           },
         ),
       ),

@@ -15,6 +15,12 @@ class Products extends Table with CoreTableColumns {
   TextColumn get quantityUnit => text().named('quantity_unit').nullable()();
   TextColumn get materialCategory =>
       text().named('material_category').nullable()();
+  TextColumn get defaultSupplierUuid =>
+      text().named('default_supplier_uuid').nullable()();
+  BoolColumn get isCustomProduct =>
+      boolean().named('is_custom_product').withDefault(const Constant(false))();
+  BoolColumn get trackInventory =>
+      boolean().named('track_inventory').withDefault(const Constant(true))();
 }
 
 class ProductElements extends Table with CoreTableColumns {

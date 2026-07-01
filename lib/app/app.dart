@@ -6,6 +6,8 @@ import '../features/customers/presentation/customer_detail_page.dart';
 import '../features/customers/presentation/customer_form_page.dart';
 import '../features/customers/presentation/customer_list_page.dart';
 import '../features/customers/view_models/customer_list_view_model.dart';
+import '../features/dashboard/presentation/dashboard_page.dart';
+import '../features/dashboard/view_models/dashboard_view_model.dart';
 import '../features/finance/presentation/finance_page.dart';
 import '../features/finance/view_models/finance_view_model.dart';
 import '../features/orders/presentation/order_detail_page.dart';
@@ -53,7 +55,7 @@ class _DesktopWorkspacePage extends ConsumerStatefulWidget {
 }
 
 class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
-  int _selectedIndex = 7;
+  int _selectedIndex = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -74,6 +76,10 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   String get _title {
+    if (_selectedIndex == 0) {
+      return '首页';
+    }
+
     if (_selectedIndex == 7) {
       return '财务';
     }
@@ -95,6 +101,10 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   String? get _subtitle {
+    if (_selectedIndex == 0) {
+      return '经营概览、待处理事项和最近动态';
+    }
+
     if (_selectedIndex == 7) {
       return '费用录入、成本归集和订单利润分析';
     }
@@ -172,6 +182,18 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   List<Widget> _actions(BuildContext context) {
+    if (_selectedIndex == 0) {
+      return [
+        AppButton(
+          label: '刷新看板',
+          icon: Icons.refresh,
+          variant: AppButtonVariant.secondary,
+          onPressed: () =>
+              ref.read(dashboardViewModelProvider.notifier).refresh(),
+        ),
+      ];
+    }
+
     if (_selectedIndex == 7) {
       return [
         AppButton(
@@ -231,6 +253,10 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   Widget _child(BuildContext context) {
+    if (_selectedIndex == 0) {
+      return const DashboardPage();
+    }
+
     if (_selectedIndex == 7) {
       return const FinancePage();
     }

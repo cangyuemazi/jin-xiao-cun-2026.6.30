@@ -2,10 +2,47 @@ import 'package:drift/drift.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../data/database/app_database.dart';
+import '../../data/repositories/customer_repository.dart';
 import '../../data/repositories/order_repository.dart';
+import '../../data/repositories/shipment_repository.dart';
+import '../../data/repositories/supplier_repository.dart';
 import 'audit_log_service.dart';
 import 'finance_service.dart';
 import 'shipment_service.dart';
+
+class OrderListEntry {
+  const OrderListEntry({
+    required this.order,
+    required this.productCount,
+    required this.shipmentStatus,
+    this.customerName,
+    this.supplierNames = const [],
+    this.trackingNumbers = const [],
+  });
+
+  final SalesOrder order;
+  final int productCount;
+  final String shipmentStatus;
+  final String? customerName;
+  final List<String> supplierNames;
+  final List<String> trackingNumbers;
+}
+
+class OrderDetail {
+  const OrderDetail({
+    required this.order,
+    required this.items,
+    this.customerName,
+    this.supplierNamesByUuid = const {},
+    this.shipments = const [],
+  });
+
+  final SalesOrder order;
+  final List<SalesOrderItem> items;
+  final String? customerName;
+  final Map<String, String> supplierNamesByUuid;
+  final List<Shipment> shipments;
+}
 
 class CreateOrderItemInput {
   const CreateOrderItemInput({
@@ -90,11 +127,17 @@ class UpdateOrderInput {
 class OrderService {
   OrderService({
     required OrderRepository orderRepository,
+    CustomerRepository? customerRepository,
+    SupplierRepository? supplierRepository,
+    ShipmentRepository? shipmentRepository,
     required FinanceService financeService,
     ShipmentService? shipmentService,
     AuditLogService? auditLogService,
     Uuid? uuidGenerator,
   }) : _orderRepository = orderRepository,
+       _customerRepository = customerRepository,
+       _supplierRepository = supplierRepository,
+       _shipmentRepository = shipmentRepository,
        _financeService = financeService,
        _shipmentService = shipmentService,
        _auditLogService = auditLogService,
@@ -103,10 +146,57 @@ class OrderService {
   static const _terminalStatuses = {'completed', 'cancelled', 'after_sales'};
 
   final OrderRepository _orderRepository;
+  final CustomerRepository? _customerRepository;
+  final SupplierRepository? _supplierRepository;
+  final ShipmentRepository? _shipmentRepository;
   final FinanceService _financeService;
   final ShipmentService? _shipmentService;
   final AuditLogService? _auditLogService;
   final Uuid _uuid;
+
+  Future<List<OrderListEntry>> listOrders({
+    String keyword = '',
+    int limit = 50,
+    int offset = 0,
+  }) async {
+    final orders = keyword.trim().isEmpty
+        ? await _orderRepository.list(limit: limit, offset: offset)
+        : await _orderRepository.search(keyword, limit: limit, offset: offset);
+
+    return Future.wait(orders.map(_buildListEntry));
+  }
+
+  Future<OrderDetail?> getOrderDetail(String orderUuid) async {
+    final order = await _orderRepository.getByUuid(orderUuid);
+    if (order == null) {
+      return null;
+    }
+
+    final items = await _orderRepository.listItemsByOrderUuid(orderUuid);
+    final supplierNamesByUuid = <String, String>{};
+    for (final item in items) {
+      final supplierUuid = item.supplierUuid;
+      if (supplierUuid == null ||
+          supplierNamesByUuid.containsKey(supplierUuid)) {
+        continue;
+      }
+
+      supplierNamesByUuid[supplierUuid] =
+          await _resolveSupplierName(supplierUuid) ?? supplierUuid;
+    }
+
+    final shipments =
+        await _shipmentRepository?.listByOrderUuid(orderUuid) ??
+        const <Shipment>[];
+
+    return OrderDetail(
+      order: order,
+      items: items,
+      customerName: await _resolveCustomerName(order.customerUuid),
+      supplierNamesByUuid: supplierNamesByUuid,
+      shipments: shipments,
+    );
+  }
 
   Future<SalesOrder?> createOrder(CreateOrderInput input) async {
     final orderUuid = input.uuid ?? _uuid.v4();
@@ -190,6 +280,56 @@ class OrderService {
     }
 
     return updated;
+  }
+
+  Future<void> replaceOrderItems(
+    String orderUuid,
+    List<CreateOrderItemInput> items, {
+    String? operatorName,
+    String? deviceId,
+  }) async {
+    final oldItems = await _orderRepository.listItemsByOrderUuid(orderUuid);
+    for (final item in oldItems) {
+      await _orderRepository.softDeleteItem(item.uuid);
+    }
+
+    for (final item in items) {
+      await _orderRepository.createItem(
+        SalesOrderItemsCompanion.insert(
+          uuid: item.uuid ?? _uuid.v4(),
+          orderUuid: orderUuid,
+          productUuid: Value(item.productUuid),
+          productNameSnapshot: item.productNameSnapshot,
+          productCodeSnapshot: Value(item.productCodeSnapshot),
+          specificationSnapshot: Value(item.specificationSnapshot),
+          quantityValue: Value(item.quantityValue),
+          quantityUnit: Value(item.quantityUnit),
+          saleAmount: Value(item.saleAmount),
+          costAmount: Value(item.costAmount),
+          itemStatus: Value(item.itemStatus),
+          supplierUuid: Value(item.supplierUuid),
+          remark: Value(item.remark),
+          deviceId: Value(deviceId),
+        ),
+      );
+    }
+
+    await refreshOrderAmounts(
+      orderUuid,
+      operatorName: operatorName,
+      deviceId: deviceId,
+      recordAudit: false,
+    );
+
+    await _auditLogService?.recordUpdate(
+      entityType: 'sales_order',
+      entityUuid: orderUuid,
+      oldValue: {'item_count': oldItems.length},
+      newValue: {'item_count': items.length},
+      operatorName: operatorName,
+      deviceId: deviceId,
+      remark: 'Replace order items',
+    );
   }
 
   Future<bool> softDeleteOrder(
@@ -326,5 +466,59 @@ class OrderService {
       if (input.invoiceStatus != null) 'invoice_status': input.invoiceStatus,
       if (input.remark != null) 'remark': input.remark,
     };
+  }
+
+  Future<OrderListEntry> _buildListEntry(SalesOrder order) async {
+    final items = await _orderRepository.listItemsByOrderUuid(order.uuid);
+    final shipments =
+        await _shipmentRepository?.listByOrderUuid(order.uuid) ??
+        const <Shipment>[];
+    final shipmentStatus =
+        await _shipmentService?.resolveOrderShipmentStatus(order.uuid) ??
+        (shipments.isEmpty ? 'pending' : 'partial_shipped');
+
+    final supplierNames = <String>{};
+    for (final item in items) {
+      final supplierUuid = item.supplierUuid;
+      if (supplierUuid == null || supplierUuid.isEmpty) {
+        continue;
+      }
+
+      supplierNames.add(
+        await _resolveSupplierName(supplierUuid) ?? supplierUuid,
+      );
+    }
+
+    return OrderListEntry(
+      order: order,
+      productCount: items.length,
+      shipmentStatus: shipmentStatus,
+      customerName: await _resolveCustomerName(order.customerUuid),
+      supplierNames: supplierNames.toList(),
+      trackingNumbers: shipments
+          .map((shipment) => shipment.trackingNo)
+          .whereType<String>()
+          .where((trackingNo) => trackingNo.isNotEmpty)
+          .toSet()
+          .toList(),
+    );
+  }
+
+  Future<String?> _resolveCustomerName(String? customerUuid) async {
+    if (customerUuid == null || customerUuid.isEmpty) {
+      return null;
+    }
+
+    final customer = await _customerRepository?.getByUuid(customerUuid);
+    return customer?.customerName ?? customerUuid;
+  }
+
+  Future<String?> _resolveSupplierName(String supplierUuid) async {
+    if (supplierUuid.isEmpty) {
+      return null;
+    }
+
+    final supplier = await _supplierRepository?.getByUuid(supplierUuid);
+    return supplier?.supplierName ?? supplierUuid;
   }
 }

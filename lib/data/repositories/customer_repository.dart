@@ -58,7 +58,9 @@ class CustomerRepository extends RepositoryBase<Customers, Customer> {
         db.customers.customerName,
         db.customers.companyName,
         db.customers.contactName,
+        db.customers.department,
         db.customers.phone,
+        db.customers.wechat,
         db.customers.email,
         db.customers.remark,
       ],
@@ -79,9 +81,25 @@ class CustomerRepository extends RepositoryBase<Customers, Customer> {
             ? byCustomer
             : byCustomer & address.deletedAt.isNull();
       })
-      ..orderBy([(address) => OrderingTerm.desc(address.createdAt)]);
+      ..orderBy([
+        (address) => OrderingTerm.desc(address.isDefault),
+        (address) => OrderingTerm.desc(address.updatedAt),
+      ]);
 
     return query.get();
+  }
+
+  Future<CustomerAddressesData?> getAddressByUuid(
+    String uuid, {
+    bool includeDeleted = false,
+  }) {
+    final query = db.select(db.customerAddresses)
+      ..where((address) {
+        final byUuid = address.uuid.equals(uuid);
+        return includeDeleted ? byUuid : byUuid & address.deletedAt.isNull();
+      });
+
+    return query.getSingleOrNull();
   }
 
   Future<int> createAddress(CustomerAddressesCompanion address) {

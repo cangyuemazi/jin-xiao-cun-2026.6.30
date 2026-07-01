@@ -156,10 +156,30 @@ class $CustomersTable extends Customers
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _departmentMeta = const VerificationMeta(
+    'department',
+  );
+  @override
+  late final GeneratedColumn<String> department = GeneratedColumn<String>(
+    'department',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _phoneMeta = const VerificationMeta('phone');
   @override
   late final GeneratedColumn<String> phone = GeneratedColumn<String>(
     'phone',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _wechatMeta = const VerificationMeta('wechat');
+  @override
+  late final GeneratedColumn<String> wechat = GeneratedColumn<String>(
+    'wechat',
     aliasedName,
     true,
     type: DriftSqlType.string,
@@ -209,7 +229,9 @@ class $CustomersTable extends Customers
     customerName,
     companyName,
     contactName,
+    department,
     phone,
+    wechat,
     email,
     customerType,
     taxNo,
@@ -308,10 +330,22 @@ class $CustomersTable extends Customers
         ),
       );
     }
+    if (data.containsKey('department')) {
+      context.handle(
+        _departmentMeta,
+        department.isAcceptableOrUnknown(data['department']!, _departmentMeta),
+      );
+    }
     if (data.containsKey('phone')) {
       context.handle(
         _phoneMeta,
         phone.isAcceptableOrUnknown(data['phone']!, _phoneMeta),
+      );
+    }
+    if (data.containsKey('wechat')) {
+      context.handle(
+        _wechatMeta,
+        wechat.isAcceptableOrUnknown(data['wechat']!, _wechatMeta),
       );
     }
     if (data.containsKey('email')) {
@@ -392,9 +426,17 @@ class $CustomersTable extends Customers
         DriftSqlType.string,
         data['${effectivePrefix}contact_name'],
       ),
+      department: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}department'],
+      ),
       phone: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}phone'],
+      ),
+      wechat: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}wechat'],
       ),
       email: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
@@ -430,7 +472,9 @@ class Customer extends DataClass implements Insertable<Customer> {
   final String customerName;
   final String? companyName;
   final String? contactName;
+  final String? department;
   final String? phone;
+  final String? wechat;
   final String? email;
   final String customerType;
   final String? taxNo;
@@ -447,7 +491,9 @@ class Customer extends DataClass implements Insertable<Customer> {
     required this.customerName,
     this.companyName,
     this.contactName,
+    this.department,
     this.phone,
+    this.wechat,
     this.email,
     required this.customerType,
     this.taxNo,
@@ -477,8 +523,14 @@ class Customer extends DataClass implements Insertable<Customer> {
     if (!nullToAbsent || contactName != null) {
       map['contact_name'] = Variable<String>(contactName);
     }
+    if (!nullToAbsent || department != null) {
+      map['department'] = Variable<String>(department);
+    }
     if (!nullToAbsent || phone != null) {
       map['phone'] = Variable<String>(phone);
+    }
+    if (!nullToAbsent || wechat != null) {
+      map['wechat'] = Variable<String>(wechat);
     }
     if (!nullToAbsent || email != null) {
       map['email'] = Variable<String>(email);
@@ -514,9 +566,15 @@ class Customer extends DataClass implements Insertable<Customer> {
       contactName: contactName == null && nullToAbsent
           ? const Value.absent()
           : Value(contactName),
+      department: department == null && nullToAbsent
+          ? const Value.absent()
+          : Value(department),
       phone: phone == null && nullToAbsent
           ? const Value.absent()
           : Value(phone),
+      wechat: wechat == null && nullToAbsent
+          ? const Value.absent()
+          : Value(wechat),
       email: email == null && nullToAbsent
           ? const Value.absent()
           : Value(email),
@@ -545,7 +603,9 @@ class Customer extends DataClass implements Insertable<Customer> {
       customerName: serializer.fromJson<String>(json['customerName']),
       companyName: serializer.fromJson<String?>(json['companyName']),
       contactName: serializer.fromJson<String?>(json['contactName']),
+      department: serializer.fromJson<String?>(json['department']),
       phone: serializer.fromJson<String?>(json['phone']),
+      wechat: serializer.fromJson<String?>(json['wechat']),
       email: serializer.fromJson<String?>(json['email']),
       customerType: serializer.fromJson<String>(json['customerType']),
       taxNo: serializer.fromJson<String?>(json['taxNo']),
@@ -567,7 +627,9 @@ class Customer extends DataClass implements Insertable<Customer> {
       'customerName': serializer.toJson<String>(customerName),
       'companyName': serializer.toJson<String?>(companyName),
       'contactName': serializer.toJson<String?>(contactName),
+      'department': serializer.toJson<String?>(department),
       'phone': serializer.toJson<String?>(phone),
+      'wechat': serializer.toJson<String?>(wechat),
       'email': serializer.toJson<String?>(email),
       'customerType': serializer.toJson<String>(customerType),
       'taxNo': serializer.toJson<String?>(taxNo),
@@ -587,7 +649,9 @@ class Customer extends DataClass implements Insertable<Customer> {
     String? customerName,
     Value<String?> companyName = const Value.absent(),
     Value<String?> contactName = const Value.absent(),
+    Value<String?> department = const Value.absent(),
     Value<String?> phone = const Value.absent(),
+    Value<String?> wechat = const Value.absent(),
     Value<String?> email = const Value.absent(),
     String? customerType,
     Value<String?> taxNo = const Value.absent(),
@@ -604,7 +668,9 @@ class Customer extends DataClass implements Insertable<Customer> {
     customerName: customerName ?? this.customerName,
     companyName: companyName.present ? companyName.value : this.companyName,
     contactName: contactName.present ? contactName.value : this.contactName,
+    department: department.present ? department.value : this.department,
     phone: phone.present ? phone.value : this.phone,
+    wechat: wechat.present ? wechat.value : this.wechat,
     email: email.present ? email.value : this.email,
     customerType: customerType ?? this.customerType,
     taxNo: taxNo.present ? taxNo.value : this.taxNo,
@@ -631,7 +697,11 @@ class Customer extends DataClass implements Insertable<Customer> {
       contactName: data.contactName.present
           ? data.contactName.value
           : this.contactName,
+      department: data.department.present
+          ? data.department.value
+          : this.department,
       phone: data.phone.present ? data.phone.value : this.phone,
+      wechat: data.wechat.present ? data.wechat.value : this.wechat,
       email: data.email.present ? data.email.value : this.email,
       customerType: data.customerType.present
           ? data.customerType.value
@@ -655,7 +725,9 @@ class Customer extends DataClass implements Insertable<Customer> {
           ..write('customerName: $customerName, ')
           ..write('companyName: $companyName, ')
           ..write('contactName: $contactName, ')
+          ..write('department: $department, ')
           ..write('phone: $phone, ')
+          ..write('wechat: $wechat, ')
           ..write('email: $email, ')
           ..write('customerType: $customerType, ')
           ..write('taxNo: $taxNo')
@@ -677,7 +749,9 @@ class Customer extends DataClass implements Insertable<Customer> {
     customerName,
     companyName,
     contactName,
+    department,
     phone,
+    wechat,
     email,
     customerType,
     taxNo,
@@ -698,7 +772,9 @@ class Customer extends DataClass implements Insertable<Customer> {
           other.customerName == this.customerName &&
           other.companyName == this.companyName &&
           other.contactName == this.contactName &&
+          other.department == this.department &&
           other.phone == this.phone &&
+          other.wechat == this.wechat &&
           other.email == this.email &&
           other.customerType == this.customerType &&
           other.taxNo == this.taxNo);
@@ -717,7 +793,9 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
   final Value<String> customerName;
   final Value<String?> companyName;
   final Value<String?> contactName;
+  final Value<String?> department;
   final Value<String?> phone;
+  final Value<String?> wechat;
   final Value<String?> email;
   final Value<String> customerType;
   final Value<String?> taxNo;
@@ -734,7 +812,9 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     this.customerName = const Value.absent(),
     this.companyName = const Value.absent(),
     this.contactName = const Value.absent(),
+    this.department = const Value.absent(),
     this.phone = const Value.absent(),
+    this.wechat = const Value.absent(),
     this.email = const Value.absent(),
     this.customerType = const Value.absent(),
     this.taxNo = const Value.absent(),
@@ -752,7 +832,9 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     required String customerName,
     this.companyName = const Value.absent(),
     this.contactName = const Value.absent(),
+    this.department = const Value.absent(),
     this.phone = const Value.absent(),
+    this.wechat = const Value.absent(),
     this.email = const Value.absent(),
     this.customerType = const Value.absent(),
     this.taxNo = const Value.absent(),
@@ -771,7 +853,9 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     Expression<String>? customerName,
     Expression<String>? companyName,
     Expression<String>? contactName,
+    Expression<String>? department,
     Expression<String>? phone,
+    Expression<String>? wechat,
     Expression<String>? email,
     Expression<String>? customerType,
     Expression<String>? taxNo,
@@ -789,7 +873,9 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
       if (customerName != null) 'customer_name': customerName,
       if (companyName != null) 'company_name': companyName,
       if (contactName != null) 'contact_name': contactName,
+      if (department != null) 'department': department,
       if (phone != null) 'phone': phone,
+      if (wechat != null) 'wechat': wechat,
       if (email != null) 'email': email,
       if (customerType != null) 'customer_type': customerType,
       if (taxNo != null) 'tax_no': taxNo,
@@ -809,7 +895,9 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     Value<String>? customerName,
     Value<String?>? companyName,
     Value<String?>? contactName,
+    Value<String?>? department,
     Value<String?>? phone,
+    Value<String?>? wechat,
     Value<String?>? email,
     Value<String>? customerType,
     Value<String?>? taxNo,
@@ -827,7 +915,9 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
       customerName: customerName ?? this.customerName,
       companyName: companyName ?? this.companyName,
       contactName: contactName ?? this.contactName,
+      department: department ?? this.department,
       phone: phone ?? this.phone,
+      wechat: wechat ?? this.wechat,
       email: email ?? this.email,
       customerType: customerType ?? this.customerType,
       taxNo: taxNo ?? this.taxNo,
@@ -873,8 +963,14 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
     if (contactName.present) {
       map['contact_name'] = Variable<String>(contactName.value);
     }
+    if (department.present) {
+      map['department'] = Variable<String>(department.value);
+    }
     if (phone.present) {
       map['phone'] = Variable<String>(phone.value);
+    }
+    if (wechat.present) {
+      map['wechat'] = Variable<String>(wechat.value);
     }
     if (email.present) {
       map['email'] = Variable<String>(email.value);
@@ -903,7 +999,9 @@ class CustomersCompanion extends UpdateCompanion<Customer> {
           ..write('customerName: $customerName, ')
           ..write('companyName: $companyName, ')
           ..write('contactName: $contactName, ')
+          ..write('department: $department, ')
           ..write('phone: $phone, ')
+          ..write('wechat: $wechat, ')
           ..write('email: $email, ')
           ..write('customerType: $customerType, ')
           ..write('taxNo: $taxNo')
@@ -1101,6 +1199,17 @@ class $CustomerAddressesTable extends CustomerAddresses
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _recipientCompanyMeta = const VerificationMeta(
+    'recipientCompany',
+  );
+  @override
+  late final GeneratedColumn<String> recipientCompany = GeneratedColumn<String>(
+    'recipient_company',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
   static const VerificationMeta _fullAddressMeta = const VerificationMeta(
     'fullAddress',
   );
@@ -1145,6 +1254,7 @@ class $CustomerAddressesTable extends CustomerAddresses
     city,
     district,
     detailAddress,
+    recipientCompany,
     fullAddress,
     isDefault,
   ];
@@ -1266,6 +1376,15 @@ class $CustomerAddressesTable extends CustomerAddresses
         ),
       );
     }
+    if (data.containsKey('recipient_company')) {
+      context.handle(
+        _recipientCompanyMeta,
+        recipientCompany.isAcceptableOrUnknown(
+          data['recipient_company']!,
+          _recipientCompanyMeta,
+        ),
+      );
+    }
     if (data.containsKey('full_address')) {
       context.handle(
         _fullAddressMeta,
@@ -1354,6 +1473,10 @@ class $CustomerAddressesTable extends CustomerAddresses
         DriftSqlType.string,
         data['${effectivePrefix}detail_address'],
       ),
+      recipientCompany: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}recipient_company'],
+      ),
       fullAddress: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}full_address'],
@@ -1389,6 +1512,7 @@ class CustomerAddressesData extends DataClass
   final String? city;
   final String? district;
   final String? detailAddress;
+  final String? recipientCompany;
   final String? fullAddress;
   final bool isDefault;
   const CustomerAddressesData({
@@ -1408,6 +1532,7 @@ class CustomerAddressesData extends DataClass
     this.city,
     this.district,
     this.detailAddress,
+    this.recipientCompany,
     this.fullAddress,
     required this.isDefault,
   });
@@ -1447,6 +1572,9 @@ class CustomerAddressesData extends DataClass
     }
     if (!nullToAbsent || detailAddress != null) {
       map['detail_address'] = Variable<String>(detailAddress);
+    }
+    if (!nullToAbsent || recipientCompany != null) {
+      map['recipient_company'] = Variable<String>(recipientCompany);
     }
     if (!nullToAbsent || fullAddress != null) {
       map['full_address'] = Variable<String>(fullAddress);
@@ -1489,6 +1617,9 @@ class CustomerAddressesData extends DataClass
       detailAddress: detailAddress == null && nullToAbsent
           ? const Value.absent()
           : Value(detailAddress),
+      recipientCompany: recipientCompany == null && nullToAbsent
+          ? const Value.absent()
+          : Value(recipientCompany),
       fullAddress: fullAddress == null && nullToAbsent
           ? const Value.absent()
           : Value(fullAddress),
@@ -1518,6 +1649,7 @@ class CustomerAddressesData extends DataClass
       city: serializer.fromJson<String?>(json['city']),
       district: serializer.fromJson<String?>(json['district']),
       detailAddress: serializer.fromJson<String?>(json['detailAddress']),
+      recipientCompany: serializer.fromJson<String?>(json['recipientCompany']),
       fullAddress: serializer.fromJson<String?>(json['fullAddress']),
       isDefault: serializer.fromJson<bool>(json['isDefault']),
     );
@@ -1542,6 +1674,7 @@ class CustomerAddressesData extends DataClass
       'city': serializer.toJson<String?>(city),
       'district': serializer.toJson<String?>(district),
       'detailAddress': serializer.toJson<String?>(detailAddress),
+      'recipientCompany': serializer.toJson<String?>(recipientCompany),
       'fullAddress': serializer.toJson<String?>(fullAddress),
       'isDefault': serializer.toJson<bool>(isDefault),
     };
@@ -1564,6 +1697,7 @@ class CustomerAddressesData extends DataClass
     Value<String?> city = const Value.absent(),
     Value<String?> district = const Value.absent(),
     Value<String?> detailAddress = const Value.absent(),
+    Value<String?> recipientCompany = const Value.absent(),
     Value<String?> fullAddress = const Value.absent(),
     bool? isDefault,
   }) => CustomerAddressesData(
@@ -1587,6 +1721,9 @@ class CustomerAddressesData extends DataClass
     detailAddress: detailAddress.present
         ? detailAddress.value
         : this.detailAddress,
+    recipientCompany: recipientCompany.present
+        ? recipientCompany.value
+        : this.recipientCompany,
     fullAddress: fullAddress.present ? fullAddress.value : this.fullAddress,
     isDefault: isDefault ?? this.isDefault,
   );
@@ -1616,6 +1753,9 @@ class CustomerAddressesData extends DataClass
       detailAddress: data.detailAddress.present
           ? data.detailAddress.value
           : this.detailAddress,
+      recipientCompany: data.recipientCompany.present
+          ? data.recipientCompany.value
+          : this.recipientCompany,
       fullAddress: data.fullAddress.present
           ? data.fullAddress.value
           : this.fullAddress,
@@ -1642,6 +1782,7 @@ class CustomerAddressesData extends DataClass
           ..write('city: $city, ')
           ..write('district: $district, ')
           ..write('detailAddress: $detailAddress, ')
+          ..write('recipientCompany: $recipientCompany, ')
           ..write('fullAddress: $fullAddress, ')
           ..write('isDefault: $isDefault')
           ..write(')'))
@@ -1666,6 +1807,7 @@ class CustomerAddressesData extends DataClass
     city,
     district,
     detailAddress,
+    recipientCompany,
     fullAddress,
     isDefault,
   );
@@ -1689,6 +1831,7 @@ class CustomerAddressesData extends DataClass
           other.city == this.city &&
           other.district == this.district &&
           other.detailAddress == this.detailAddress &&
+          other.recipientCompany == this.recipientCompany &&
           other.fullAddress == this.fullAddress &&
           other.isDefault == this.isDefault);
 }
@@ -1711,6 +1854,7 @@ class CustomerAddressesCompanion
   final Value<String?> city;
   final Value<String?> district;
   final Value<String?> detailAddress;
+  final Value<String?> recipientCompany;
   final Value<String?> fullAddress;
   final Value<bool> isDefault;
   const CustomerAddressesCompanion({
@@ -1730,6 +1874,7 @@ class CustomerAddressesCompanion
     this.city = const Value.absent(),
     this.district = const Value.absent(),
     this.detailAddress = const Value.absent(),
+    this.recipientCompany = const Value.absent(),
     this.fullAddress = const Value.absent(),
     this.isDefault = const Value.absent(),
   });
@@ -1750,6 +1895,7 @@ class CustomerAddressesCompanion
     this.city = const Value.absent(),
     this.district = const Value.absent(),
     this.detailAddress = const Value.absent(),
+    this.recipientCompany = const Value.absent(),
     this.fullAddress = const Value.absent(),
     this.isDefault = const Value.absent(),
   }) : uuid = Value(uuid),
@@ -1771,6 +1917,7 @@ class CustomerAddressesCompanion
     Expression<String>? city,
     Expression<String>? district,
     Expression<String>? detailAddress,
+    Expression<String>? recipientCompany,
     Expression<String>? fullAddress,
     Expression<bool>? isDefault,
   }) {
@@ -1791,6 +1938,7 @@ class CustomerAddressesCompanion
       if (city != null) 'city': city,
       if (district != null) 'district': district,
       if (detailAddress != null) 'detail_address': detailAddress,
+      if (recipientCompany != null) 'recipient_company': recipientCompany,
       if (fullAddress != null) 'full_address': fullAddress,
       if (isDefault != null) 'is_default': isDefault,
     });
@@ -1813,6 +1961,7 @@ class CustomerAddressesCompanion
     Value<String?>? city,
     Value<String?>? district,
     Value<String?>? detailAddress,
+    Value<String?>? recipientCompany,
     Value<String?>? fullAddress,
     Value<bool>? isDefault,
   }) {
@@ -1833,6 +1982,7 @@ class CustomerAddressesCompanion
       city: city ?? this.city,
       district: district ?? this.district,
       detailAddress: detailAddress ?? this.detailAddress,
+      recipientCompany: recipientCompany ?? this.recipientCompany,
       fullAddress: fullAddress ?? this.fullAddress,
       isDefault: isDefault ?? this.isDefault,
     );
@@ -1889,6 +2039,9 @@ class CustomerAddressesCompanion
     if (detailAddress.present) {
       map['detail_address'] = Variable<String>(detailAddress.value);
     }
+    if (recipientCompany.present) {
+      map['recipient_company'] = Variable<String>(recipientCompany.value);
+    }
     if (fullAddress.present) {
       map['full_address'] = Variable<String>(fullAddress.value);
     }
@@ -1917,6 +2070,7 @@ class CustomerAddressesCompanion
           ..write('city: $city, ')
           ..write('district: $district, ')
           ..write('detailAddress: $detailAddress, ')
+          ..write('recipientCompany: $recipientCompany, ')
           ..write('fullAddress: $fullAddress, ')
           ..write('isDefault: $isDefault')
           ..write(')'))
@@ -19369,7 +19523,9 @@ typedef $$CustomersTableCreateCompanionBuilder =
       required String customerName,
       Value<String?> companyName,
       Value<String?> contactName,
+      Value<String?> department,
       Value<String?> phone,
+      Value<String?> wechat,
       Value<String?> email,
       Value<String> customerType,
       Value<String?> taxNo,
@@ -19388,7 +19544,9 @@ typedef $$CustomersTableUpdateCompanionBuilder =
       Value<String> customerName,
       Value<String?> companyName,
       Value<String?> contactName,
+      Value<String?> department,
       Value<String?> phone,
+      Value<String?> wechat,
       Value<String?> email,
       Value<String> customerType,
       Value<String?> taxNo,
@@ -19463,8 +19621,18 @@ class $$CustomersTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get department => $composableBuilder(
+    column: $table.department,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<String> get phone => $composableBuilder(
     column: $table.phone,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get wechat => $composableBuilder(
+    column: $table.wechat,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -19553,8 +19721,18 @@ class $$CustomersTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get department => $composableBuilder(
+    column: $table.department,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get phone => $composableBuilder(
     column: $table.phone,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<String> get wechat => $composableBuilder(
+    column: $table.wechat,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -19627,8 +19805,16 @@ class $$CustomersTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get department => $composableBuilder(
+    column: $table.department,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get phone =>
       $composableBuilder(column: $table.phone, builder: (column) => column);
+
+  GeneratedColumn<String> get wechat =>
+      $composableBuilder(column: $table.wechat, builder: (column) => column);
 
   GeneratedColumn<String> get email =>
       $composableBuilder(column: $table.email, builder: (column) => column);
@@ -19682,7 +19868,9 @@ class $$CustomersTableTableManager
                 Value<String> customerName = const Value.absent(),
                 Value<String?> companyName = const Value.absent(),
                 Value<String?> contactName = const Value.absent(),
+                Value<String?> department = const Value.absent(),
                 Value<String?> phone = const Value.absent(),
+                Value<String?> wechat = const Value.absent(),
                 Value<String?> email = const Value.absent(),
                 Value<String> customerType = const Value.absent(),
                 Value<String?> taxNo = const Value.absent(),
@@ -19699,7 +19887,9 @@ class $$CustomersTableTableManager
                 customerName: customerName,
                 companyName: companyName,
                 contactName: contactName,
+                department: department,
                 phone: phone,
+                wechat: wechat,
                 email: email,
                 customerType: customerType,
                 taxNo: taxNo,
@@ -19718,7 +19908,9 @@ class $$CustomersTableTableManager
                 required String customerName,
                 Value<String?> companyName = const Value.absent(),
                 Value<String?> contactName = const Value.absent(),
+                Value<String?> department = const Value.absent(),
                 Value<String?> phone = const Value.absent(),
+                Value<String?> wechat = const Value.absent(),
                 Value<String?> email = const Value.absent(),
                 Value<String> customerType = const Value.absent(),
                 Value<String?> taxNo = const Value.absent(),
@@ -19735,7 +19927,9 @@ class $$CustomersTableTableManager
                 customerName: customerName,
                 companyName: companyName,
                 contactName: contactName,
+                department: department,
                 phone: phone,
+                wechat: wechat,
                 email: email,
                 customerType: customerType,
                 taxNo: taxNo,
@@ -19780,6 +19974,7 @@ typedef $$CustomerAddressesTableCreateCompanionBuilder =
       Value<String?> city,
       Value<String?> district,
       Value<String?> detailAddress,
+      Value<String?> recipientCompany,
       Value<String?> fullAddress,
       Value<bool> isDefault,
     });
@@ -19801,6 +19996,7 @@ typedef $$CustomerAddressesTableUpdateCompanionBuilder =
       Value<String?> city,
       Value<String?> district,
       Value<String?> detailAddress,
+      Value<String?> recipientCompany,
       Value<String?> fullAddress,
       Value<bool> isDefault,
     });
@@ -19891,6 +20087,11 @@ class $$CustomerAddressesTableFilterComposer
 
   ColumnFilters<String> get detailAddress => $composableBuilder(
     column: $table.detailAddress,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get recipientCompany => $composableBuilder(
+    column: $table.recipientCompany,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -19994,6 +20195,11 @@ class $$CustomerAddressesTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get recipientCompany => $composableBuilder(
+    column: $table.recipientCompany,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<String> get fullAddress => $composableBuilder(
     column: $table.fullAddress,
     builder: (column) => ColumnOrderings(column),
@@ -20070,6 +20276,11 @@ class $$CustomerAddressesTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get recipientCompany => $composableBuilder(
+    column: $table.recipientCompany,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<String> get fullAddress => $composableBuilder(
     column: $table.fullAddress,
     builder: (column) => column,
@@ -20135,6 +20346,7 @@ class $$CustomerAddressesTableTableManager
                 Value<String?> city = const Value.absent(),
                 Value<String?> district = const Value.absent(),
                 Value<String?> detailAddress = const Value.absent(),
+                Value<String?> recipientCompany = const Value.absent(),
                 Value<String?> fullAddress = const Value.absent(),
                 Value<bool> isDefault = const Value.absent(),
               }) => CustomerAddressesCompanion(
@@ -20154,6 +20366,7 @@ class $$CustomerAddressesTableTableManager
                 city: city,
                 district: district,
                 detailAddress: detailAddress,
+                recipientCompany: recipientCompany,
                 fullAddress: fullAddress,
                 isDefault: isDefault,
               ),
@@ -20175,6 +20388,7 @@ class $$CustomerAddressesTableTableManager
                 Value<String?> city = const Value.absent(),
                 Value<String?> district = const Value.absent(),
                 Value<String?> detailAddress = const Value.absent(),
+                Value<String?> recipientCompany = const Value.absent(),
                 Value<String?> fullAddress = const Value.absent(),
                 Value<bool> isDefault = const Value.absent(),
               }) => CustomerAddressesCompanion.insert(
@@ -20194,6 +20408,7 @@ class $$CustomerAddressesTableTableManager
                 city: city,
                 district: district,
                 detailAddress: detailAddress,
+                recipientCompany: recipientCompany,
                 fullAddress: fullAddress,
                 isDefault: isDefault,
               ),

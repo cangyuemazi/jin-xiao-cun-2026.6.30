@@ -10,7 +10,9 @@ class Customers extends Table with CoreTableColumns {
       text().named('customer_name').withLength(min: 1, max: 128)();
   TextColumn get companyName => text().named('company_name').nullable()();
   TextColumn get contactName => text().named('contact_name').nullable()();
+  TextColumn get department => text().nullable()();
   TextColumn get phone => text().nullable()();
+  TextColumn get wechat => text().nullable()();
   TextColumn get email => text().nullable()();
   TextColumn get customerType =>
       text().named('customer_type').withDefault(const Constant('default'))();
@@ -28,6 +30,8 @@ class CustomerAddresses extends Table with CoreTableColumns {
   TextColumn get city => text().nullable()();
   TextColumn get district => text().nullable()();
   TextColumn get detailAddress => text().named('detail_address').nullable()();
+  TextColumn get recipientCompany =>
+      text().named('recipient_company').nullable()();
   TextColumn get fullAddress => text().named('full_address').nullable()();
   BoolColumn get isDefault =>
       boolean().named('is_default').withDefault(const Constant(false))();

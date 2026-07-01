@@ -12,6 +12,7 @@ import '../data/repositories/shipment_repository.dart';
 import '../data/repositories/supplier_repository.dart';
 import '../domain/services/audit_log_service.dart';
 import '../domain/services/backup_service.dart';
+import '../domain/services/customer_service.dart';
 import '../domain/services/dictionary_service.dart';
 import '../domain/services/export_service.dart';
 import '../domain/services/finance_service.dart';
@@ -91,6 +92,13 @@ final orderServiceProvider = Provider<OrderService>((ref) {
     shipmentRepository: ref.watch(shipmentRepositoryProvider),
     financeService: ref.watch(financeServiceProvider),
     shipmentService: ref.watch(shipmentServiceProvider),
+    auditLogService: ref.watch(auditLogServiceProvider),
+  );
+});
+
+final customerServiceProvider = Provider<CustomerService>((ref) {
+  return CustomerService(
+    customerRepository: ref.watch(customerRepositoryProvider),
     auditLogService: ref.watch(auditLogServiceProvider),
   );
 });

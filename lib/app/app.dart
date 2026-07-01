@@ -18,6 +18,7 @@ import '../features/products/presentation/product_detail_page.dart';
 import '../features/products/presentation/product_form_page.dart';
 import '../features/products/presentation/product_list_page.dart';
 import '../features/products/view_models/product_list_view_model.dart';
+import '../features/settings/presentation/settings_page.dart';
 import '../features/suppliers/presentation/supplier_detail_page.dart';
 import '../features/suppliers/presentation/supplier_form_page.dart';
 import '../features/suppliers/presentation/supplier_list_page.dart';
@@ -92,6 +93,10 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
       return '厂家';
     }
 
+    if (_selectedIndex == 8) {
+      return '设置';
+    }
+
     return switch (_selectedIndex) {
       1 => '订单',
       2 => '客户',
@@ -117,6 +122,10 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
       return '厂家资料、加工能力和默认交期管理';
     }
 
+    if (_selectedIndex == 8) {
+      return 'Excel 导入、系统参数和本地维护';
+    }
+
     return switch (_selectedIndex) {
       1 => '订单列表、录入、编辑和软删除',
       2 => '客户资料、联系方式和收货地址管理',
@@ -136,6 +145,10 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
 
     if (_selectedIndex == 4) {
       return '搜索厂家名称、联系人或擅长产品';
+    }
+
+    if (_selectedIndex == 8) {
+      return null;
     }
 
     return switch (_selectedIndex) {
@@ -226,6 +239,10 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
       ];
     }
 
+    if (_selectedIndex == 8) {
+      return const [];
+    }
+
     return switch (_selectedIndex) {
       1 => [
         AppButton(
@@ -279,6 +296,10 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
         onOpenSupplier: (supplierUuid) =>
             _openSupplierDetail(context, supplierUuid),
       );
+    }
+
+    if (_selectedIndex == 8) {
+      return const SettingsPage();
     }
 
     return switch (_selectedIndex) {

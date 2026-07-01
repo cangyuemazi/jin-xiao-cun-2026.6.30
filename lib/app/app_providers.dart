@@ -154,7 +154,16 @@ final backupServiceProvider = Provider<BackupService>((ref) {
 });
 
 final importServiceProvider = Provider<ImportService>((ref) {
-  return ImportService();
+  return ImportService(
+    orderService: ref.watch(orderServiceProvider),
+    customerService: ref.watch(customerServiceProvider),
+    supplierService: ref.watch(supplierServiceProvider),
+    shipmentService: ref.watch(shipmentServiceProvider),
+    financeService: ref.watch(financeServiceProvider),
+    orderRepository: ref.watch(orderRepositoryProvider),
+    shipmentRepository: ref.watch(shipmentRepositoryProvider),
+    auditLogService: ref.watch(auditLogServiceProvider),
+  );
 });
 
 final exportServiceProvider = Provider<ExportService>((ref) {

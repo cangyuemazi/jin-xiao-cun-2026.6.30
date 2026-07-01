@@ -28,8 +28,12 @@ class ShipmentItems extends Table with CoreTableColumns {
   TextColumn get orderUuid => text().named('order_uuid').nullable()();
   TextColumn get orderItemUuid => text().named('order_item_uuid')();
   TextColumn get productUuid => text().named('product_uuid').nullable()();
+  TextColumn get productNameSnapshot =>
+      text().named('product_name_snapshot').nullable()();
   RealColumn get quantityValue => real().named('quantity_value').nullable()();
   TextColumn get quantityUnit => text().named('quantity_unit').nullable()();
+  BoolColumn get isFullShipment =>
+      boolean().named('is_full_shipment').withDefault(const Constant(false))();
   TextColumn get itemStatus =>
       text().named('item_status').withDefault(const Constant('draft'))();
 }

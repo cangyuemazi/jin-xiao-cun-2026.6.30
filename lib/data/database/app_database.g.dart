@@ -10371,6 +10371,17 @@ class $ShipmentItemsTable extends ShipmentItems
     type: DriftSqlType.string,
     requiredDuringInsert: false,
   );
+  static const VerificationMeta _productNameSnapshotMeta =
+      const VerificationMeta('productNameSnapshot');
+  @override
+  late final GeneratedColumn<String> productNameSnapshot =
+      GeneratedColumn<String>(
+        'product_name_snapshot',
+        aliasedName,
+        true,
+        type: DriftSqlType.string,
+        requiredDuringInsert: false,
+      );
   static const VerificationMeta _quantityValueMeta = const VerificationMeta(
     'quantityValue',
   );
@@ -10392,6 +10403,21 @@ class $ShipmentItemsTable extends ShipmentItems
     true,
     type: DriftSqlType.string,
     requiredDuringInsert: false,
+  );
+  static const VerificationMeta _isFullShipmentMeta = const VerificationMeta(
+    'isFullShipment',
+  );
+  @override
+  late final GeneratedColumn<bool> isFullShipment = GeneratedColumn<bool>(
+    'is_full_shipment',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_full_shipment" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
   );
   static const VerificationMeta _itemStatusMeta = const VerificationMeta(
     'itemStatus',
@@ -10420,8 +10446,10 @@ class $ShipmentItemsTable extends ShipmentItems
     orderUuid,
     orderItemUuid,
     productUuid,
+    productNameSnapshot,
     quantityValue,
     quantityUnit,
+    isFullShipment,
     itemStatus,
   ];
   @override
@@ -10526,6 +10554,15 @@ class $ShipmentItemsTable extends ShipmentItems
         ),
       );
     }
+    if (data.containsKey('product_name_snapshot')) {
+      context.handle(
+        _productNameSnapshotMeta,
+        productNameSnapshot.isAcceptableOrUnknown(
+          data['product_name_snapshot']!,
+          _productNameSnapshotMeta,
+        ),
+      );
+    }
     if (data.containsKey('quantity_value')) {
       context.handle(
         _quantityValueMeta,
@@ -10541,6 +10578,15 @@ class $ShipmentItemsTable extends ShipmentItems
         quantityUnit.isAcceptableOrUnknown(
           data['quantity_unit']!,
           _quantityUnitMeta,
+        ),
+      );
+    }
+    if (data.containsKey('is_full_shipment')) {
+      context.handle(
+        _isFullShipmentMeta,
+        isFullShipment.isAcceptableOrUnknown(
+          data['is_full_shipment']!,
+          _isFullShipmentMeta,
         ),
       );
     }
@@ -10611,6 +10657,10 @@ class $ShipmentItemsTable extends ShipmentItems
         DriftSqlType.string,
         data['${effectivePrefix}product_uuid'],
       ),
+      productNameSnapshot: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}product_name_snapshot'],
+      ),
       quantityValue: attachedDatabase.typeMapping.read(
         DriftSqlType.double,
         data['${effectivePrefix}quantity_value'],
@@ -10619,6 +10669,10 @@ class $ShipmentItemsTable extends ShipmentItems
         DriftSqlType.string,
         data['${effectivePrefix}quantity_unit'],
       ),
+      isFullShipment: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_full_shipment'],
+      )!,
       itemStatus: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
         data['${effectivePrefix}item_status'],
@@ -10646,8 +10700,10 @@ class ShipmentItem extends DataClass implements Insertable<ShipmentItem> {
   final String? orderUuid;
   final String orderItemUuid;
   final String? productUuid;
+  final String? productNameSnapshot;
   final double? quantityValue;
   final String? quantityUnit;
+  final bool isFullShipment;
   final String itemStatus;
   const ShipmentItem({
     required this.id,
@@ -10663,8 +10719,10 @@ class ShipmentItem extends DataClass implements Insertable<ShipmentItem> {
     this.orderUuid,
     required this.orderItemUuid,
     this.productUuid,
+    this.productNameSnapshot,
     this.quantityValue,
     this.quantityUnit,
+    required this.isFullShipment,
     required this.itemStatus,
   });
   @override
@@ -10693,12 +10751,16 @@ class ShipmentItem extends DataClass implements Insertable<ShipmentItem> {
     if (!nullToAbsent || productUuid != null) {
       map['product_uuid'] = Variable<String>(productUuid);
     }
+    if (!nullToAbsent || productNameSnapshot != null) {
+      map['product_name_snapshot'] = Variable<String>(productNameSnapshot);
+    }
     if (!nullToAbsent || quantityValue != null) {
       map['quantity_value'] = Variable<double>(quantityValue);
     }
     if (!nullToAbsent || quantityUnit != null) {
       map['quantity_unit'] = Variable<String>(quantityUnit);
     }
+    map['is_full_shipment'] = Variable<bool>(isFullShipment);
     map['item_status'] = Variable<String>(itemStatus);
     return map;
   }
@@ -10728,12 +10790,16 @@ class ShipmentItem extends DataClass implements Insertable<ShipmentItem> {
       productUuid: productUuid == null && nullToAbsent
           ? const Value.absent()
           : Value(productUuid),
+      productNameSnapshot: productNameSnapshot == null && nullToAbsent
+          ? const Value.absent()
+          : Value(productNameSnapshot),
       quantityValue: quantityValue == null && nullToAbsent
           ? const Value.absent()
           : Value(quantityValue),
       quantityUnit: quantityUnit == null && nullToAbsent
           ? const Value.absent()
           : Value(quantityUnit),
+      isFullShipment: Value(isFullShipment),
       itemStatus: Value(itemStatus),
     );
   }
@@ -10757,8 +10823,12 @@ class ShipmentItem extends DataClass implements Insertable<ShipmentItem> {
       orderUuid: serializer.fromJson<String?>(json['orderUuid']),
       orderItemUuid: serializer.fromJson<String>(json['orderItemUuid']),
       productUuid: serializer.fromJson<String?>(json['productUuid']),
+      productNameSnapshot: serializer.fromJson<String?>(
+        json['productNameSnapshot'],
+      ),
       quantityValue: serializer.fromJson<double?>(json['quantityValue']),
       quantityUnit: serializer.fromJson<String?>(json['quantityUnit']),
+      isFullShipment: serializer.fromJson<bool>(json['isFullShipment']),
       itemStatus: serializer.fromJson<String>(json['itemStatus']),
     );
   }
@@ -10779,8 +10849,10 @@ class ShipmentItem extends DataClass implements Insertable<ShipmentItem> {
       'orderUuid': serializer.toJson<String?>(orderUuid),
       'orderItemUuid': serializer.toJson<String>(orderItemUuid),
       'productUuid': serializer.toJson<String?>(productUuid),
+      'productNameSnapshot': serializer.toJson<String?>(productNameSnapshot),
       'quantityValue': serializer.toJson<double?>(quantityValue),
       'quantityUnit': serializer.toJson<String?>(quantityUnit),
+      'isFullShipment': serializer.toJson<bool>(isFullShipment),
       'itemStatus': serializer.toJson<String>(itemStatus),
     };
   }
@@ -10799,8 +10871,10 @@ class ShipmentItem extends DataClass implements Insertable<ShipmentItem> {
     Value<String?> orderUuid = const Value.absent(),
     String? orderItemUuid,
     Value<String?> productUuid = const Value.absent(),
+    Value<String?> productNameSnapshot = const Value.absent(),
     Value<double?> quantityValue = const Value.absent(),
     Value<String?> quantityUnit = const Value.absent(),
+    bool? isFullShipment,
     String? itemStatus,
   }) => ShipmentItem(
     id: id ?? this.id,
@@ -10816,10 +10890,14 @@ class ShipmentItem extends DataClass implements Insertable<ShipmentItem> {
     orderUuid: orderUuid.present ? orderUuid.value : this.orderUuid,
     orderItemUuid: orderItemUuid ?? this.orderItemUuid,
     productUuid: productUuid.present ? productUuid.value : this.productUuid,
+    productNameSnapshot: productNameSnapshot.present
+        ? productNameSnapshot.value
+        : this.productNameSnapshot,
     quantityValue: quantityValue.present
         ? quantityValue.value
         : this.quantityValue,
     quantityUnit: quantityUnit.present ? quantityUnit.value : this.quantityUnit,
+    isFullShipment: isFullShipment ?? this.isFullShipment,
     itemStatus: itemStatus ?? this.itemStatus,
   );
   ShipmentItem copyWithCompanion(ShipmentItemsCompanion data) {
@@ -10845,12 +10923,18 @@ class ShipmentItem extends DataClass implements Insertable<ShipmentItem> {
       productUuid: data.productUuid.present
           ? data.productUuid.value
           : this.productUuid,
+      productNameSnapshot: data.productNameSnapshot.present
+          ? data.productNameSnapshot.value
+          : this.productNameSnapshot,
       quantityValue: data.quantityValue.present
           ? data.quantityValue.value
           : this.quantityValue,
       quantityUnit: data.quantityUnit.present
           ? data.quantityUnit.value
           : this.quantityUnit,
+      isFullShipment: data.isFullShipment.present
+          ? data.isFullShipment.value
+          : this.isFullShipment,
       itemStatus: data.itemStatus.present
           ? data.itemStatus.value
           : this.itemStatus,
@@ -10873,8 +10957,10 @@ class ShipmentItem extends DataClass implements Insertable<ShipmentItem> {
           ..write('orderUuid: $orderUuid, ')
           ..write('orderItemUuid: $orderItemUuid, ')
           ..write('productUuid: $productUuid, ')
+          ..write('productNameSnapshot: $productNameSnapshot, ')
           ..write('quantityValue: $quantityValue, ')
           ..write('quantityUnit: $quantityUnit, ')
+          ..write('isFullShipment: $isFullShipment, ')
           ..write('itemStatus: $itemStatus')
           ..write(')'))
         .toString();
@@ -10895,8 +10981,10 @@ class ShipmentItem extends DataClass implements Insertable<ShipmentItem> {
     orderUuid,
     orderItemUuid,
     productUuid,
+    productNameSnapshot,
     quantityValue,
     quantityUnit,
+    isFullShipment,
     itemStatus,
   );
   @override
@@ -10916,8 +11004,10 @@ class ShipmentItem extends DataClass implements Insertable<ShipmentItem> {
           other.orderUuid == this.orderUuid &&
           other.orderItemUuid == this.orderItemUuid &&
           other.productUuid == this.productUuid &&
+          other.productNameSnapshot == this.productNameSnapshot &&
           other.quantityValue == this.quantityValue &&
           other.quantityUnit == this.quantityUnit &&
+          other.isFullShipment == this.isFullShipment &&
           other.itemStatus == this.itemStatus);
 }
 
@@ -10935,8 +11025,10 @@ class ShipmentItemsCompanion extends UpdateCompanion<ShipmentItem> {
   final Value<String?> orderUuid;
   final Value<String> orderItemUuid;
   final Value<String?> productUuid;
+  final Value<String?> productNameSnapshot;
   final Value<double?> quantityValue;
   final Value<String?> quantityUnit;
+  final Value<bool> isFullShipment;
   final Value<String> itemStatus;
   const ShipmentItemsCompanion({
     this.id = const Value.absent(),
@@ -10952,8 +11044,10 @@ class ShipmentItemsCompanion extends UpdateCompanion<ShipmentItem> {
     this.orderUuid = const Value.absent(),
     this.orderItemUuid = const Value.absent(),
     this.productUuid = const Value.absent(),
+    this.productNameSnapshot = const Value.absent(),
     this.quantityValue = const Value.absent(),
     this.quantityUnit = const Value.absent(),
+    this.isFullShipment = const Value.absent(),
     this.itemStatus = const Value.absent(),
   });
   ShipmentItemsCompanion.insert({
@@ -10970,8 +11064,10 @@ class ShipmentItemsCompanion extends UpdateCompanion<ShipmentItem> {
     this.orderUuid = const Value.absent(),
     required String orderItemUuid,
     this.productUuid = const Value.absent(),
+    this.productNameSnapshot = const Value.absent(),
     this.quantityValue = const Value.absent(),
     this.quantityUnit = const Value.absent(),
+    this.isFullShipment = const Value.absent(),
     this.itemStatus = const Value.absent(),
   }) : uuid = Value(uuid),
        shipmentUuid = Value(shipmentUuid),
@@ -10990,8 +11086,10 @@ class ShipmentItemsCompanion extends UpdateCompanion<ShipmentItem> {
     Expression<String>? orderUuid,
     Expression<String>? orderItemUuid,
     Expression<String>? productUuid,
+    Expression<String>? productNameSnapshot,
     Expression<double>? quantityValue,
     Expression<String>? quantityUnit,
+    Expression<bool>? isFullShipment,
     Expression<String>? itemStatus,
   }) {
     return RawValuesInsertable({
@@ -11008,8 +11106,11 @@ class ShipmentItemsCompanion extends UpdateCompanion<ShipmentItem> {
       if (orderUuid != null) 'order_uuid': orderUuid,
       if (orderItemUuid != null) 'order_item_uuid': orderItemUuid,
       if (productUuid != null) 'product_uuid': productUuid,
+      if (productNameSnapshot != null)
+        'product_name_snapshot': productNameSnapshot,
       if (quantityValue != null) 'quantity_value': quantityValue,
       if (quantityUnit != null) 'quantity_unit': quantityUnit,
+      if (isFullShipment != null) 'is_full_shipment': isFullShipment,
       if (itemStatus != null) 'item_status': itemStatus,
     });
   }
@@ -11028,8 +11129,10 @@ class ShipmentItemsCompanion extends UpdateCompanion<ShipmentItem> {
     Value<String?>? orderUuid,
     Value<String>? orderItemUuid,
     Value<String?>? productUuid,
+    Value<String?>? productNameSnapshot,
     Value<double?>? quantityValue,
     Value<String?>? quantityUnit,
+    Value<bool>? isFullShipment,
     Value<String>? itemStatus,
   }) {
     return ShipmentItemsCompanion(
@@ -11046,8 +11149,10 @@ class ShipmentItemsCompanion extends UpdateCompanion<ShipmentItem> {
       orderUuid: orderUuid ?? this.orderUuid,
       orderItemUuid: orderItemUuid ?? this.orderItemUuid,
       productUuid: productUuid ?? this.productUuid,
+      productNameSnapshot: productNameSnapshot ?? this.productNameSnapshot,
       quantityValue: quantityValue ?? this.quantityValue,
       quantityUnit: quantityUnit ?? this.quantityUnit,
+      isFullShipment: isFullShipment ?? this.isFullShipment,
       itemStatus: itemStatus ?? this.itemStatus,
     );
   }
@@ -11094,11 +11199,19 @@ class ShipmentItemsCompanion extends UpdateCompanion<ShipmentItem> {
     if (productUuid.present) {
       map['product_uuid'] = Variable<String>(productUuid.value);
     }
+    if (productNameSnapshot.present) {
+      map['product_name_snapshot'] = Variable<String>(
+        productNameSnapshot.value,
+      );
+    }
     if (quantityValue.present) {
       map['quantity_value'] = Variable<double>(quantityValue.value);
     }
     if (quantityUnit.present) {
       map['quantity_unit'] = Variable<String>(quantityUnit.value);
+    }
+    if (isFullShipment.present) {
+      map['is_full_shipment'] = Variable<bool>(isFullShipment.value);
     }
     if (itemStatus.present) {
       map['item_status'] = Variable<String>(itemStatus.value);
@@ -11122,8 +11235,10 @@ class ShipmentItemsCompanion extends UpdateCompanion<ShipmentItem> {
           ..write('orderUuid: $orderUuid, ')
           ..write('orderItemUuid: $orderItemUuid, ')
           ..write('productUuid: $productUuid, ')
+          ..write('productNameSnapshot: $productNameSnapshot, ')
           ..write('quantityValue: $quantityValue, ')
           ..write('quantityUnit: $quantityUnit, ')
+          ..write('isFullShipment: $isFullShipment, ')
           ..write('itemStatus: $itemStatus')
           ..write(')'))
         .toString();
@@ -24416,8 +24531,10 @@ typedef $$ShipmentItemsTableCreateCompanionBuilder =
       Value<String?> orderUuid,
       required String orderItemUuid,
       Value<String?> productUuid,
+      Value<String?> productNameSnapshot,
       Value<double?> quantityValue,
       Value<String?> quantityUnit,
+      Value<bool> isFullShipment,
       Value<String> itemStatus,
     });
 typedef $$ShipmentItemsTableUpdateCompanionBuilder =
@@ -24435,8 +24552,10 @@ typedef $$ShipmentItemsTableUpdateCompanionBuilder =
       Value<String?> orderUuid,
       Value<String> orderItemUuid,
       Value<String?> productUuid,
+      Value<String?> productNameSnapshot,
       Value<double?> quantityValue,
       Value<String?> quantityUnit,
+      Value<bool> isFullShipment,
       Value<String> itemStatus,
     });
 
@@ -24514,6 +24633,11 @@ class $$ShipmentItemsTableFilterComposer
     builder: (column) => ColumnFilters(column),
   );
 
+  ColumnFilters<String> get productNameSnapshot => $composableBuilder(
+    column: $table.productNameSnapshot,
+    builder: (column) => ColumnFilters(column),
+  );
+
   ColumnFilters<double> get quantityValue => $composableBuilder(
     column: $table.quantityValue,
     builder: (column) => ColumnFilters(column),
@@ -24521,6 +24645,11 @@ class $$ShipmentItemsTableFilterComposer
 
   ColumnFilters<String> get quantityUnit => $composableBuilder(
     column: $table.quantityUnit,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isFullShipment => $composableBuilder(
+    column: $table.isFullShipment,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -24604,6 +24733,11 @@ class $$ShipmentItemsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<String> get productNameSnapshot => $composableBuilder(
+    column: $table.productNameSnapshot,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<double> get quantityValue => $composableBuilder(
     column: $table.quantityValue,
     builder: (column) => ColumnOrderings(column),
@@ -24611,6 +24745,11 @@ class $$ShipmentItemsTableOrderingComposer
 
   ColumnOrderings<String> get quantityUnit => $composableBuilder(
     column: $table.quantityUnit,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isFullShipment => $composableBuilder(
+    column: $table.isFullShipment,
     builder: (column) => ColumnOrderings(column),
   );
 
@@ -24676,6 +24815,11 @@ class $$ShipmentItemsTableAnnotationComposer
     builder: (column) => column,
   );
 
+  GeneratedColumn<String> get productNameSnapshot => $composableBuilder(
+    column: $table.productNameSnapshot,
+    builder: (column) => column,
+  );
+
   GeneratedColumn<double> get quantityValue => $composableBuilder(
     column: $table.quantityValue,
     builder: (column) => column,
@@ -24683,6 +24827,11 @@ class $$ShipmentItemsTableAnnotationComposer
 
   GeneratedColumn<String> get quantityUnit => $composableBuilder(
     column: $table.quantityUnit,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get isFullShipment => $composableBuilder(
+    column: $table.isFullShipment,
     builder: (column) => column,
   );
 
@@ -24736,8 +24885,10 @@ class $$ShipmentItemsTableTableManager
                 Value<String?> orderUuid = const Value.absent(),
                 Value<String> orderItemUuid = const Value.absent(),
                 Value<String?> productUuid = const Value.absent(),
+                Value<String?> productNameSnapshot = const Value.absent(),
                 Value<double?> quantityValue = const Value.absent(),
                 Value<String?> quantityUnit = const Value.absent(),
+                Value<bool> isFullShipment = const Value.absent(),
                 Value<String> itemStatus = const Value.absent(),
               }) => ShipmentItemsCompanion(
                 id: id,
@@ -24753,8 +24904,10 @@ class $$ShipmentItemsTableTableManager
                 orderUuid: orderUuid,
                 orderItemUuid: orderItemUuid,
                 productUuid: productUuid,
+                productNameSnapshot: productNameSnapshot,
                 quantityValue: quantityValue,
                 quantityUnit: quantityUnit,
+                isFullShipment: isFullShipment,
                 itemStatus: itemStatus,
               ),
           createCompanionCallback:
@@ -24772,8 +24925,10 @@ class $$ShipmentItemsTableTableManager
                 Value<String?> orderUuid = const Value.absent(),
                 required String orderItemUuid,
                 Value<String?> productUuid = const Value.absent(),
+                Value<String?> productNameSnapshot = const Value.absent(),
                 Value<double?> quantityValue = const Value.absent(),
                 Value<String?> quantityUnit = const Value.absent(),
+                Value<bool> isFullShipment = const Value.absent(),
                 Value<String> itemStatus = const Value.absent(),
               }) => ShipmentItemsCompanion.insert(
                 id: id,
@@ -24789,8 +24944,10 @@ class $$ShipmentItemsTableTableManager
                 orderUuid: orderUuid,
                 orderItemUuid: orderItemUuid,
                 productUuid: productUuid,
+                productNameSnapshot: productNameSnapshot,
                 quantityValue: quantityValue,
                 quantityUnit: quantityUnit,
+                isFullShipment: isFullShipment,
                 itemStatus: itemStatus,
               ),
           withReferenceMapper: (p0) => p0

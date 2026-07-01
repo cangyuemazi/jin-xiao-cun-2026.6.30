@@ -99,6 +99,19 @@ class ShipmentRepository extends RepositoryBase<Shipments, Shipment> {
     return query.get();
   }
 
+  Future<ShipmentItem?> getItemByUuid(
+    String uuid, {
+    bool includeDeleted = false,
+  }) {
+    final query = db.select(db.shipmentItems)
+      ..where((item) {
+        final byUuid = item.uuid.equals(uuid);
+        return includeDeleted ? byUuid : byUuid & item.deletedAt.isNull();
+      });
+
+    return query.getSingleOrNull();
+  }
+
   Future<List<ShipmentItem>> listItemsByOrderUuid(
     String orderUuid, {
     bool includeDeleted = false,
@@ -107,6 +120,22 @@ class ShipmentRepository extends RepositoryBase<Shipments, Shipment> {
       ..where((item) {
         final byOrder = item.orderUuid.equals(orderUuid);
         return includeDeleted ? byOrder : byOrder & item.deletedAt.isNull();
+      })
+      ..orderBy([(item) => OrderingTerm.desc(item.createdAt)]);
+
+    return query.get();
+  }
+
+  Future<List<ShipmentItem>> listItemsByOrderItemUuid(
+    String orderItemUuid, {
+    bool includeDeleted = false,
+  }) {
+    final query = db.select(db.shipmentItems)
+      ..where((item) {
+        final byOrderItem = item.orderItemUuid.equals(orderItemUuid);
+        return includeDeleted
+            ? byOrderItem
+            : byOrderItem & item.deletedAt.isNull();
       })
       ..orderBy([(item) => OrderingTerm.desc(item.createdAt)]);
 
@@ -141,5 +170,16 @@ class ShipmentRepository extends RepositoryBase<Shipments, Shipment> {
             );
 
     return affectedRows > 0;
+  }
+
+  Future<int> softDeleteItemsByShipmentUuid(String shipmentUuid) async {
+    final now = DateTime.now();
+    return (db.update(db.shipmentItems)..where(
+          (item) =>
+              item.shipmentUuid.equals(shipmentUuid) & item.deletedAt.isNull(),
+        ))
+        .write(
+          ShipmentItemsCompanion(deletedAt: Value(now), updatedAt: Value(now)),
+        );
   }
 }

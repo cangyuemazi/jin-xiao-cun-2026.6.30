@@ -18,6 +18,10 @@ import '../features/suppliers/presentation/supplier_detail_page.dart';
 import '../features/suppliers/presentation/supplier_form_page.dart';
 import '../features/suppliers/presentation/supplier_list_page.dart';
 import '../features/suppliers/view_models/supplier_list_view_model.dart';
+import '../features/shipments/presentation/shipment_detail_page.dart';
+import '../features/shipments/presentation/shipment_form_page.dart';
+import '../features/shipments/presentation/shipment_list_page.dart';
+import '../features/shipments/view_models/shipment_list_view_model.dart';
 import '../shared/theme/app_spacing.dart';
 import '../shared/theme/app_theme.dart';
 import '../shared/layout/desktop_shell.dart';
@@ -47,7 +51,7 @@ class _DesktopWorkspacePage extends ConsumerStatefulWidget {
 }
 
 class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
-  int _selectedIndex = 4;
+  int _selectedIndex = 5;
 
   @override
   Widget build(BuildContext context) {
@@ -68,6 +72,10 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   String get _title {
+    if (_selectedIndex == 5) {
+      return '发货';
+    }
+
     if (_selectedIndex == 4) {
       return '厂家';
     }
@@ -81,6 +89,10 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   String? get _subtitle {
+    if (_selectedIndex == 5) {
+      return '发货单、快递单号和分批发货管理';
+    }
+
     if (_selectedIndex == 4) {
       return '厂家资料、加工能力和默认交期管理';
     }
@@ -94,6 +106,10 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   String? get _searchHint {
+    if (_selectedIndex == 5) {
+      return '搜索发货单号、快递单号或订单';
+    }
+
     if (_selectedIndex == 4) {
       return '搜索厂家名称、联系人或擅长产品';
     }
@@ -107,6 +123,12 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   void Function(String)? get _onSearchChanged {
+    if (_selectedIndex == 5) {
+      return (keyword) => ref
+          .read(shipmentListViewModelProvider.notifier)
+          .setSearchKeyword(keyword);
+    }
+
     if (_selectedIndex == 4) {
       return (keyword) => ref
           .read(supplierListViewModelProvider.notifier)
@@ -131,6 +153,16 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   List<Widget> _actions(BuildContext context) {
+    if (_selectedIndex == 5) {
+      return [
+        AppButton(
+          label: '新增发货',
+          icon: Icons.local_shipping_outlined,
+          onPressed: () => _openShipmentForm(context),
+        ),
+      ];
+    }
+
     if (_selectedIndex == 4) {
       return [
         AppButton(
@@ -168,6 +200,16 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   Widget _child(BuildContext context) {
+    if (_selectedIndex == 5) {
+      return ShipmentListPage(
+        onCreateShipment: () => _openShipmentForm(context),
+        onEditShipment: (shipmentUuid) =>
+            _openShipmentForm(context, shipmentUuid),
+        onOpenShipment: (shipmentUuid) =>
+            _openShipmentDetail(context, shipmentUuid),
+      );
+    }
+
     if (_selectedIndex == 4) {
       return SupplierListPage(
         onCreateSupplier: () => _openSupplierForm(context),
@@ -350,6 +392,37 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
           onEdit: (selectedSupplierUuid) {
             Navigator.of(pageContext).pop();
             _openSupplierForm(context, selectedSupplierUuid);
+          },
+        ),
+      ),
+    );
+  }
+
+  void _openShipmentForm(BuildContext context, [String? shipmentUuid]) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (pageContext) => ShipmentFormPage(
+          shipmentUuid: shipmentUuid,
+          onCancel: () => Navigator.of(pageContext).pop(),
+          onSaved: (_) {
+            ref.invalidate(shipmentListViewModelProvider);
+            ref.invalidate(orderListViewModelProvider);
+            Navigator.of(pageContext).pop();
+          },
+        ),
+      ),
+    );
+  }
+
+  void _openShipmentDetail(BuildContext context, String shipmentUuid) {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (pageContext) => ShipmentDetailPage(
+          shipmentUuid: shipmentUuid,
+          onBack: () => Navigator.of(pageContext).pop(),
+          onEdit: (selectedShipmentUuid) {
+            Navigator.of(pageContext).pop();
+            _openShipmentForm(context, selectedShipmentUuid);
           },
         ),
       ),

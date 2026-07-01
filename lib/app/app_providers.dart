@@ -82,6 +82,8 @@ final shipmentServiceProvider = Provider<ShipmentService>((ref) {
   return ShipmentService(
     shipmentRepository: ref.watch(shipmentRepositoryProvider),
     orderRepository: ref.watch(orderRepositoryProvider),
+    customerRepository: ref.watch(customerRepositoryProvider),
+    dictionaryService: ref.watch(dictionaryServiceProvider),
     auditLogService: ref.watch(auditLogServiceProvider),
   );
 });

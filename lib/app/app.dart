@@ -6,6 +6,8 @@ import '../features/customers/presentation/customer_detail_page.dart';
 import '../features/customers/presentation/customer_form_page.dart';
 import '../features/customers/presentation/customer_list_page.dart';
 import '../features/customers/view_models/customer_list_view_model.dart';
+import '../features/finance/presentation/finance_page.dart';
+import '../features/finance/view_models/finance_view_model.dart';
 import '../features/orders/presentation/order_detail_page.dart';
 import '../features/orders/presentation/order_form_page.dart';
 import '../features/orders/presentation/order_list_page.dart';
@@ -51,7 +53,7 @@ class _DesktopWorkspacePage extends ConsumerStatefulWidget {
 }
 
 class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
-  int _selectedIndex = 5;
+  int _selectedIndex = 7;
 
   @override
   Widget build(BuildContext context) {
@@ -72,6 +74,10 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   String get _title {
+    if (_selectedIndex == 7) {
+      return '财务';
+    }
+
     if (_selectedIndex == 5) {
       return '发货';
     }
@@ -89,6 +95,10 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   String? get _subtitle {
+    if (_selectedIndex == 7) {
+      return '费用录入、成本归集和订单利润分析';
+    }
+
     if (_selectedIndex == 5) {
       return '发货单、快递单号和分批发货管理';
     }
@@ -106,6 +116,10 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   String? get _searchHint {
+    if (_selectedIndex == 7) {
+      return '搜索订单号';
+    }
+
     if (_selectedIndex == 5) {
       return '搜索发货单号、快递单号或订单';
     }
@@ -123,6 +137,11 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   void Function(String)? get _onSearchChanged {
+    if (_selectedIndex == 7) {
+      return (keyword) =>
+          ref.read(financeViewModelProvider.notifier).setSearchKeyword(keyword);
+    }
+
     if (_selectedIndex == 5) {
       return (keyword) => ref
           .read(shipmentListViewModelProvider.notifier)
@@ -153,6 +172,18 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   List<Widget> _actions(BuildContext context) {
+    if (_selectedIndex == 7) {
+      return [
+        AppButton(
+          label: '刷新金额',
+          icon: Icons.refresh,
+          variant: AppButtonVariant.secondary,
+          onPressed: () =>
+              ref.read(financeViewModelProvider.notifier).refreshAmounts(),
+        ),
+      ];
+    }
+
     if (_selectedIndex == 5) {
       return [
         AppButton(
@@ -200,6 +231,10 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   }
 
   Widget _child(BuildContext context) {
+    if (_selectedIndex == 7) {
+      return const FinancePage();
+    }
+
     if (_selectedIndex == 5) {
       return ShipmentListPage(
         onCreateShipment: () => _openShipmentForm(context),

@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_spacing.dart';
-import '../theme/app_text_styles.dart';
 import 'app_button.dart';
 
 class AppDialog extends StatelessWidget {

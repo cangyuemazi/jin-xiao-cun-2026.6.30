@@ -120,8 +120,10 @@ class OrderListPage extends ConsumerWidget {
                 AppTableColumn<OrderListRowState>(
                   label: '发货状态',
                   width: 120,
-                  cellBuilder: (row) =>
-                      ShipmentStatusBadge(status: row.shipmentStatus),
+                  cellBuilder: (row) => ShipmentStatusBadge(
+                    status: row.shipmentStatus,
+                    label: row.shipmentStatusLabel,
+                  ),
                 ),
                 AppTableColumn<OrderListRowState>(
                   label: '销售金额',
@@ -167,8 +169,10 @@ class OrderListPage extends ConsumerWidget {
                 AppTableColumn<OrderListRowState>(
                   label: '订单状态',
                   width: 120,
-                  cellBuilder: (row) =>
-                      OrderStatusBadge(status: row.orderStatus),
+                  cellBuilder: (row) => OrderStatusBadge(
+                    status: row.orderStatus,
+                    label: row.orderStatusLabel,
+                  ),
                 ),
                 AppTableColumn<OrderListRowState>(
                   label: '操作',

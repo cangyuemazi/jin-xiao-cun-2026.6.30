@@ -41,3 +41,14 @@
 - 禁止硬编码订单状态、费用类型、产品类型。
 - 禁止随意修改数据库结构而不写 migration。
 - 禁止为了快速实现而破坏分层架构。
+
+## 第 20 阶段后的维护基线
+
+- 新增页面时，页面只允许调用 ViewModel / Provider。
+- 新增业务动作时，优先放入 `lib/domain/services/`。
+- 新增数据库查询时，优先放入 `lib/data/repositories/`。
+- 新增状态、类型、费用、快递公司等枚举类数据时，优先使用 `dictionaries`，不得在 UI 中写死文案来源。
+- UI 可以根据状态 code 做视觉 tone 映射，但展示文案应优先来自 Service / ViewModel 提供的字典 label。
+- 只做 UI 重做时，允许修改 `lib/features/*/presentation/`、`lib/features/*/widgets/`、`lib/shared/theme/`、`lib/shared/widgets/`、`lib/shared/layout/`。
+- 只做 UI 重做时，禁止随意修改 `lib/data/`、`lib/domain/`、`lib/data/database/`、`lib/data/repositories/`、`lib/domain/services/`。
+- 每次完成阶段、修复、重构或维护任务后必须运行 `flutter analyze`，通过后再提交。

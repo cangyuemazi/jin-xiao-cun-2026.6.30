@@ -86,3 +86,23 @@ lib/data/database/
 lib/data/repositories/
 lib/domain/services/
 ```
+
+## 第 20 阶段 UI 基线
+
+当前界面基线：
+
+- 桌面端采用左侧导航、顶部工具栏、中间内容区。
+- 页面主体使用 `SectionHeader`、`AppCard`、`AppTable`、`StatusBadge`、`AppButton`、`AppTextField` 等通用组件。
+- 颜色使用 `AppColors`。
+- 字体使用 `AppTextStyles` 或 Flutter Theme 中由 `AppTheme` 统一生成的样式。
+- 间距使用 `AppSpacing`。
+- 圆角使用 `AppRadius`。
+- 阴影使用 `AppShadows`。
+
+后续 UI 优化建议：
+
+- 优先优化 `shared/theme`，再让各页面自然继承。
+- 优先增强 `shared/widgets`，不要在页面中重复写局部组件。
+- 状态标签展示文案应优先来自字典 label，页面可以仅根据状态 code 选择视觉 tone。
+- 表格列宽、空状态、筛选提示和危险操作确认应保持各模块一致。
+- 不要为了页面方便直接读取数据库或计算业务结果。

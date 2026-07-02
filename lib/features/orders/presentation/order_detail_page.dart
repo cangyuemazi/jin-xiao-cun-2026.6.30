@@ -76,19 +76,18 @@ class OrderDetailPage extends ConsumerWidget {
                   children: [
                     _Info(
                       label: '订单状态',
-                      child: OrderStatusBadge(status: detail.orderStatus),
+                      child: OrderStatusBadge(
+                        status: detail.orderStatus,
+                        label: detail.orderStatusLabel,
+                      ),
                     ),
                     _Info(
                       label: '销售金额',
-                      child: OrderAmountText(
-                        amount: detail.totalSaleAmount,
-                      ),
+                      child: OrderAmountText(amount: detail.totalSaleAmount),
                     ),
                     _Info(
                       label: '成本',
-                      child: OrderAmountText(
-                        amount: detail.totalCostAmount,
-                      ),
+                      child: OrderAmountText(amount: detail.totalCostAmount),
                     ),
                     _Info(
                       label: '毛利',
@@ -177,8 +176,10 @@ class OrderDetailPage extends ConsumerWidget {
                   AppTableColumn<OrderShipmentState>(
                     label: '发货状态',
                     width: 120,
-                    cellBuilder: (shipment) =>
-                        ShipmentStatusBadge(status: shipment.shipmentStatus),
+                    cellBuilder: (shipment) => ShipmentStatusBadge(
+                      status: shipment.shipmentStatus,
+                      label: shipment.shipmentStatusLabel,
+                    ),
                   ),
                   AppTableColumn<OrderShipmentState>(
                     label: '运费',

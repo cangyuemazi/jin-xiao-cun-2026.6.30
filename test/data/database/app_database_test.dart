@@ -3,17 +3,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:jin_xiao_cun_2026/data/database/app_database.dart';
 
 void main() {
-  test('AppDatabase initializes with core schema version 2', () async {
+  test('AppDatabase initializes with core schema version 6', () async {
     final database = AppDatabase.forExecutor(NativeDatabase.memory());
     addTearDown(database.close);
 
-    expect(database.schemaVersion, 2);
+    expect(database.schemaVersion, 6);
 
     final migrations = await database
         .select(database.schemaMigrationEntries)
         .get();
     expect(migrations, hasLength(1));
-    expect(migrations.single.version, 2);
+    expect(migrations.single.version, 6);
 
     final tableNames = await database
         .customSelect(

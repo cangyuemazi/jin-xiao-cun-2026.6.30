@@ -121,6 +121,7 @@ final orderServiceProvider = Provider<OrderService>((ref) {
     customerRepository: ref.watch(customerRepositoryProvider),
     supplierRepository: ref.watch(supplierRepositoryProvider),
     shipmentRepository: ref.watch(shipmentRepositoryProvider),
+    dictionaryService: ref.watch(dictionaryServiceProvider),
     financeService: ref.watch(financeServiceProvider),
     shipmentService: ref.watch(shipmentServiceProvider),
     auditLogService: ref.watch(auditLogServiceProvider),

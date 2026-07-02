@@ -1,12 +1,25 @@
+import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:jin_xiao_cun_2026/app/app.dart';
+import 'package:jin_xiao_cun_2026/app/app_providers.dart';
+import 'package:jin_xiao_cun_2026/data/database/app_database.dart';
 
 void main() {
   testWidgets('app starts with shared theme', (WidgetTester tester) async {
-    await tester.pumpWidget(const JinXiaoCunApp());
+    final database = AppDatabase.forExecutor(NativeDatabase.memory());
+    addTearDown(database.close);
 
-    expect(find.text('首页'), findsOneWidget);
-    expect(find.text('基础界面已就绪'), findsOneWidget);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: [appDatabaseProvider.overrideWithValue(database)],
+        child: const JinXiaoCunApp(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('首页'), findsWidgets);
+    expect(find.text('经营概览'), findsOneWidget);
   });
 }

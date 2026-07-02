@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../shared/theme/app_colors.dart';
+import '../../../shared/theme/app_radius.dart';
 import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/theme/app_text_styles.dart';
 import '../../../shared/widgets/app_card.dart';
@@ -38,7 +39,7 @@ class DashboardMetricCard extends StatelessWidget {
                   height: AppSpacing.xxxl,
                   decoration: BoxDecoration(
                     color: colors.background,
-                    borderRadius: BorderRadius.circular(AppSpacing.sm),
+                    borderRadius: AppRadius.sm,
                   ),
                   child: Icon(icon, color: colors.foreground),
                 ),

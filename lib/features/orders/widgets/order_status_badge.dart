@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import '../../../shared/widgets/status_badge.dart';
 
 class OrderStatusBadge extends StatelessWidget {
-  const OrderStatusBadge({super.key, required this.status});
+  const OrderStatusBadge({super.key, required this.status, this.label});
 
   final String status;
+  final String? label;
 
   @override
   Widget build(BuildContext context) {
-    return StatusBadge(label: status, tone: _tone(status));
+    return StatusBadge(label: label ?? status, tone: _tone(status));
   }
 
   StatusBadgeTone _tone(String status) {
@@ -27,13 +28,14 @@ class OrderStatusBadge extends StatelessWidget {
 }
 
 class ShipmentStatusBadge extends StatelessWidget {
-  const ShipmentStatusBadge({super.key, required this.status});
+  const ShipmentStatusBadge({super.key, required this.status, this.label});
 
   final String status;
+  final String? label;
 
   @override
   Widget build(BuildContext context) {
-    return StatusBadge(label: status, tone: _tone(status));
+    return StatusBadge(label: label ?? status, tone: _tone(status));
   }
 
   StatusBadgeTone _tone(String status) {

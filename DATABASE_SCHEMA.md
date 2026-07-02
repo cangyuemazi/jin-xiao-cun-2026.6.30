@@ -121,3 +121,46 @@ operated_at
 device_id
 remark
 ```
+
+## 第 20 阶段实现状态
+
+当前 Drift 数据库已实现第一版核心表：
+
+- `customers`
+- `customer_addresses`
+- `products`
+- `product_elements`
+- `suppliers`
+- `sales_orders`
+- `sales_order_items`
+- `purchase_orders`
+- `purchase_order_items`
+- `shipments`
+- `shipment_items`
+- `inventory_items`
+- `inventory_logs`
+- `expense_items`
+- `payments`
+- `attachments`
+- `audit_logs`
+- `dictionaries`
+- `custom_fields`
+- `custom_field_values`
+- `schema_migrations`
+
+已落实的数据库约束：
+
+- 核心业务表包含 `uuid`。
+- 核心业务表预留 `created_at`、`updated_at`、`deleted_at`、`sync_status`、`device_id`、`version`、`remark`。
+- 金额字段使用整数分存储。
+- 订单、发货、费用、客户、产品、厂家等数据删除通过 Repository 软删除。
+- 订单状态、费用类型、客户类型、产品类型、厂家类型、发货状态和快递公司通过 `dictionaries` 初始化。
+- 数据库文件保存在本机应用数据目录，源码目录不保存运行数据库。
+
+后续修改表结构时，必须：
+
+1. 更新 Drift table 定义。
+2. 增加或调整 migration。
+3. 运行 `dart run build_runner build --delete-conflicting-outputs`。
+4. 运行 `flutter analyze`。
+5. 更新本文件中的字段或表说明。

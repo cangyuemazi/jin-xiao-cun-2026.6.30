@@ -106,3 +106,42 @@ UI -> ViewModel / Provider -> Service -> Repository -> Database
 ```
 
 下层不得反向依赖上层。业务能力应优先放在 Service 层，数据库访问必须通过 Repository 层。
+
+## 当前架构实现状态
+
+截至第 20 阶段，项目已形成以下稳定分层：
+
+- `lib/app/` 负责应用装配、Provider 组合、桌面工作区和模块入口。
+- `lib/features/*/presentation/` 负责页面展示和用户交互。
+- `lib/features/*/view_models/` 负责页面状态，并调用 Service。
+- `lib/features/*/widgets/` 负责模块内可复用 UI。
+- `lib/domain/services/` 负责订单金额、发货状态、利润、导入导出、备份恢复、异常检查和审计日志等业务规则。
+- `lib/data/repositories/` 负责 Drift 数据访问、搜索、写入和软删除。
+- `lib/data/database/` 负责 Drift 表结构、数据库打开路径、迁移策略和索引。
+- `lib/shared/theme/` 和 `lib/shared/widgets/` 负责统一设计系统和通用组件。
+
+后续二次开发应优先在已有层内扩展，不要跨层偷懒。例如：新增订单风险规则应放入 Service；新增订单查询条件应先扩展 Repository，再通过 Service 和 ViewModel 暴露给 UI。
+
+## UI 重做边界
+
+如果后续只重做界面，可以主要替换：
+
+```text
+lib/features/*/presentation/
+lib/features/*/widgets/
+lib/shared/theme/
+lib/shared/widgets/
+lib/shared/layout/
+```
+
+不要因为 UI 重做随意修改：
+
+```text
+lib/data/
+lib/domain/
+lib/data/database/
+lib/data/repositories/
+lib/domain/services/
+```
+
+这条边界用于保证未来移动端、云同步和多人协作扩展时，业务规则和数据层不被 UI 改版牵连。

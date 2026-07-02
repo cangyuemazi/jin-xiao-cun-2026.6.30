@@ -63,7 +63,9 @@ class OrderListRowState {
     required this.orderNo,
     required this.productCount,
     required this.shipmentStatus,
+    required this.shipmentStatusLabel,
     required this.orderStatus,
+    required this.orderStatusLabel,
     required this.totalSaleAmount,
     required this.totalCostAmount,
     required this.totalProfitAmount,
@@ -79,12 +81,14 @@ class OrderListRowState {
   final int productCount;
   final DateTime? orderDate;
   final String shipmentStatus;
+  final String shipmentStatusLabel;
   final int totalSaleAmount;
   final int totalCostAmount;
   final int totalProfitAmount;
   final List<String> supplierNames;
   final List<String> trackingNumbers;
   final String orderStatus;
+  final String orderStatusLabel;
 
   factory OrderListRowState.fromEntry(OrderListEntry entry) {
     return OrderListRowState(
@@ -94,12 +98,14 @@ class OrderListRowState {
       productCount: entry.productCount,
       orderDate: entry.order.orderDate,
       shipmentStatus: entry.shipmentStatus,
+      shipmentStatusLabel: entry.shipmentStatusLabel,
       totalSaleAmount: entry.order.totalSaleAmount,
       totalCostAmount: entry.order.totalCostAmount,
       totalProfitAmount: entry.order.totalProfitAmount,
       supplierNames: entry.supplierNames,
       trackingNumbers: entry.trackingNumbers,
       orderStatus: entry.order.orderStatus,
+      orderStatusLabel: entry.orderStatusLabel,
     );
   }
 }
@@ -109,6 +115,7 @@ class OrderDetailViewState {
     required this.uuid,
     required this.orderNo,
     required this.orderStatus,
+    required this.orderStatusLabel,
     required this.totalSaleAmount,
     required this.totalCostAmount,
     required this.totalProfitAmount,
@@ -122,6 +129,7 @@ class OrderDetailViewState {
   final String orderNo;
   final String? customerName;
   final String orderStatus;
+  final String orderStatusLabel;
   final int totalSaleAmount;
   final int totalCostAmount;
   final int totalProfitAmount;
@@ -135,6 +143,7 @@ class OrderDetailViewState {
       orderNo: detail.order.orderNo,
       customerName: detail.customerName,
       orderStatus: detail.order.orderStatus,
+      orderStatusLabel: detail.orderStatusLabel,
       totalSaleAmount: detail.order.totalSaleAmount,
       totalCostAmount: detail.order.totalCostAmount,
       totalProfitAmount: detail.order.totalProfitAmount,
@@ -162,6 +171,9 @@ class OrderDetailViewState {
               carrier: shipment.carrier,
               trackingNo: shipment.trackingNo,
               shipmentStatus: shipment.shipmentStatus,
+              shipmentStatusLabel:
+                  detail.shipmentStatusLabelsByUuid[shipment.uuid] ??
+                  shipment.shipmentStatus,
               shippingFee: shipment.shippingFee,
             ),
           )
@@ -196,6 +208,7 @@ class OrderShipmentState {
   const OrderShipmentState({
     required this.shipmentNo,
     required this.shipmentStatus,
+    required this.shipmentStatusLabel,
     required this.shippingFee,
     this.carrier,
     this.trackingNo,
@@ -205,6 +218,7 @@ class OrderShipmentState {
   final String? carrier;
   final String? trackingNo;
   final String shipmentStatus;
+  final String shipmentStatusLabel;
   final int shippingFee;
 }
 

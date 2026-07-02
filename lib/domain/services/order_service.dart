@@ -7,6 +7,7 @@ import '../../data/repositories/order_repository.dart';
 import '../../data/repositories/shipment_repository.dart';
 import '../../data/repositories/supplier_repository.dart';
 import 'audit_log_service.dart';
+import 'dictionary_service.dart';
 import 'finance_service.dart';
 import 'shipment_service.dart';
 
@@ -15,6 +16,8 @@ class OrderListEntry {
     required this.order,
     required this.productCount,
     required this.shipmentStatus,
+    required this.orderStatusLabel,
+    required this.shipmentStatusLabel,
     this.customerName,
     this.supplierNames = const [],
     this.trackingNumbers = const [],
@@ -23,6 +26,8 @@ class OrderListEntry {
   final SalesOrder order;
   final int productCount;
   final String shipmentStatus;
+  final String orderStatusLabel;
+  final String shipmentStatusLabel;
   final String? customerName;
   final List<String> supplierNames;
   final List<String> trackingNumbers;
@@ -32,16 +37,20 @@ class OrderDetail {
   const OrderDetail({
     required this.order,
     required this.items,
+    required this.orderStatusLabel,
     this.customerName,
     this.supplierNamesByUuid = const {},
     this.shipments = const [],
+    this.shipmentStatusLabelsByUuid = const {},
   });
 
   final SalesOrder order;
   final List<SalesOrderItem> items;
+  final String orderStatusLabel;
   final String? customerName;
   final Map<String, String> supplierNamesByUuid;
   final List<Shipment> shipments;
+  final Map<String, String> shipmentStatusLabelsByUuid;
 }
 
 class CreateOrderItemInput {
@@ -130,6 +139,7 @@ class OrderService {
     CustomerRepository? customerRepository,
     SupplierRepository? supplierRepository,
     ShipmentRepository? shipmentRepository,
+    DictionaryService? dictionaryService,
     required FinanceService financeService,
     ShipmentService? shipmentService,
     AuditLogService? auditLogService,
@@ -138,6 +148,7 @@ class OrderService {
        _customerRepository = customerRepository,
        _supplierRepository = supplierRepository,
        _shipmentRepository = shipmentRepository,
+       _dictionaryService = dictionaryService,
        _financeService = financeService,
        _shipmentService = shipmentService,
        _auditLogService = auditLogService,
@@ -149,6 +160,7 @@ class OrderService {
   final CustomerRepository? _customerRepository;
   final SupplierRepository? _supplierRepository;
   final ShipmentRepository? _shipmentRepository;
+  final DictionaryService? _dictionaryService;
   final FinanceService _financeService;
   final ShipmentService? _shipmentService;
   final AuditLogService? _auditLogService;
@@ -162,13 +174,26 @@ class OrderService {
     final orders = keyword.trim().isEmpty
         ? await _orderRepository.list(limit: limit, offset: offset)
         : await _orderRepository.search(keyword, limit: limit, offset: offset);
+    final orderStatusLabels = await _labelsByType('order_status');
+    final shipmentStatusLabels = await _labelsByType('shipment_status');
 
-    return Future.wait(orders.map(_buildListEntry));
+    return Future.wait(
+      orders.map(
+        (order) => _buildListEntry(
+          order,
+          orderStatusLabels: orderStatusLabels,
+          shipmentStatusLabels: shipmentStatusLabels,
+        ),
+      ),
+    );
   }
 
   Future<List<OrderListEntry>> listOrdersByUuids(Iterable<String> uuids) async {
     final entries = <OrderListEntry>[];
     final seen = <String>{};
+    final orderStatusLabels = await _labelsByType('order_status');
+    final shipmentStatusLabels = await _labelsByType('shipment_status');
+
     for (final uuid in uuids) {
       if (!seen.add(uuid)) {
         continue;
@@ -179,7 +204,13 @@ class OrderService {
         continue;
       }
 
-      entries.add(await _buildListEntry(order));
+      entries.add(
+        await _buildListEntry(
+          order,
+          orderStatusLabels: orderStatusLabels,
+          shipmentStatusLabels: shipmentStatusLabels,
+        ),
+      );
     }
 
     return entries;
@@ -207,13 +238,23 @@ class OrderService {
     final shipments =
         await _shipmentRepository?.listByOrderUuid(orderUuid) ??
         const <Shipment>[];
+    final orderStatusLabels = await _labelsByType('order_status');
+    final shipmentStatusLabels = await _labelsByType('shipment_status');
 
     return OrderDetail(
       order: order,
       items: items,
+      orderStatusLabel:
+          orderStatusLabels[order.orderStatus] ?? order.orderStatus,
       customerName: await _resolveCustomerName(order.customerUuid),
       supplierNamesByUuid: supplierNamesByUuid,
       shipments: shipments,
+      shipmentStatusLabelsByUuid: {
+        for (final shipment in shipments)
+          shipment.uuid:
+              shipmentStatusLabels[shipment.shipmentStatus] ??
+              shipment.shipmentStatus,
+      },
     );
   }
 
@@ -487,7 +528,11 @@ class OrderService {
     };
   }
 
-  Future<OrderListEntry> _buildListEntry(SalesOrder order) async {
+  Future<OrderListEntry> _buildListEntry(
+    SalesOrder order, {
+    required Map<String, String> orderStatusLabels,
+    required Map<String, String> shipmentStatusLabels,
+  }) async {
     final items = await _orderRepository.listItemsByOrderUuid(order.uuid);
     final shipments =
         await _shipmentRepository?.listByOrderUuid(order.uuid) ??
@@ -512,6 +557,10 @@ class OrderService {
       order: order,
       productCount: items.length,
       shipmentStatus: shipmentStatus,
+      orderStatusLabel:
+          orderStatusLabels[order.orderStatus] ?? order.orderStatus,
+      shipmentStatusLabel:
+          shipmentStatusLabels[shipmentStatus] ?? shipmentStatus,
       customerName: await _resolveCustomerName(order.customerUuid),
       supplierNames: supplierNames.toList(),
       trackingNumbers: shipments
@@ -539,5 +588,17 @@ class OrderService {
 
     final supplier = await _supplierRepository?.getByUuid(supplierUuid);
     return supplier?.supplierName ?? supplierUuid;
+  }
+
+  Future<Map<String, String>> _labelsByType(String dictType) async {
+    await _dictionaryService?.initializeDefaultDictionaries();
+    final dictionaries =
+        await _dictionaryService?.listEnabledByType(dictType) ??
+        const <Dictionary>[];
+
+    return {
+      for (final dictionary in dictionaries)
+        dictionary.dictKey: dictionary.dictLabel,
+    };
   }
 }

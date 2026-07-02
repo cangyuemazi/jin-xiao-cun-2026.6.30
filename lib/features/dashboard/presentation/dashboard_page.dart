@@ -10,6 +10,7 @@ import '../../../shared/widgets/app_table.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/section_header.dart';
 import '../../../shared/widgets/status_badge.dart';
+import '../../orders/widgets/order_status_badge.dart' as order_badges;
 import '../view_models/dashboard_view_model.dart';
 import '../widgets/dashboard_metric_card.dart';
 import '../widgets/dashboard_todo_card.dart';
@@ -290,9 +291,9 @@ class _RecentOrdersTable extends StatelessWidget {
             AppTableColumn<DashboardRecentOrderState>(
               label: '状态',
               width: 110,
-              cellBuilder: (row) => StatusBadge(
+              cellBuilder: (row) => order_badges.OrderStatusBadge(
+                status: row.orderStatus,
                 label: row.orderStatusLabel,
-                tone: _orderTone(row.orderStatus),
               ),
             ),
           ],
@@ -303,19 +304,6 @@ class _RecentOrdersTable extends StatelessWidget {
 
   String _money(int amount) {
     return '¥${DashboardViewModel.formatFenToYuan(amount)}';
-  }
-
-  StatusBadgeTone _orderTone(String status) {
-    return switch (status) {
-      'completed' || 'shipped' => StatusBadgeTone.success,
-      'partial_shipped' ||
-      'purchasing' ||
-      'in_production' ||
-      'ready_to_ship' => StatusBadgeTone.warning,
-      'cancelled' || 'after_sales' => StatusBadgeTone.danger,
-      'confirmed' => StatusBadgeTone.info,
-      _ => StatusBadgeTone.neutral,
-    };
   }
 }
 
@@ -363,24 +351,14 @@ class _RecentShipmentsTable extends StatelessWidget {
             AppTableColumn<DashboardRecentShipmentState>(
               label: '状态',
               width: 110,
-              cellBuilder: (row) => StatusBadge(
+              cellBuilder: (row) => order_badges.ShipmentStatusBadge(
+                status: row.shipmentStatus,
                 label: row.shipmentStatusLabel,
-                tone: _shipmentTone(row.shipmentStatus),
               ),
             ),
           ],
         ),
       ],
     );
-  }
-
-  StatusBadgeTone _shipmentTone(String status) {
-    return switch (status) {
-      'shipped' || 'completed' => StatusBadgeTone.success,
-      'partial_shipped' => StatusBadgeTone.warning,
-      'pending' => StatusBadgeTone.info,
-      'cancelled' => StatusBadgeTone.danger,
-      _ => StatusBadgeTone.neutral,
-    };
   }
 }

@@ -3,12 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/widgets/app_button.dart';
+import '../../../shared/widgets/app_form_section.dart';
+import '../../../shared/widgets/app_page_header.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/status_badge.dart';
 import '../view_models/supplier_form_view_model.dart';
 import '../view_models/supplier_list_view_model.dart';
-import '../widgets/supplier_form_section.dart';
 import '../widgets/supplier_type_select.dart';
 
 class SupplierFormPage extends ConsumerWidget {
@@ -40,14 +41,9 @@ class SupplierFormPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    state.isEditing ? '编辑厂家' : '新增厂家',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
+            AppPageHeader(
+              title: state.isEditing ? '编辑厂家' : '新增厂家',
+              actions: [
                 AppButton(
                   label: '取消',
                   icon: Icons.close,
@@ -71,7 +67,7 @@ class SupplierFormPage extends ConsumerWidget {
               ),
             ],
             const SizedBox(height: AppSpacing.xxl),
-            SupplierFormSection(
+            AppFormSection(
               title: '厂家基本信息',
               child: Column(
                 children: [
@@ -155,7 +151,7 @@ class SupplierFormPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            SupplierFormSection(
+            AppFormSection(
               title: '采购与加工能力',
               child: Column(
                 children: [
@@ -182,7 +178,7 @@ class SupplierFormPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            SupplierFormSection(
+            AppFormSection(
               title: '备注',
               child: AppTextField(
                 initialValue: state.remark,

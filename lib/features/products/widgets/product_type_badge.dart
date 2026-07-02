@@ -11,7 +11,7 @@ class ProductTypeBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return StatusBadge(
       label: label,
-      tone: StatusBadgeTone.accent,
+      tone: StatusBadgeTone.purple,
       icon: Icons.category_outlined,
     );
   }

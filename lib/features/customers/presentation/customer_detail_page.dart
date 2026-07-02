@@ -5,12 +5,13 @@ import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_dialog.dart';
+import '../../../shared/widgets/app_info_item.dart';
+import '../../../shared/widgets/app_page_header.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/section_header.dart';
 import '../view_models/customer_detail_view_model.dart';
 import '../view_models/customer_list_view_model.dart';
 import '../widgets/customer_address_table.dart';
-import '../widgets/customer_type_badge.dart';
 
 class CustomerDetailPage extends ConsumerWidget {
   const CustomerDetailPage({
@@ -53,47 +54,35 @@ class CustomerDetailPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SectionHeader(
+              AppPageHeader(
                 title: detail.customerName,
-                description: detail.companyName ?? '未填写单位信息',
-                trailing: Wrap(
-                  spacing: AppSpacing.sm,
-                  children: [
-                    AppButton(
-                      label: '返回',
-                      icon: Icons.arrow_back,
-                      variant: AppButtonVariant.secondary,
-                      onPressed: onBack,
-                    ),
-                    AppButton(
-                      label: '编辑客户',
-                      icon: Icons.edit_outlined,
-                      onPressed: () => onEditCustomer(detail.uuid),
-                    ),
-                  ],
-                ),
+                subtitle: detail.companyName,
+                actions: [
+                  AppButton(
+                    label: '返回',
+                    icon: Icons.arrow_back,
+                    variant: AppButtonVariant.secondary,
+                    onPressed: onBack,
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  AppButton(
+                    label: '编辑客户',
+                    icon: Icons.edit_outlined,
+                    onPressed: () => onEditCustomer(detail.uuid),
+                  ),
+                ],
               ),
-              const SizedBox(height: AppSpacing.xxl),
               AppCard(
-                child: Wrap(
-                  spacing: AppSpacing.xxl,
-                  runSpacing: AppSpacing.lg,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _Info(
-                      label: '客户类型',
-                      child: CustomerTypeBadge(
-                        customerType: detail.customerType,
-                      ),
-                    ),
-                    _Info(label: '手机号', child: Text(detail.phone ?? '-')),
-                    _Info(label: '微信', child: Text(detail.wechat ?? '-')),
-                    _Info(label: '邮箱', child: Text(detail.email ?? '-')),
-                    _Info(
-                      label: '单位/学校/公司',
-                      child: Text(detail.companyName ?? '-'),
-                    ),
-                    _Info(label: '部门', child: Text(detail.department ?? '-')),
-                    _Info(label: '备注', child: Text(detail.remark ?? '-')),
+                    AppInfoItem(label: '客户类型', value: detail.customerType),
+                    AppInfoItem(label: '手机号', value: detail.phone),
+                    AppInfoItem(label: '微信', value: detail.wechat),
+                    AppInfoItem(label: '邮箱', value: detail.email),
+                    AppInfoItem(label: '单位/学校/公司', value: detail.companyName),
+                    AppInfoItem(label: '部门', value: detail.department),
+                    AppInfoItem(label: '备注', value: detail.remark),
                   ],
                 ),
               ),
@@ -179,27 +168,5 @@ class CustomerDetailPage extends ConsumerWidget {
         .read(customerDetailViewModelProvider(customerUuid).notifier)
         .softDeleteAddress(addressUuid);
     ref.invalidate(customerListViewModelProvider);
-  }
-}
-
-class _Info extends StatelessWidget {
-  const _Info({required this.label, required this.child});
-
-  final String label;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 180,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label),
-          const SizedBox(height: AppSpacing.xs),
-          child,
-        ],
-      ),
-    );
   }
 }

@@ -4,10 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
+import '../../../shared/widgets/app_info_item.dart';
+import '../../../shared/widgets/app_page_header.dart';
 import '../../../shared/widgets/empty_state.dart';
-import '../../../shared/widgets/section_header.dart';
 import '../view_models/supplier_list_view_model.dart';
-import '../widgets/supplier_type_badge.dart';
 
 class SupplierDetailPage extends ConsumerWidget {
   const SupplierDetailPage({
@@ -46,53 +46,41 @@ class SupplierDetailPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SectionHeader(
+              AppPageHeader(
                 title: detail.supplierName,
-                description: detail.specialtyProducts ?? '未填写擅长产品',
-                trailing: Wrap(
-                  spacing: AppSpacing.sm,
-                  children: [
-                    AppButton(
-                      label: '返回',
-                      icon: Icons.arrow_back,
-                      variant: AppButtonVariant.secondary,
-                      onPressed: onBack,
-                    ),
-                    AppButton(
-                      label: '编辑',
-                      icon: Icons.edit_outlined,
-                      onPressed: () => onEdit(detail.uuid),
-                    ),
-                  ],
-                ),
+                subtitle: detail.specialtyProducts,
+                actions: [
+                  AppButton(
+                    label: '返回',
+                    icon: Icons.arrow_back,
+                    variant: AppButtonVariant.secondary,
+                    onPressed: onBack,
+                  ),
+                  const SizedBox(width: AppSpacing.sm),
+                  AppButton(
+                    label: '编辑',
+                    icon: Icons.edit_outlined,
+                    onPressed: () => onEdit(detail.uuid),
+                  ),
+                ],
               ),
-              const SizedBox(height: AppSpacing.xxl),
               AppCard(
-                child: Wrap(
-                  spacing: AppSpacing.xxl,
-                  runSpacing: AppSpacing.lg,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    _Info(
-                      label: '厂家类型',
-                      child: SupplierTypeBadge(label: detail.supplierTypeLabel),
-                    ),
-                    _Info(label: '联系人', child: Text(detail.contactName ?? '-')),
-                    _Info(label: '电话', child: Text(detail.phone ?? '-')),
-                    _Info(label: '微信', child: Text(detail.wechat ?? '-')),
-                    _Info(label: '邮箱', child: Text(detail.email ?? '-')),
-                    _Info(
-                      label: '擅长产品',
-                      child: Text(detail.specialtyProducts ?? '-'),
-                    ),
-                    _Info(
+                    AppInfoItem(label: '厂家类型', value: detail.supplierTypeLabel),
+                    AppInfoItem(label: '联系人', value: detail.contactName),
+                    AppInfoItem(label: '电话', value: detail.phone),
+                    AppInfoItem(label: '微信', value: detail.wechat),
+                    AppInfoItem(label: '邮箱', value: detail.email),
+                    AppInfoItem(label: '擅长产品', value: detail.specialtyProducts),
+                    AppInfoItem(
                       label: '默认交期',
-                      child: Text(
-                        detail.defaultLeadDays == null
-                            ? '-'
-                            : '${detail.defaultLeadDays} 天',
-                      ),
+                      value: detail.defaultLeadDays == null
+                          ? null
+                          : '${detail.defaultLeadDays} 天',
                     ),
-                    _Info(label: '备注', child: Text(detail.remark ?? '-')),
+                    AppInfoItem(label: '备注', value: detail.remark),
                   ],
                 ),
               ),
@@ -100,28 +88,6 @@ class SupplierDetailPage extends ConsumerWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class _Info extends StatelessWidget {
-  const _Info({required this.label, required this.child});
-
-  final String label;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 180,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label),
-          const SizedBox(height: AppSpacing.xs),
-          child,
-        ],
-      ),
     );
   }
 }

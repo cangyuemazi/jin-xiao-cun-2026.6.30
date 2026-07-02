@@ -11,7 +11,7 @@ class CustomerTypeBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return StatusBadge(
       label: customerType,
-      tone: StatusBadgeTone.info,
+      tone: StatusBadgeTone.purple,
       icon: Icons.person_outline,
     );
   }

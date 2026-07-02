@@ -11,7 +11,7 @@ class SupplierTypeBadge extends StatelessWidget {
   Widget build(BuildContext context) {
     return StatusBadge(
       label: label,
-      tone: StatusBadgeTone.info,
+      tone: StatusBadgeTone.purple,
       icon: Icons.factory_outlined,
     );
   }

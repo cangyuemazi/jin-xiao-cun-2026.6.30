@@ -4,9 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_dialog.dart';
+import '../../../shared/widgets/app_page_header.dart';
 import '../../../shared/widgets/app_table.dart';
 import '../../../shared/widgets/empty_state.dart';
-import '../../../shared/widgets/section_header.dart';
 import '../view_models/supplier_list_view_model.dart';
 import '../widgets/supplier_type_badge.dart';
 
@@ -38,16 +38,18 @@ class SupplierListPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SectionHeader(
+            AppPageHeader(
               title: '厂家列表',
-              description: '共 ${data.suppliers.length} 个厂家/供应商',
-              trailing: AppButton(
-                label: '新增厂家',
-                icon: Icons.factory_outlined,
-                onPressed: onCreateSupplier,
-              ),
+              subtitle: '共 ${data.suppliers.length} 个厂家/供应商',
+              actions: [
+                AppButton(
+                  label: '新增厂家',
+                  icon: Icons.factory_outlined,
+                  onPressed: onCreateSupplier,
+                ),
+              ],
             ),
-            const SizedBox(height: AppSpacing.xxl),
+            const SizedBox(height: AppSpacing.lg),
             AppTable<SupplierListRowState>(
               rows: data.suppliers,
               emptyTitle: '暂无厂家',

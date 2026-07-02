@@ -4,9 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_dialog.dart';
+import '../../../shared/widgets/app_page_header.dart';
 import '../../../shared/widgets/app_table.dart';
 import '../../../shared/widgets/empty_state.dart';
-import '../../../shared/widgets/section_header.dart';
 import '../view_models/customer_list_view_model.dart';
 import '../widgets/customer_type_badge.dart';
 
@@ -38,16 +38,18 @@ class CustomerListPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SectionHeader(
+            AppPageHeader(
               title: '客户列表',
-              description: '共 ${data.customers.length} 位客户',
-              trailing: AppButton(
-                label: '新增客户',
-                icon: Icons.person_add_alt_1_outlined,
-                onPressed: onCreateCustomer,
-              ),
+              subtitle: '共 ${data.customers.length} 位客户',
+              actions: [
+                AppButton(
+                  label: '新增客户',
+                  icon: Icons.person_add_alt_1_outlined,
+                  onPressed: onCreateCustomer,
+                ),
+              ],
             ),
-            const SizedBox(height: AppSpacing.xxl),
+            const SizedBox(height: AppSpacing.lg),
             AppTable<CustomerListRowState>(
               rows: data.customers,
               emptyTitle: '暂无客户',

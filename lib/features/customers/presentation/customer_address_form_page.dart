@@ -5,13 +5,14 @@ import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_radius.dart';
 import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/widgets/app_button.dart';
+import '../../../shared/widgets/app_form_section.dart';
+import '../../../shared/widgets/app_page_header.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/status_badge.dart';
 import '../view_models/customer_address_form_view_model.dart';
 import '../view_models/customer_detail_view_model.dart';
 import '../view_models/customer_list_view_model.dart';
-import '../widgets/customer_form_section.dart';
 
 class CustomerAddressFormPage extends ConsumerWidget {
   const CustomerAddressFormPage({
@@ -48,14 +49,9 @@ class CustomerAddressFormPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    state.isEditing ? '编辑收货地址' : '新增收货地址',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
+            AppPageHeader(
+              title: state.isEditing ? '编辑收货地址' : '新增收货地址',
+              actions: [
                 AppButton(
                   label: '取消',
                   icon: Icons.close,
@@ -79,7 +75,7 @@ class CustomerAddressFormPage extends ConsumerWidget {
               ),
             ],
             const SizedBox(height: AppSpacing.xxl),
-            CustomerFormSection(
+            AppFormSection(
               title: '收件人信息',
               child: Column(
                 children: [
@@ -119,7 +115,7 @@ class CustomerAddressFormPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            CustomerFormSection(
+            AppFormSection(
               title: '地址信息',
               child: Column(
                 children: [
@@ -175,7 +171,7 @@ class CustomerAddressFormPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            CustomerFormSection(
+            AppFormSection(
               title: '备注',
               child: AppTextField(
                 initialValue: state.remark,

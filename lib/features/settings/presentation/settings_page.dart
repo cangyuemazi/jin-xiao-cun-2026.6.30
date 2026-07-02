@@ -9,9 +9,11 @@ import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_dialog.dart';
 import '../../../shared/widgets/app_table.dart';
+import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/section_header.dart';
 import '../../../shared/widgets/status_badge.dart';
+import '../view_models/export_view_model.dart';
 import '../view_models/import_view_model.dart';
 
 class SettingsPage extends ConsumerWidget {
@@ -52,6 +54,8 @@ class SettingsPage extends ConsumerWidget {
             title: '系统设置',
             description: 'Excel 订单导入、数据维护和后续系统参数集中放在这里。',
           ),
+          const SizedBox(height: AppSpacing.xxl),
+          const _ExportSection(),
           const SizedBox(height: AppSpacing.xxl),
           _ImportControlCard(
             state: state,
@@ -201,6 +205,195 @@ class SettingsPage extends ConsumerWidget {
     if (confirmed == true) {
       await ref.read(importViewModelProvider.notifier).confirmImport();
     }
+  }
+}
+
+class _ExportSection extends ConsumerWidget {
+  const _ExportSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncState = ref.watch(exportViewModelProvider);
+
+    return asyncState.when(
+      loading: () => _ExportCard(
+        state: const ExportState(),
+        isLoading: true,
+        onKeywordChanged: (_) {},
+        onExportFilteredDefault: null,
+        onExportFilteredSelectedPath: null,
+        onExportFullDefault: null,
+        onExportFullSelectedPath: null,
+      ),
+      error: (error, stackTrace) => _ExportCard(
+        state: ExportState(errorMessage: error.toString()),
+        onKeywordChanged: (value) =>
+            ref.read(exportViewModelProvider.notifier).updateKeyword(value),
+        onExportFilteredDefault: () => ref
+            .read(exportViewModelProvider.notifier)
+            .exportFilteredToDefault(),
+        onExportFilteredSelectedPath: () => ref
+            .read(exportViewModelProvider.notifier)
+            .exportFilteredToSelectedPath(),
+        onExportFullDefault: () => ref
+            .read(exportViewModelProvider.notifier)
+            .exportFullBackupToDefault(),
+        onExportFullSelectedPath: () => ref
+            .read(exportViewModelProvider.notifier)
+            .exportFullBackupToSelectedPath(),
+      ),
+      data: (state) => _ExportCard(
+        state: state,
+        onKeywordChanged: (value) =>
+            ref.read(exportViewModelProvider.notifier).updateKeyword(value),
+        onExportFilteredDefault: () => ref
+            .read(exportViewModelProvider.notifier)
+            .exportFilteredToDefault(),
+        onExportFilteredSelectedPath: () => ref
+            .read(exportViewModelProvider.notifier)
+            .exportFilteredToSelectedPath(),
+        onExportFullDefault: () => ref
+            .read(exportViewModelProvider.notifier)
+            .exportFullBackupToDefault(),
+        onExportFullSelectedPath: () => ref
+            .read(exportViewModelProvider.notifier)
+            .exportFullBackupToSelectedPath(),
+      ),
+    );
+  }
+}
+
+class _ExportCard extends StatelessWidget {
+  const _ExportCard({
+    required this.state,
+    required this.onKeywordChanged,
+    required this.onExportFilteredDefault,
+    required this.onExportFilteredSelectedPath,
+    required this.onExportFullDefault,
+    required this.onExportFullSelectedPath,
+    this.isLoading = false,
+  });
+
+  final ExportState state;
+  final bool isLoading;
+  final ValueChanged<String> onKeywordChanged;
+  final VoidCallback? onExportFilteredDefault;
+  final VoidCallback? onExportFilteredSelectedPath;
+  final VoidCallback? onExportFullDefault;
+  final VoidCallback? onExportFullSelectedPath;
+
+  @override
+  Widget build(BuildContext context) {
+    final result = state.result;
+
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SectionHeader(
+            title: 'Excel 订单导出',
+            description: '导出订单、产品明细、客户、厂家、发货和金额信息。',
+          ),
+          const SizedBox(height: AppSpacing.xl),
+          AppTextField(
+            key: ValueKey('export-keyword-${state.keyword}'),
+            initialValue: state.keyword,
+            label: '筛选关键词',
+            hintText: '可输入订单号、客户 UUID、订单状态等',
+            helperText: '留空时导出当前全部订单；完整备份式导出会忽略筛选关键词。',
+            prefixIcon: const Icon(Icons.search),
+            enabled: !isLoading,
+            onChanged: onKeywordChanged,
+          ),
+          const SizedBox(height: AppSpacing.lg),
+          Wrap(
+            spacing: AppSpacing.sm,
+            runSpacing: AppSpacing.sm,
+            children: [
+              AppButton(
+                label: '导出筛选结果',
+                icon: Icons.download_outlined,
+                isLoading: isLoading,
+                onPressed: isLoading ? null : onExportFilteredDefault,
+              ),
+              AppButton(
+                label: '选择位置导出',
+                icon: Icons.folder_open_outlined,
+                variant: AppButtonVariant.secondary,
+                onPressed: isLoading ? null : onExportFilteredSelectedPath,
+              ),
+              AppButton(
+                label: '完整备份式导出',
+                icon: Icons.archive_outlined,
+                variant: AppButtonVariant.secondary,
+                onPressed: isLoading ? null : onExportFullDefault,
+              ),
+              AppButton(
+                label: '备份导出到指定位置',
+                icon: Icons.save_as_outlined,
+                variant: AppButtonVariant.ghost,
+                onPressed: isLoading ? null : onExportFullSelectedPath,
+              ),
+            ],
+          ),
+          if (state.errorMessage != null) ...[
+            const SizedBox(height: AppSpacing.lg),
+            StatusBadge(
+              label: state.errorMessage!,
+              tone: StatusBadgeTone.danger,
+              icon: Icons.error_outline,
+            ),
+          ],
+          if (result != null) ...[
+            const SizedBox(height: AppSpacing.lg),
+            _ExportResultCard(result: result),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _ExportResultCard extends StatelessWidget {
+  const _ExportResultCard({required this.result});
+
+  final ExportResultState result;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.successSoft,
+        borderRadius: AppRadius.card,
+        border: Border.all(color: AppColors.successSoft),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const StatusBadge(
+              label: '导出完成',
+              tone: StatusBadgeTone.success,
+              icon: Icons.check_circle_outline,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Wrap(
+              spacing: AppSpacing.md,
+              runSpacing: AppSpacing.md,
+              children: [
+                _SummaryMetric(label: '导出类型', value: result.modeLabel),
+                _SummaryMetric(label: '订单数', value: '${result.orderCount}'),
+                _SummaryMetric(label: '明细行', value: '${result.rowCount}'),
+                _SummaryMetric(label: '导出时间', value: result.generatedAtText),
+              ],
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(result.filePath, style: AppTextStyles.caption),
+          ],
+        ),
+      ),
+    );
   }
 }
 

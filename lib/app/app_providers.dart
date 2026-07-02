@@ -167,5 +167,12 @@ final importServiceProvider = Provider<ImportService>((ref) {
 });
 
 final exportServiceProvider = Provider<ExportService>((ref) {
-  return ExportService(auditLogService: ref.watch(auditLogServiceProvider));
+  return ExportService(
+    orderRepository: ref.watch(orderRepositoryProvider),
+    customerRepository: ref.watch(customerRepositoryProvider),
+    supplierRepository: ref.watch(supplierRepositoryProvider),
+    shipmentRepository: ref.watch(shipmentRepositoryProvider),
+    dictionaryService: ref.watch(dictionaryServiceProvider),
+    auditLogService: ref.watch(auditLogServiceProvider),
+  );
 });

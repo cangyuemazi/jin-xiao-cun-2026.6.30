@@ -79,19 +79,19 @@ class AppDatabase extends _$AppDatabase {
       await _upgradeFromV1ToV2(migrator);
     }
 
-    if (from >= 2 && from < 3) {
+    if (from < 3) {
       await _upgradeFromV2ToV3(migrator);
     }
 
-    if (from >= 2 && from < 4) {
+    if (from < 4) {
       await _upgradeFromV3ToV4(migrator);
     }
 
-    if (from >= 2 && from < 5) {
+    if (from < 5) {
       await _upgradeFromV4ToV5(migrator);
     }
 
-    if (from >= 2 && from < 6) {
+    if (from < 6) {
       await _upgradeFromV5ToV6(migrator);
     }
 

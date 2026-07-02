@@ -283,22 +283,29 @@ class FinanceService {
       0,
       (sum, item) => sum + item.costAmount,
     );
-    final expenseProductCost = expenses
-        .where((expense) => expense.expenseType == _productCostType)
-        .fold<int>(0, (sum, expense) => sum + expense.amount);
-    final otherCost = expenses
+
+    final allExpenseCost = expenses
         .where(
-          (expense) =>
-              expense.expenseType != _productCostType &&
-              _costExpenseTypes.contains(expense.expenseType),
+          (expense) => _costExpenseTypes.contains(expense.expenseType),
         )
         .fold<int>(0, (sum, expense) => sum + expense.amount);
 
-    final productCost = expenseProductCost > 0
-        ? expenseProductCost
-        : itemProductCost;
+    int shipmentsShippingFee = 0;
+    if (_shipmentRepository != null) {
+      final shipments =
+          await _shipmentRepository.listByOrderUuid(orderUuid);
+      shipmentsShippingFee = shipments.fold<int>(
+        0,
+        (sum, shipment) => sum + shipment.shippingFee,
+      );
+    }
 
-    return productCost + otherCost;
+    // TODO: shipments.shipping_fee may overlap with expense_items of type
+    // shipping_fee if the user records both. Current data model cannot
+    // distinguish these cases; consider a future reconciliation flag or
+    // convention (e.g. use expense_items OR shipment.shipping_fee, not both).
+
+    return itemProductCost + allExpenseCost + shipmentsShippingFee;
   }
 
   Future<int> calculateOrderProfit(String orderUuid) async {

@@ -3,13 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/widgets/app_button.dart';
+import '../../../shared/widgets/app_form_section.dart';
+import '../../../shared/widgets/app_page_header.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/status_badge.dart';
 import '../view_models/order_form_view_model.dart';
 import '../view_models/order_list_view_model.dart';
 import '../widgets/order_fee_editor.dart';
-import '../widgets/order_form_section.dart';
 import '../widgets/order_items_editor.dart';
 import '../widgets/order_supplier_editor.dart';
 
@@ -42,28 +43,23 @@ class OrderFormPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    state.isEditing ? '编辑订单' : '新增订单',
-                    style: Theme.of(context).textTheme.titleLarge,
+              AppPageHeader(
+                title: state.isEditing ? '编辑订单' : '新增订单',
+                actions: [
+                  AppButton(
+                    label: '取消',
+                    icon: Icons.close,
+                    variant: AppButtonVariant.secondary,
+                    onPressed: onCancel,
                   ),
-                ),
-                AppButton(
-                  label: '取消',
-                  icon: Icons.close,
-                  variant: AppButtonVariant.secondary,
-                  onPressed: onCancel,
-                ),
-                const SizedBox(width: AppSpacing.sm),
-                AppButton(
-                  label: '保存订单',
-                  icon: Icons.save_outlined,
-                  onPressed: () => _save(context, ref),
-                ),
-              ],
-            ),
+                  const SizedBox(width: AppSpacing.sm),
+                  AppButton(
+                    label: '保存订单',
+                    icon: Icons.save_outlined,
+                    onPressed: () => _save(context, ref),
+                  ),
+                ],
+              ),
             if (state.errorMessage != null) ...[
               const SizedBox(height: AppSpacing.lg),
               StatusBadge(
@@ -73,7 +69,7 @@ class OrderFormPage extends ConsumerWidget {
               ),
             ],
             const SizedBox(height: AppSpacing.xxl),
-            OrderFormSection(
+            AppFormSection(
               title: '订单基本信息',
               child: Row(
                 children: [
@@ -112,7 +108,7 @@ class OrderFormPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            OrderFormSection(
+            AppFormSection(
               title: '客户信息',
               child: Row(
                 children: [
@@ -149,7 +145,7 @@ class OrderFormPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            OrderFormSection(
+            AppFormSection(
               title: '产品明细',
               child: OrderItemsEditor(
                 items: state.items,
@@ -161,7 +157,7 @@ class OrderFormPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            OrderFormSection(
+            AppFormSection(
               title: '采购/厂家信息',
               child: OrderSupplierEditor(
                 items: state.items,
@@ -170,7 +166,7 @@ class OrderFormPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            OrderFormSection(
+            AppFormSection(
               title: '费用信息',
               child: OrderFeeEditor(
                 items: state.items,
@@ -179,7 +175,7 @@ class OrderFormPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            OrderFormSection(
+            AppFormSection(
               title: '发货信息',
               child: Row(
                 children: const [
@@ -202,7 +198,7 @@ class OrderFormPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            OrderFormSection(
+            AppFormSection(
               title: '备注',
               child: AppTextField(
                 initialValue: state.remark,

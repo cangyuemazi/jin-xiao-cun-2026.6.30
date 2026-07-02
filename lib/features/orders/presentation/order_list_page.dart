@@ -5,9 +5,9 @@ import '../../../domain/services/data_quality_service.dart';
 import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_dialog.dart';
+import '../../../shared/widgets/app_page_header.dart';
 import '../../../shared/widgets/app_table.dart';
 import '../../../shared/widgets/empty_state.dart';
-import '../../../shared/widgets/section_header.dart';
 import '../../../shared/widgets/status_badge.dart';
 import '../view_models/order_list_view_model.dart';
 import '../widgets/order_amount_text.dart';
@@ -41,53 +41,48 @@ class OrderListPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SectionHeader(
+            AppPageHeader(
               title: '订单列表',
-              description: '共 ${data.orders.length} 条订单',
-              trailing: Wrap(
-                spacing: AppSpacing.sm,
-                children: [
-                  AppButton(
-                    label: '异常订单',
-                    icon: Icons.warning_amber_outlined,
-                    variant: AppButtonVariant.secondary,
-                    onPressed: () => ref
-                        .read(orderListViewModelProvider.notifier)
-                        .setQualityFilter(DataQualityService.allIssuesCode),
-                  ),
-                  AppButton(
-                    label: '新增订单',
-                    icon: Icons.add,
-                    onPressed: onCreateOrder,
-                  ),
-                ],
-              ),
+              subtitle: '共 ${data.orders.length} 条订单',
+              actions: [
+                AppButton(
+                  label: '异常订单',
+                  icon: Icons.warning_amber_outlined,
+                  variant: AppButtonVariant.secondary,
+                  onPressed: () => ref
+                      .read(orderListViewModelProvider.notifier)
+                      .setQualityFilter(DataQualityService.allIssuesCode),
+                ),
+                AppButton(
+                  label: '新增订单',
+                  icon: Icons.add,
+                  onPressed: onCreateOrder,
+                ),
+              ],
             ),
-            if (data.hasQualityFilter) ...[
-              const SizedBox(height: AppSpacing.lg),
-              Wrap(
-                spacing: AppSpacing.sm,
-                runSpacing: AppSpacing.sm,
-                crossAxisAlignment: WrapCrossAlignment.center,
-                children: [
-                  StatusBadge(
-                    label:
-                        '异常筛选：${data.qualityFilterLabel ?? '异常订单'} · ${data.qualityIssueCount} 项',
-                    tone: StatusBadgeTone.warning,
-                  ),
-                  AppButton(
-                    label: '清除筛选',
-                    icon: Icons.filter_alt_off,
-                    size: AppButtonSize.small,
-                    variant: AppButtonVariant.ghost,
-                    onPressed: () => ref
-                        .read(orderListViewModelProvider.notifier)
-                        .clearQualityFilter(),
-                  ),
-                ],
+            if (data.hasQualityFilter)
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppSpacing.xl),
+                child: Row(
+                  children: [
+                    StatusBadge(
+                      label: '${data.qualityFilterLabel ?? '异常订单'} · ${data.qualityIssueCount} 项',
+                      tone: StatusBadgeTone.warning,
+                      icon: Icons.filter_alt_outlined,
+                    ),
+                    const SizedBox(width: AppSpacing.sm),
+                    AppButton(
+                      label: '清除',
+                      icon: Icons.close,
+                      size: AppButtonSize.small,
+                      variant: AppButtonVariant.ghost,
+                      onPressed: () => ref
+                          .read(orderListViewModelProvider.notifier)
+                          .clearQualityFilter(),
+                    ),
+                  ],
+                ),
               ),
-            ],
-            const SizedBox(height: AppSpacing.xxl),
             AppTable<OrderListRowState>(
               rows: data.orders,
               emptyTitle: data.hasQualityFilter ? '暂无异常订单' : '暂无订单',

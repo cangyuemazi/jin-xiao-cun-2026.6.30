@@ -14,6 +14,7 @@ import '../domain/services/audit_log_service.dart';
 import '../domain/services/backup_service.dart';
 import '../domain/services/customer_service.dart';
 import '../domain/services/dashboard_service.dart';
+import '../domain/services/data_quality_service.dart';
 import '../domain/services/dictionary_service.dart';
 import '../domain/services/export_service.dart';
 import '../domain/services/finance_service.dart';
@@ -92,6 +93,17 @@ final shipmentServiceProvider = Provider<ShipmentService>((ref) {
   );
 });
 
+final dataQualityServiceProvider = Provider<DataQualityService>((ref) {
+  return DataQualityService(
+    orderRepository: ref.watch(orderRepositoryProvider),
+    shipmentRepository: ref.watch(shipmentRepositoryProvider),
+    customerRepository: ref.watch(customerRepositoryProvider),
+    supplierRepository: ref.watch(supplierRepositoryProvider),
+    inventoryRepository: ref.watch(inventoryRepositoryProvider),
+    shipmentService: ref.watch(shipmentServiceProvider),
+  );
+});
+
 final dashboardServiceProvider = Provider<DashboardService>((ref) {
   return DashboardService(
     orderRepository: ref.watch(orderRepositoryProvider),
@@ -99,6 +111,7 @@ final dashboardServiceProvider = Provider<DashboardService>((ref) {
     customerRepository: ref.watch(customerRepositoryProvider),
     dictionaryService: ref.watch(dictionaryServiceProvider),
     shipmentService: ref.watch(shipmentServiceProvider),
+    dataQualityService: ref.watch(dataQualityServiceProvider),
   );
 });
 

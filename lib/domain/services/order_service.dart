@@ -166,6 +166,25 @@ class OrderService {
     return Future.wait(orders.map(_buildListEntry));
   }
 
+  Future<List<OrderListEntry>> listOrdersByUuids(Iterable<String> uuids) async {
+    final entries = <OrderListEntry>[];
+    final seen = <String>{};
+    for (final uuid in uuids) {
+      if (!seen.add(uuid)) {
+        continue;
+      }
+
+      final order = await _orderRepository.getByUuid(uuid);
+      if (order == null) {
+        continue;
+      }
+
+      entries.add(await _buildListEntry(order));
+    }
+
+    return entries;
+  }
+
   Future<OrderDetail?> getOrderDetail(String orderUuid) async {
     final order = await _orderRepository.getByUuid(orderUuid);
     if (order == null) {

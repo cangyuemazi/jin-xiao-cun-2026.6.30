@@ -294,7 +294,7 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
 
   Widget _child(BuildContext context) {
     if (_selectedIndex == 0) {
-      return const DashboardPage();
+      return DashboardPage(onQualityIssueSelected: _openQualityIssueOrders);
     }
 
     if (_selectedIndex == 7) {
@@ -353,6 +353,20 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
         ),
       ),
     };
+  }
+
+  void _openQualityIssueOrders(String issueCode) {
+    setState(() {
+      _selectedIndex = 1;
+    });
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+
+      ref.read(orderListViewModelProvider.notifier).setQualityFilter(issueCode);
+    });
   }
 
   void _openOrderForm(BuildContext context, [String? orderUuid]) {

@@ -12,18 +12,21 @@ class DashboardTodoCard extends StatelessWidget {
     required this.count,
     required this.icon,
     required this.tone,
+    this.onTap,
   });
 
   final String label;
   final int count;
   final IconData icon;
   final DashboardTodoTone tone;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
     final colors = _colors(tone);
 
     return AppCard(
+      onTap: onTap,
       child: SizedBox(
         width: 210,
         child: Row(

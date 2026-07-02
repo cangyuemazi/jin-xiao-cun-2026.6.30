@@ -17,17 +17,41 @@ final orderDetailProvider = FutureProvider.autoDispose
     });
 
 class OrderListState {
-  const OrderListState({this.keyword = '', this.orders = const []});
+  const OrderListState({
+    this.keyword = '',
+    this.qualityFilterCode,
+    this.qualityFilterLabel,
+    this.qualityIssueCount = 0,
+    this.orders = const [],
+  });
 
   final String keyword;
+  final String? qualityFilterCode;
+  final String? qualityFilterLabel;
+  final int qualityIssueCount;
   final List<OrderListRowState> orders;
+
+  bool get hasQualityFilter => qualityFilterCode != null;
 
   OrderListState copyWith({
     String? keyword,
+    String? qualityFilterCode,
+    String? qualityFilterLabel,
+    int? qualityIssueCount,
     List<OrderListRowState>? orders,
+    bool clearQualityFilter = false,
   }) {
     return OrderListState(
       keyword: keyword ?? this.keyword,
+      qualityFilterCode: clearQualityFilter
+          ? null
+          : qualityFilterCode ?? this.qualityFilterCode,
+      qualityFilterLabel: clearQualityFilter
+          ? null
+          : qualityFilterLabel ?? this.qualityFilterLabel,
+      qualityIssueCount: clearQualityFilter
+          ? 0
+          : qualityIssueCount ?? this.qualityIssueCount,
       orders: orders ?? this.orders,
     );
   }
@@ -191,23 +215,70 @@ class OrderListViewModel extends AsyncNotifier<OrderListState> {
   }
 
   Future<void> setSearchKeyword(String keyword) async {
+    final qualityFilterCode = state.value?.qualityFilterCode;
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() => _load(keyword: keyword));
+    state = await AsyncValue.guard(
+      () => _load(keyword: keyword, qualityFilterCode: qualityFilterCode),
+    );
+  }
+
+  Future<void> setQualityFilter(String? code) async {
+    final keyword = state.value?.keyword ?? '';
+    state = const AsyncValue.loading();
+    state = await AsyncValue.guard(
+      () => _load(keyword: keyword, qualityFilterCode: code),
+    );
+  }
+
+  Future<void> clearQualityFilter() {
+    return setQualityFilter(null);
   }
 
   Future<void> refresh() async {
     final keyword = state.value?.keyword ?? '';
+    final qualityFilterCode = state.value?.qualityFilterCode;
     state = const AsyncValue.loading();
-    state = await AsyncValue.guard(() => _load(keyword: keyword));
+    state = await AsyncValue.guard(
+      () => _load(keyword: keyword, qualityFilterCode: qualityFilterCode),
+    );
   }
 
   Future<void> softDeleteOrder(String orderUuid) async {
     final keyword = state.value?.keyword ?? '';
+    final qualityFilterCode = state.value?.qualityFilterCode;
     await ref.read(orderServiceProvider).softDeleteOrder(orderUuid);
-    state = await AsyncValue.guard(() => _load(keyword: keyword));
+    state = await AsyncValue.guard(
+      () => _load(keyword: keyword, qualityFilterCode: qualityFilterCode),
+    );
   }
 
-  Future<OrderListState> _load({String keyword = ''}) async {
+  Future<OrderListState> _load({
+    String keyword = '',
+    String? qualityFilterCode,
+  }) async {
+    if (qualityFilterCode != null) {
+      final report = await ref.read(dataQualityServiceProvider).analyze();
+      final issues = report.issuesForCode(qualityFilterCode);
+      final orderUuids = issues
+          .map((issue) => issue.orderUuid)
+          .whereType<String>()
+          .toSet();
+      final entries = await ref
+          .read(orderServiceProvider)
+          .listOrdersByUuids(orderUuids);
+      final filteredEntries = _filterEntriesByKeyword(entries, keyword);
+
+      return OrderListState(
+        keyword: keyword,
+        qualityFilterCode: qualityFilterCode,
+        qualityFilterLabel: ref
+            .read(dataQualityServiceProvider)
+            .ruleTitle(qualityFilterCode),
+        qualityIssueCount: issues.length,
+        orders: filteredEntries.map(OrderListRowState.fromEntry).toList(),
+      );
+    }
+
     final orders = await ref
         .read(orderServiceProvider)
         .listOrders(keyword: keyword, limit: 100);
@@ -216,5 +287,21 @@ class OrderListViewModel extends AsyncNotifier<OrderListState> {
       keyword: keyword,
       orders: orders.map(OrderListRowState.fromEntry).toList(),
     );
+  }
+
+  List<OrderListEntry> _filterEntriesByKeyword(
+    List<OrderListEntry> entries,
+    String keyword,
+  ) {
+    final normalized = keyword.trim().toLowerCase();
+    if (normalized.isEmpty) {
+      return entries;
+    }
+
+    return entries.where((entry) {
+      return entry.order.orderNo.toLowerCase().contains(normalized) ||
+          (entry.customerName ?? '').toLowerCase().contains(normalized) ||
+          entry.order.orderStatus.toLowerCase().contains(normalized);
+    }).toList();
   }
 }

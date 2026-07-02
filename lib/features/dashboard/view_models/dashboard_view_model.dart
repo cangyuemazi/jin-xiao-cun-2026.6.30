@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../app/app_providers.dart';
 import '../../../domain/services/dashboard_service.dart';
+import '../../../domain/services/data_quality_service.dart';
 
 final dashboardViewModelProvider =
     AsyncNotifierProvider.autoDispose<DashboardViewModel, DashboardState>(
@@ -19,6 +20,8 @@ class DashboardState {
     required this.missingCostOrderCount,
     required this.missingSaleAmountOrderCount,
     required this.abnormalOrderCount,
+    this.qualitySummaries = const [],
+    this.recentQualityIssues = const [],
     this.recentOrders = const [],
     this.recentShipments = const [],
   });
@@ -32,6 +35,8 @@ class DashboardState {
   final int missingCostOrderCount;
   final int missingSaleAmountOrderCount;
   final int abnormalOrderCount;
+  final List<DashboardQualitySummaryState> qualitySummaries;
+  final List<DashboardQualityIssueState> recentQualityIssues;
   final List<DashboardRecentOrderState> recentOrders;
   final List<DashboardRecentShipmentState> recentShipments;
 
@@ -47,12 +52,72 @@ class DashboardState {
       missingCostOrderCount: overview.missingCostOrderCount,
       missingSaleAmountOrderCount: overview.missingSaleAmountOrderCount,
       abnormalOrderCount: overview.abnormalOrderCount,
+      qualitySummaries: overview.qualitySummaries
+          .map(DashboardQualitySummaryState.fromModel)
+          .toList(),
+      recentQualityIssues: overview.recentQualityIssues
+          .map(DashboardQualityIssueState.fromModel)
+          .toList(),
       recentOrders: overview.recentOrders
           .map(DashboardRecentOrderState.fromModel)
           .toList(),
       recentShipments: overview.recentShipments
           .map(DashboardRecentShipmentState.fromModel)
           .toList(),
+    );
+  }
+}
+
+class DashboardQualitySummaryState {
+  const DashboardQualitySummaryState({
+    required this.code,
+    required this.title,
+    required this.severity,
+    required this.issueCount,
+    required this.orderCount,
+  });
+
+  final String code;
+  final String title;
+  final DataQualitySeverity severity;
+  final int issueCount;
+  final int orderCount;
+
+  factory DashboardQualitySummaryState.fromModel(
+    DataQualityRuleSummary summary,
+  ) {
+    return DashboardQualitySummaryState(
+      code: summary.code,
+      title: summary.title,
+      severity: summary.severity,
+      issueCount: summary.issueCount,
+      orderCount: summary.orderCount,
+    );
+  }
+}
+
+class DashboardQualityIssueState {
+  const DashboardQualityIssueState({
+    required this.code,
+    required this.title,
+    required this.message,
+    required this.severity,
+    this.orderNo,
+  });
+
+  final String code;
+  final String title;
+  final String message;
+  final DataQualitySeverity severity;
+  final String? orderNo;
+
+  factory DashboardQualityIssueState.fromModel(DataQualityIssue issue) {
+    return DashboardQualityIssueState(
+      code: issue.code,
+      title: issue.title,
+      message: issue.message,
+      severity: issue.severity,
+      orderNo: issue.orderNo,
     );
   }
 }

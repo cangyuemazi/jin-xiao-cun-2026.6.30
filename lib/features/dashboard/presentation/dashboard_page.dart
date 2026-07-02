@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../domain/services/data_quality_service.dart';
 import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/theme/app_text_styles.dart';
@@ -14,7 +15,9 @@ import '../widgets/dashboard_metric_card.dart';
 import '../widgets/dashboard_todo_card.dart';
 
 class DashboardPage extends ConsumerWidget {
-  const DashboardPage({super.key});
+  const DashboardPage({super.key, this.onQualityIssueSelected});
+
+  final ValueChanged<String>? onQualityIssueSelected;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -89,18 +92,26 @@ class DashboardPage extends ConsumerWidget {
                   count: data.pendingShipmentOrderCount,
                   icon: Icons.local_shipping_outlined,
                   tone: DashboardTodoTone.info,
+                  onTap: () =>
+                      onQualityIssueSelected?.call('ordered_not_shipped'),
                 ),
                 DashboardTodoCard(
                   label: '未填成本订单',
                   count: data.missingCostOrderCount,
                   icon: Icons.price_change_outlined,
                   tone: DashboardTodoTone.warning,
+                  onTap: () => onQualityIssueSelected?.call(
+                    DataQualityService.missingCostGroupCode,
+                  ),
                 ),
                 DashboardTodoCard(
                   label: '未填销售金额订单',
                   count: data.missingSaleAmountOrderCount,
                   icon: Icons.request_quote_outlined,
                   tone: DashboardTodoTone.warning,
+                  onTap: () => onQualityIssueSelected?.call(
+                    DataQualityService.missingSaleAmountGroupCode,
+                  ),
                 ),
                 DashboardTodoCard(
                   label: '异常订单',
@@ -109,8 +120,18 @@ class DashboardPage extends ConsumerWidget {
                   tone: data.abnormalOrderCount > 0
                       ? DashboardTodoTone.danger
                       : DashboardTodoTone.neutral,
+                  onTap: () => onQualityIssueSelected?.call(
+                    DataQualityService.allIssuesCode,
+                  ),
                 ),
               ],
+            ),
+            const SizedBox(height: AppSpacing.xxl),
+            _QualitySummaryTable(
+              rows: data.qualitySummaries
+                  .where((summary) => summary.issueCount > 0)
+                  .toList(),
+              onIssueSelected: onQualityIssueSelected,
             ),
             const SizedBox(height: AppSpacing.xxl),
             Row(
@@ -131,6 +152,87 @@ class DashboardPage extends ConsumerWidget {
 
   String _money(int amount) {
     return '¥${DashboardViewModel.formatFenToYuan(amount)}';
+  }
+}
+
+class _QualitySummaryTable extends StatelessWidget {
+  const _QualitySummaryTable({required this.rows, this.onIssueSelected});
+
+  final List<DashboardQualitySummaryState> rows;
+  final ValueChanged<String>? onIssueSelected;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SectionHeader(
+          title: '异常提醒',
+          description: '由数据质量服务统一识别，点击后进入订单列表筛选',
+        ),
+        const SizedBox(height: AppSpacing.lg),
+        AppTable<DashboardQualitySummaryState>(
+          rows: rows,
+          emptyTitle: '暂无异常提醒',
+          emptyDescription: '当前订单、发货、客户、厂家和库存数据未触发异常规则。',
+          onRowTap: (row) => onIssueSelected?.call(row.code),
+          columns: [
+            AppTableColumn<DashboardQualitySummaryState>(
+              label: '异常规则',
+              width: 220,
+              cellBuilder: (row) => Text(row.title),
+            ),
+            AppTableColumn<DashboardQualitySummaryState>(
+              label: '异常数',
+              width: 80,
+              numeric: true,
+              cellBuilder: (row) => Text('${row.issueCount}'),
+            ),
+            AppTableColumn<DashboardQualitySummaryState>(
+              label: '涉及订单',
+              width: 90,
+              numeric: true,
+              cellBuilder: (row) => Text('${row.orderCount}'),
+            ),
+            AppTableColumn<DashboardQualitySummaryState>(
+              label: '级别',
+              width: 100,
+              cellBuilder: (row) => StatusBadge(
+                label: _severityLabel(row.severity),
+                tone: _qualityTone(row.severity),
+              ),
+            ),
+            AppTableColumn<DashboardQualitySummaryState>(
+              label: '操作',
+              width: 110,
+              cellBuilder: (row) => AppButton(
+                label: '查看',
+                icon: Icons.arrow_forward,
+                size: AppButtonSize.small,
+                variant: AppButtonVariant.ghost,
+                onPressed: () => onIssueSelected?.call(row.code),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  StatusBadgeTone _qualityTone(DataQualitySeverity severity) {
+    return switch (severity) {
+      DataQualitySeverity.info => StatusBadgeTone.info,
+      DataQualitySeverity.warning => StatusBadgeTone.warning,
+      DataQualitySeverity.danger => StatusBadgeTone.danger,
+    };
+  }
+
+  String _severityLabel(DataQualitySeverity severity) {
+    return switch (severity) {
+      DataQualitySeverity.info => '提醒',
+      DataQualitySeverity.warning => '警告',
+      DataQualitySeverity.danger => '风险',
+    };
   }
 }
 

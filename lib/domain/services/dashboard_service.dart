@@ -2,6 +2,7 @@ import '../../data/database/app_database.dart';
 import '../../data/repositories/customer_repository.dart';
 import '../../data/repositories/order_repository.dart';
 import '../../data/repositories/shipment_repository.dart';
+import 'data_quality_service.dart';
 import 'dictionary_service.dart';
 import 'shipment_service.dart';
 
@@ -15,6 +16,8 @@ class DashboardOverview {
     required this.missingCostOrderCount,
     required this.missingSaleAmountOrderCount,
     required this.abnormalOrderCount,
+    this.qualitySummaries = const [],
+    this.recentQualityIssues = const [],
     this.recentOrders = const [],
     this.recentShipments = const [],
   });
@@ -27,6 +30,8 @@ class DashboardOverview {
   final int missingCostOrderCount;
   final int missingSaleAmountOrderCount;
   final int abnormalOrderCount;
+  final List<DataQualityRuleSummary> qualitySummaries;
+  final List<DataQualityIssue> recentQualityIssues;
   final List<DashboardRecentOrder> recentOrders;
   final List<DashboardRecentShipment> recentShipments;
 }
@@ -86,11 +91,13 @@ class DashboardService {
     CustomerRepository? customerRepository,
     DictionaryService? dictionaryService,
     ShipmentService? shipmentService,
+    DataQualityService? dataQualityService,
   }) : _orderRepository = orderRepository,
        _shipmentRepository = shipmentRepository,
        _customerRepository = customerRepository,
        _dictionaryService = dictionaryService,
-       _shipmentService = shipmentService;
+       _shipmentService = shipmentService,
+       _dataQualityService = dataQualityService;
 
   static const _terminalShipmentExcludedOrderStatuses = {
     'completed',
@@ -103,6 +110,7 @@ class DashboardService {
   final CustomerRepository? _customerRepository;
   final DictionaryService? _dictionaryService;
   final ShipmentService? _shipmentService;
+  final DataQualityService? _dataQualityService;
 
   Future<DashboardOverview> getOverview({DateTime? now}) async {
     final current = now ?? DateTime.now();
@@ -111,41 +119,31 @@ class DashboardService {
         ? DateTime(current.year + 1)
         : DateTime(current.year, current.month + 1);
     final orders = await _orderRepository.list(limit: 1000);
+    final qualityReport = await _dataQualityService?.analyze(now: current);
     final monthOrders = orders.where((order) {
       final date = order.orderDate ?? order.createdAt;
       return !date.isBefore(monthStart) && date.isBefore(nextMonth);
     }).toList();
 
-    var pendingShipmentOrderCount = 0;
-    var missingCostOrderCount = 0;
-    var missingSaleAmountOrderCount = 0;
-    final abnormalOrderUuids = <String>{};
+    final pendingShipmentOrderCount =
+        qualityReport?._orderCountForCodes({'ordered_not_shipped'}) ??
+        await _fallbackPendingShipmentOrderCount(orders);
+    final missingCostOrderCount =
+        qualityReport?._orderCountForCodes({
+          'shipped_missing_cost',
+          'sale_without_cost',
+        }) ??
+        _fallbackMissingCostOrderCount(orders);
+    final missingSaleAmountOrderCount =
+        qualityReport?._orderCountForCodes({
+          'shipped_missing_sale_amount',
+          'cost_without_sale',
+        }) ??
+        _fallbackMissingSaleAmountOrderCount(orders);
 
-    for (final order in orders) {
-      final isCancelled = order.orderStatus == 'cancelled';
-      if (!isCancelled && order.totalCostAmount <= 0) {
-        missingCostOrderCount += 1;
-        abnormalOrderUuids.add(order.uuid);
-      }
-      if (!isCancelled && order.totalSaleAmount <= 0) {
-        missingSaleAmountOrderCount += 1;
-        abnormalOrderUuids.add(order.uuid);
-      }
-      if (!isCancelled && order.totalProfitAmount < 0) {
-        abnormalOrderUuids.add(order.uuid);
-      }
-
-      if (_terminalShipmentExcludedOrderStatuses.contains(order.orderStatus)) {
-        continue;
-      }
-
-      final shipmentStatus =
-          await _shipmentService?.resolveOrderShipmentStatus(order.uuid) ??
-          (order.orderStatus == 'shipped' ? 'shipped' : 'pending');
-      if (shipmentStatus != 'shipped') {
-        pendingShipmentOrderCount += 1;
-      }
-    }
+    final abnormalOrderCount =
+        qualityReport?.abnormalOrderCount ??
+        _fallbackAbnormalOrderCount(orders);
 
     final orderStatusLabels = await _labelsByType('order_status');
     final shipmentStatusLabels = await _labelsByType('shipment_status');
@@ -159,7 +157,9 @@ class DashboardService {
       pendingShipmentOrderCount: pendingShipmentOrderCount,
       missingCostOrderCount: missingCostOrderCount,
       missingSaleAmountOrderCount: missingSaleAmountOrderCount,
-      abnormalOrderCount: abnormalOrderUuids.length,
+      abnormalOrderCount: abnormalOrderCount,
+      qualitySummaries: qualityReport?.ruleSummaries ?? const [],
+      recentQualityIssues: qualityReport?.issues.take(8).toList() ?? const [],
       recentOrders: await _recentOrders(orders, orderStatusLabels),
       recentShipments: await _recentShipments(
         shipmentStatusLabels,
@@ -263,5 +263,65 @@ class DashboardService {
 
   int _sum(List<SalesOrder> orders, int Function(SalesOrder order) value) {
     return orders.fold<int>(0, (sum, order) => sum + value(order));
+  }
+
+  Future<int> _fallbackPendingShipmentOrderCount(
+    List<SalesOrder> orders,
+  ) async {
+    var count = 0;
+    for (final order in orders) {
+      if (_terminalShipmentExcludedOrderStatuses.contains(order.orderStatus)) {
+        continue;
+      }
+
+      final shipmentStatus =
+          await _shipmentService?.resolveOrderShipmentStatus(order.uuid) ??
+          (order.orderStatus == 'shipped' ? 'shipped' : 'pending');
+      if (shipmentStatus != 'shipped') {
+        count += 1;
+      }
+    }
+    return count;
+  }
+
+  int _fallbackMissingCostOrderCount(List<SalesOrder> orders) {
+    return orders
+        .where(
+          (order) =>
+              order.orderStatus != 'cancelled' && order.totalCostAmount <= 0,
+        )
+        .length;
+  }
+
+  int _fallbackMissingSaleAmountOrderCount(List<SalesOrder> orders) {
+    return orders
+        .where(
+          (order) =>
+              order.orderStatus != 'cancelled' && order.totalSaleAmount <= 0,
+        )
+        .length;
+  }
+
+  int _fallbackAbnormalOrderCount(List<SalesOrder> orders) {
+    return orders
+        .where(
+          (order) =>
+              order.orderStatus != 'cancelled' &&
+              (order.totalSaleAmount <= 0 ||
+                  order.totalCostAmount <= 0 ||
+                  order.totalProfitAmount < 0),
+        )
+        .length;
+  }
+}
+
+extension on DataQualityReport {
+  int _orderCountForCodes(Set<String> codes) {
+    return issues
+        .where((issue) => codes.contains(issue.code))
+        .map((issue) => issue.orderUuid)
+        .whereType<String>()
+        .toSet()
+        .length;
   }
 }

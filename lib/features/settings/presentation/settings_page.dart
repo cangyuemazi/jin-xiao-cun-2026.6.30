@@ -13,6 +13,7 @@ import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/section_header.dart';
 import '../../../shared/widgets/status_badge.dart';
+import '../view_models/backup_view_model.dart';
 import '../view_models/export_view_model.dart';
 import '../view_models/import_view_model.dart';
 
@@ -56,6 +57,8 @@ class SettingsPage extends ConsumerWidget {
           ),
           const SizedBox(height: AppSpacing.xxl),
           const _ExportSection(),
+          const SizedBox(height: AppSpacing.xxl),
+          const _BackupSection(),
           const SizedBox(height: AppSpacing.xxl),
           _ImportControlCard(
             state: state,
@@ -205,6 +208,223 @@ class SettingsPage extends ConsumerWidget {
     if (confirmed == true) {
       await ref.read(importViewModelProvider.notifier).confirmImport();
     }
+  }
+}
+
+class _BackupSection extends ConsumerWidget {
+  const _BackupSection();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final asyncState = ref.watch(backupViewModelProvider);
+
+    return asyncState.when(
+      loading: () => _BackupCard(
+        state: const BackupState(),
+        isLoading: true,
+        onRefresh: null,
+        onManualBackup: null,
+        onRestore: null,
+      ),
+      error: (error, stackTrace) => _BackupCard(
+        state: BackupState(errorMessage: error.toString()),
+        onRefresh: () => ref.read(backupViewModelProvider.notifier).refresh(),
+        onManualBackup: () =>
+            ref.read(backupViewModelProvider.notifier).createManualBackup(),
+        onRestore: (entry) => _confirmRestore(context, ref, entry),
+      ),
+      data: (state) => _BackupCard(
+        state: state,
+        onRefresh: () => ref.read(backupViewModelProvider.notifier).refresh(),
+        onManualBackup: () =>
+            ref.read(backupViewModelProvider.notifier).createManualBackup(),
+        onRestore: (entry) => _confirmRestore(context, ref, entry),
+      ),
+    );
+  }
+
+  Future<void> _confirmRestore(
+    BuildContext context,
+    WidgetRef ref,
+    BackupEntryState entry,
+  ) async {
+    final confirmed = await AppDialog.show<bool>(
+      context: context,
+      title: '确认从备份恢复',
+      content: Text(
+        '恢复会用备份文件替换当前本地数据库。系统会先自动备份当前数据库，再执行恢复。\n\n'
+        '备份文件：${entry.fileName}',
+        style: AppTextStyles.body,
+      ),
+      primaryAction: AppDialogAction(
+        label: '确认恢复',
+        isDanger: true,
+        onPressed: () => Navigator.of(context).pop(true),
+      ),
+      secondaryAction: AppDialogAction(
+        label: '取消',
+        onPressed: () => Navigator.of(context).pop(false),
+      ),
+    );
+
+    if (confirmed == true) {
+      await ref
+          .read(backupViewModelProvider.notifier)
+          .restoreBackup(entry.path);
+    }
+  }
+}
+
+class _BackupCard extends StatelessWidget {
+  const _BackupCard({
+    required this.state,
+    required this.onRefresh,
+    required this.onManualBackup,
+    required this.onRestore,
+    this.isLoading = false,
+  });
+
+  final BackupState state;
+  final bool isLoading;
+  final VoidCallback? onRefresh;
+  final VoidCallback? onManualBackup;
+  final ValueChanged<BackupEntryState>? onRestore;
+
+  @override
+  Widget build(BuildContext context) {
+    final result = state.result;
+
+    return AppCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SectionHeader(
+            title: '本地数据库备份',
+            description: '启动时每天自动备份一次；手动备份和恢复均由 Service 层处理。最近 30 个备份会自动保留。',
+            trailing: Wrap(
+              spacing: AppSpacing.sm,
+              runSpacing: AppSpacing.sm,
+              children: [
+                AppButton(
+                  label: '刷新列表',
+                  icon: Icons.refresh,
+                  variant: AppButtonVariant.secondary,
+                  onPressed: isLoading ? null : onRefresh,
+                ),
+                AppButton(
+                  label: '手动备份',
+                  icon: Icons.backup_outlined,
+                  isLoading: isLoading,
+                  onPressed: isLoading ? null : onManualBackup,
+                ),
+              ],
+            ),
+          ),
+          if (state.errorMessage != null) ...[
+            const SizedBox(height: AppSpacing.lg),
+            StatusBadge(
+              label: state.errorMessage!,
+              tone: StatusBadgeTone.danger,
+              icon: Icons.error_outline,
+            ),
+          ],
+          if (result != null) ...[
+            const SizedBox(height: AppSpacing.lg),
+            _BackupResultCard(result: result),
+          ],
+          const SizedBox(height: AppSpacing.xl),
+          if (isLoading)
+            const Center(child: CircularProgressIndicator())
+          else
+            AppTable<BackupEntryState>(
+              rows: state.backups,
+              emptyTitle: '暂无备份',
+              emptyDescription: '点击手动备份后会在这里显示本地备份文件。',
+              columns: [
+                AppTableColumn<BackupEntryState>(
+                  label: '备份文件',
+                  width: 260,
+                  cellBuilder: (entry) => Text(entry.fileName),
+                ),
+                AppTableColumn<BackupEntryState>(
+                  label: '类型',
+                  width: 116,
+                  cellBuilder: (entry) => StatusBadge(
+                    label: entry.reasonLabel,
+                    tone: entry.reasonLabel == '恢复前备份'
+                        ? StatusBadgeTone.warning
+                        : StatusBadgeTone.info,
+                  ),
+                ),
+                AppTableColumn<BackupEntryState>(
+                  label: '时间',
+                  width: 150,
+                  cellBuilder: (entry) => Text(entry.createdAtText),
+                ),
+                AppTableColumn<BackupEntryState>(
+                  label: '大小',
+                  width: 92,
+                  cellBuilder: (entry) => Text(entry.sizeText),
+                ),
+                AppTableColumn<BackupEntryState>(
+                  label: '路径',
+                  width: 260,
+                  cellBuilder: (entry) => Text(entry.path),
+                ),
+                AppTableColumn<BackupEntryState>(
+                  label: '操作',
+                  width: 128,
+                  cellBuilder: (entry) => AppButton(
+                    label: '恢复',
+                    icon: Icons.restore,
+                    size: AppButtonSize.small,
+                    variant: AppButtonVariant.danger,
+                    onPressed: onRestore == null
+                        ? null
+                        : () => onRestore!(entry),
+                  ),
+                ),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BackupResultCard extends StatelessWidget {
+  const _BackupResultCard({required this.result});
+
+  final BackupResultState result;
+
+  @override
+  Widget build(BuildContext context) {
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: AppColors.infoSoft,
+        borderRadius: AppRadius.card,
+        border: Border.all(color: AppColors.infoSoft),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(AppSpacing.lg),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            StatusBadge(
+              label: result.title,
+              tone: StatusBadgeTone.info,
+              icon: Icons.check_circle_outline,
+            ),
+            const SizedBox(height: AppSpacing.md),
+            Text(result.message, style: AppTextStyles.body),
+            const SizedBox(height: AppSpacing.sm),
+            Text(result.filePath, style: AppTextStyles.caption),
+            const SizedBox(height: AppSpacing.xs),
+            Text(result.createdAtText, style: AppTextStyles.caption),
+          ],
+        ),
+      ),
+    );
   }
 }
 

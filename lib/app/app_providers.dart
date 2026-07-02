@@ -150,7 +150,10 @@ final supplierServiceProvider = Provider<SupplierService>((ref) {
 });
 
 final backupServiceProvider = Provider<BackupService>((ref) {
-  return BackupService(auditLogService: ref.watch(auditLogServiceProvider));
+  return BackupService(
+    database: ref.watch(appDatabaseProvider),
+    auditLogService: ref.watch(auditLogServiceProvider),
+  );
 });
 
 final importServiceProvider = Provider<ImportService>((ref) {

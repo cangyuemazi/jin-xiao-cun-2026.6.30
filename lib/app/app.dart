@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'app_providers.dart';
 import '../features/customers/presentation/customer_address_form_page.dart';
 import '../features/customers/presentation/customer_detail_page.dart';
 import '../features/customers/presentation/customer_form_page.dart';
@@ -59,6 +60,14 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
   int _selectedIndex = 0;
 
   @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _runStartupBackup();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return DesktopShell(
       selectedIndex: _selectedIndex,
@@ -74,6 +83,20 @@ class _DesktopWorkspacePageState extends ConsumerState<_DesktopWorkspacePage> {
       actions: _actions(context),
       child: _child(context),
     );
+  }
+
+  Future<void> _runStartupBackup() async {
+    try {
+      await ref.read(backupServiceProvider).ensureDailyLaunchBackup();
+    } catch (error) {
+      if (!mounted) {
+        return;
+      }
+
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('启动自动备份失败：$error')));
+    }
   }
 
   String get _title {

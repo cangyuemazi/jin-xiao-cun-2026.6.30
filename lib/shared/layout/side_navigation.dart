@@ -25,20 +25,65 @@ class SideNavigation extends StatelessWidget {
     SideNavigationItem(label: '厂家', icon: Icons.factory_outlined),
     SideNavigationItem(label: '发货', icon: Icons.local_shipping_outlined),
     SideNavigationItem(label: '库存', icon: Icons.inventory_2_outlined),
-    SideNavigationItem(
-      label: '财务',
-      icon: Icons.account_balance_wallet_outlined,
-    ),
+    SideNavigationItem(label: '财务', icon: Icons.account_balance_wallet_outlined),
     SideNavigationItem(label: '设置', icon: Icons.settings_outlined),
+  ];
+
+  static const List<String> groupLabels = [
+    '经营看板',
+    '业务管理',
+    '',
+    '',
+    '',
+    '',
+    '数据与系统',
+    '',
+    '',
   ];
 
   @override
   Widget build(BuildContext context) {
+    final List<Widget> groupedItems = [];
+    String? currentGroup;
+
+    for (var i = 0; i < items.length; i++) {
+      final groupLabel = i < groupLabels.length ? groupLabels[i] : '';
+      if (groupLabel.isNotEmpty && groupLabel != currentGroup) {
+        if (currentGroup != null) {
+          groupedItems.add(const SizedBox(height: AppSpacing.lg));
+        }
+        currentGroup = groupLabel;
+        groupedItems.add(
+          Padding(
+            padding: const EdgeInsets.only(
+              left: AppSpacing.md,
+              right: AppSpacing.md,
+              bottom: AppSpacing.sm,
+            ),
+            child: Text(
+              groupLabel,
+              style: AppTextStyles.captionStrong.copyWith(
+                letterSpacing: 0.5,
+              ),
+            ),
+          ),
+        );
+      }
+
+      groupedItems.add(
+        _NavigationTile(
+          item: items[i],
+          selected: i == selectedIndex,
+          onTap: () => onDestinationSelected(i),
+        ),
+      );
+    }
+
     return Container(
-      width: 232,
+      width: 240,
       decoration: const BoxDecoration(
         color: AppColors.surface,
-        border: Border(right: BorderSide(color: AppColors.border)),
+        border: Border(right: BorderSide(color: AppColors.border, width: 0.5)),
       ),
       child: SafeArea(
         child: Padding(
@@ -49,20 +94,9 @@ class SideNavigation extends StatelessWidget {
               const _BrandHeader(),
               const SizedBox(height: AppSpacing.xxl),
               Expanded(
-                child: ListView.separated(
-                  itemCount: items.length,
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: AppSpacing.xs),
-                  itemBuilder: (context, index) {
-                    final item = items[index];
-                    final selected = index == selectedIndex;
-
-                    return _NavigationTile(
-                      item: item,
-                      selected: selected,
-                      onTap: () => onDestinationSelected(index),
-                    );
-                  },
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: groupedItems,
                 ),
               ),
             ],
@@ -88,16 +122,16 @@ class _BrandHeader extends StatelessWidget {
     return Row(
       children: [
         Container(
-          width: AppSpacing.xxxl,
-          height: AppSpacing.xxxl,
+          width: 36,
+          height: 36,
           decoration: BoxDecoration(
             color: AppColors.primarySoft,
-            borderRadius: AppRadius.sm,
+            borderRadius: AppRadius.borderMd,
           ),
           child: const Icon(
             Icons.science_outlined,
             color: AppColors.primary,
-            size: AppSpacing.xl,
+            size: 20,
           ),
         ),
         const SizedBox(width: AppSpacing.md),
@@ -105,8 +139,12 @@ class _BrandHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('JinXiaoCun', style: AppTextStyles.cardTitle),
-              Text('2026', style: AppTextStyles.caption),
+              Text('JinXiaoCun', style: AppTextStyles.cardTitle.copyWith(
+                letterSpacing: -0.2,
+              )),
+              Text('2026', style: AppTextStyles.caption.copyWith(
+                color: AppColors.textMuted,
+              )),
             ],
           ),
         ),
@@ -115,7 +153,7 @@ class _BrandHeader extends StatelessWidget {
   }
 }
 
-class _NavigationTile extends StatelessWidget {
+class _NavigationTile extends StatefulWidget {
   const _NavigationTile({
     required this.item,
     required this.selected,
@@ -127,35 +165,64 @@ class _NavigationTile extends StatelessWidget {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context) {
-    final foreground = selected ? AppColors.primary : AppColors.textSecondary;
-    final background = selected ? AppColors.primarySoft : Colors.transparent;
+  State<_NavigationTile> createState() => _NavigationTileState();
+}
 
-    return Material(
-      color: background,
-      borderRadius: AppRadius.button,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: AppRadius.button,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(
-            horizontal: AppSpacing.md,
-            vertical: AppSpacing.sm,
-          ),
-          child: Row(
-            children: [
-              Icon(item.icon, size: AppSpacing.xl, color: foreground),
-              const SizedBox(width: AppSpacing.md),
-              Expanded(
-                child: Text(
-                  item.label,
-                  style: AppTextStyles.body.copyWith(
-                    color: foreground,
-                    fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
-                  ),
-                ),
+class _NavigationTileState extends State<_NavigationTile> {
+  bool _hovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final foreground =
+        widget.selected ? AppColors.primary : AppColors.textSecondary;
+    final background = widget.selected
+        ? AppColors.primarySoft
+        : _hovered
+            ? AppColors.surfaceMuted
+            : Colors.transparent;
+
+    return MouseRegion(
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      cursor: SystemMouseCursors.click,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 120),
+        margin: const EdgeInsets.only(bottom: AppSpacing.xxs),
+        decoration: BoxDecoration(
+          color: background,
+          borderRadius: AppRadius.borderMd,
+        ),
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: AppRadius.borderMd,
+          child: InkWell(
+            onTap: widget.onTap,
+            borderRadius: AppRadius.borderMd,
+            splashColor: AppColors.overlay,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(
+                horizontal: AppSpacing.md,
+                vertical: AppSpacing.sm + 2,
               ),
-            ],
+              child: Row(
+                children: [
+                  Icon(
+                    widget.item.icon,
+                    size: 20,
+                    color: foreground,
+                  ),
+                  const SizedBox(width: AppSpacing.md),
+                  Expanded(
+                    child: Text(
+                      widget.item.label,
+                      style: AppTextStyles.bodyStrong.copyWith(
+                        color: foreground,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),

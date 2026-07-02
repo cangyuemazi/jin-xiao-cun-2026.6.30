@@ -14,6 +14,8 @@ class AppTable<T> extends StatelessWidget {
     this.onRowTap,
     this.emptyTitle = '暂无数据',
     this.emptyDescription,
+    this.isLoading = false,
+    this.loadingRowCount = 5,
   });
 
   final List<AppTableColumn<T>> columns;
@@ -21,9 +23,18 @@ class AppTable<T> extends StatelessWidget {
   final ValueChanged<T>? onRowTap;
   final String emptyTitle;
   final String? emptyDescription;
+  final bool isLoading;
+  final int loadingRowCount;
 
   @override
   Widget build(BuildContext context) {
+    if (isLoading) {
+      return _LoadingTable(
+        columns: columns,
+        rowCount: loadingRowCount,
+      );
+    }
+
     if (rows.isEmpty) {
       return EmptyState(
         icon: Icons.table_rows_outlined,
@@ -43,9 +54,83 @@ class AppTable<T> extends StatelessWidget {
         child: SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: DataTable(
-            headingRowHeight: 44,
-            dataRowMinHeight: 48,
-            dataRowMaxHeight: 56,
+            headingRowHeight: 42,
+            dataRowMinHeight: AppSpacing.tableRowHeight,
+            dataRowMaxHeight: AppSpacing.tableRowHeight,
+            horizontalMargin: AppSpacing.lg,
+            columnSpacing: AppSpacing.xxl,
+            showCheckboxColumn: false,
+            headingRowColor:
+                const WidgetStatePropertyAll(AppColors.surfaceAlt),
+            columns: [
+              for (final column in columns)
+                DataColumn(
+                  numeric: column.numeric,
+                  label: _SizedCell(
+                    width: column.width,
+                    child: Text(
+                      column.label,
+                      style: AppTextStyles.tableHeader,
+                    ),
+                  ),
+                ),
+            ],
+            rows: [
+              for (var i = 0; i < rows.length; i++)
+                DataRow(
+                  onSelectChanged: onRowTap == null
+                      ? null
+                      : (_) => onRowTap!(rows[i]),
+                  color: i.isEven
+                      ? const WidgetStatePropertyAll(AppColors.surface)
+                      : const WidgetStatePropertyAll(AppColors.surfaceAlt),
+                  cells: [
+                    for (final column in columns)
+                      DataCell(
+                        _SizedCell(
+                          width: column.width,
+                          child: DefaultTextStyle.merge(
+                            style: AppTextStyles.tableCell,
+                            overflow: TextOverflow.ellipsis,
+                            child: column.cellBuilder(rows[i]),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _LoadingTable<T> extends StatelessWidget {
+  const _LoadingTable({
+    required this.columns,
+    required this.rowCount,
+  });
+
+  final List<AppTableColumn<T>> columns;
+  final int rowCount;
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipRRect(
+      borderRadius: AppRadius.table,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          border: Border.all(color: AppColors.border),
+          borderRadius: AppRadius.table,
+        ),
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: DataTable(
+            headingRowHeight: 42,
+            dataRowMinHeight: AppSpacing.tableRowHeight,
+            dataRowMaxHeight: AppSpacing.tableRowHeight,
             horizontalMargin: AppSpacing.lg,
             columnSpacing: AppSpacing.xxl,
             showCheckboxColumn: false,
@@ -55,35 +140,38 @@ class AppTable<T> extends StatelessWidget {
                   numeric: column.numeric,
                   label: _SizedCell(
                     width: column.width,
-                    child: Text(column.label),
+                    child: Text(column.label, style: AppTextStyles.tableHeader),
                   ),
                 ),
             ],
-            rows: [
-              for (final row in rows)
-                DataRow(
-                  onSelectChanged: onRowTap == null
-                      ? null
-                      : (_) {
-                          onRowTap!(row);
-                        },
-                  cells: [
-                    for (final column in columns)
-                      DataCell(
-                        _SizedCell(
-                          width: column.width,
-                          child: DefaultTextStyle.merge(
-                            style: AppTextStyles.tableCell,
-                            overflow: TextOverflow.ellipsis,
-                            child: column.cellBuilder(row),
-                          ),
-                        ),
-                      ),
-                  ],
-                ),
-            ],
+            rows: List.generate(rowCount, (index) {
+              return DataRow(cells: [
+                for (final column in columns)
+                  DataCell(
+                    _SizedCell(
+                      width: column.width,
+                      child: _ShimmerBlock(),
+                    ),
+                  ),
+              ]);
+            }),
           ),
         ),
+      ),
+    );
+  }
+}
+
+class _ShimmerBlock extends StatelessWidget {
+  const _ShimmerBlock();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      height: 14,
+      decoration: BoxDecoration(
+        color: AppColors.surfaceMuted,
+        borderRadius: AppRadius.borderXs,
       ),
     );
   }
@@ -111,10 +199,7 @@ class _SizedCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (width == null) {
-      return child;
-    }
-
+    if (width == null) return child;
     return SizedBox(width: width, child: child);
   }
 }

@@ -24,14 +24,13 @@ class TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 76,
+      height: 60,
       decoration: const BoxDecoration(
         color: AppColors.surface,
-        border: Border(bottom: BorderSide(color: AppColors.border)),
+        border: Border(bottom: BorderSide(color: AppColors.border, width: 0.5)),
       ),
       padding: const EdgeInsets.symmetric(
         horizontal: AppSpacing.xxl,
-        vertical: AppSpacing.md,
       ),
       child: Row(
         children: [
@@ -42,15 +41,19 @@ class TopBar extends StatelessWidget {
               children: [
                 Text(title, style: AppTextStyles.sectionTitle),
                 if (subtitle != null) ...[
-                  const SizedBox(height: AppSpacing.xs),
-                  Text(subtitle!, style: AppTextStyles.caption),
+                  const SizedBox(height: AppSpacing.xxs),
+                  Text(
+                    subtitle!,
+                    style: AppTextStyles.caption,
+                    overflow: TextOverflow.ellipsis,
+                  ),
                 ],
               ],
             ),
           ),
           if (searchHint != null) ...[
             SizedBox(
-              width: 280,
+              width: 256,
               child: SearchInput(
                 hintText: searchHint!,
                 onChanged: onSearchChanged,
@@ -58,10 +61,7 @@ class TopBar extends StatelessWidget {
             ),
             const SizedBox(width: AppSpacing.lg),
           ],
-          for (final action in actions) ...[
-            action,
-            if (action != actions.last) const SizedBox(width: AppSpacing.sm),
-          ],
+          ...actions,
         ],
       ),
     );

@@ -61,7 +61,7 @@ class FinancePage extends ConsumerWidget {
                 ),
               ),
               const SizedBox(height: AppSpacing.xxl),
-              FinanceFormSection(
+              AppFormSection(
                 title: '订单选择',
                 child: FinanceOrderSelect(
                   value: data.selectedOrderUuid,
@@ -97,7 +97,7 @@ class FinancePage extends ConsumerWidget {
                 ),
               ],
               const SizedBox(height: AppSpacing.lg),
-              FinanceFormSection(
+              AppFormSection(
                 key: ValueKey(
                   '${data.selectedOrderUuid}-${data.form.expenseUuid ?? 'new'}',
                 ),

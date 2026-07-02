@@ -1,7 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
-import 'app_text_field.dart';
+import '../theme/app_spacing.dart';
 
 class SearchInput extends StatelessWidget {
   const SearchInput({
@@ -21,20 +21,53 @@ class SearchInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AppTextField(
+    return TextFormField(
       controller: controller,
-      hintText: hintText,
       textInputAction: TextInputAction.search,
-      prefixIcon: const Icon(Icons.search, color: AppColors.textMuted),
-      suffixIcon: onClear == null
-          ? null
-          : IconButton(
-              tooltip: '清空',
-              onPressed: onClear,
-              icon: const Icon(Icons.close, color: AppColors.textMuted),
-            ),
       onChanged: onChanged,
-      onSubmitted: onSubmitted,
+      onFieldSubmitted: onSubmitted,
+      style: const TextStyle(
+        fontSize: 14,
+        color: AppColors.textPrimary,
+      ),
+      decoration: InputDecoration(
+        hintText: hintText,
+        filled: true,
+        fillColor: AppColors.surfaceAlt,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.md,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.sm),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.sm),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppSpacing.sm),
+          borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
+        ),
+        prefixIcon: const Icon(
+          Icons.search,
+          color: AppColors.textMuted,
+          size: 18,
+        ),
+        suffixIcon: onClear != null
+            ? IconButton(
+                tooltip: '清空',
+                onPressed: onClear,
+                icon: const Icon(Icons.close, color: AppColors.textMuted, size: 18),
+                padding: EdgeInsets.zero,
+                constraints: const BoxConstraints(
+                  minWidth: 32,
+                  minHeight: 32,
+                ),
+              )
+            : null,
+      ),
     );
   }
 }

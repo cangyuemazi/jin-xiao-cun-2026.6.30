@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_spacing.dart';
+import '../theme/app_text_styles.dart';
 import 'app_button.dart';
 
 class AppDialog extends StatelessWidget {
@@ -47,9 +48,9 @@ class AppDialog extends StatelessWidget {
       ),
       actionsPadding: const EdgeInsets.fromLTRB(
         AppSpacing.xxl,
-        AppSpacing.sm,
+        AppSpacing.md,
         AppSpacing.xxl,
-        AppSpacing.xxl,
+        AppSpacing.xl,
       ),
       actions: [
         if (secondaryAction != null)

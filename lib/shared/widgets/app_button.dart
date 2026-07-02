@@ -37,76 +37,80 @@ class AppButton extends StatelessWidget {
       isLoading: isLoading,
     );
     final effectiveOnPressed = isLoading ? null : onPressed;
+
+    final style = _style();
+
     final button = switch (variant) {
       AppButtonVariant.primary => FilledButton(
-        onPressed: effectiveOnPressed,
-        style: _style(),
-        child: child,
-      ),
+          onPressed: effectiveOnPressed,
+          style: style,
+          child: child,
+        ),
       AppButtonVariant.secondary => OutlinedButton(
-        onPressed: effectiveOnPressed,
-        style: _style(),
-        child: child,
-      ),
+          onPressed: effectiveOnPressed,
+          style: style,
+          child: child,
+        ),
       AppButtonVariant.ghost => TextButton(
-        onPressed: effectiveOnPressed,
-        style: _style(),
-        child: child,
-      ),
+          onPressed: effectiveOnPressed,
+          style: style,
+          child: child,
+        ),
       AppButtonVariant.danger => FilledButton(
-        onPressed: effectiveOnPressed,
-        style: _style(),
-        child: child,
-      ),
+          onPressed: effectiveOnPressed,
+          style: style,
+          child: child,
+        ),
     };
 
-    if (!expanded) {
-      return button;
-    }
-
+    if (!expanded) return button;
     return SizedBox(width: double.infinity, child: button);
   }
 
   ButtonStyle _style() {
-    final padding = switch (size) {
+    final double height = size == AppButtonSize.small ? 32 : 38;
+
+    final EdgeInsets padding = switch (size) {
       AppButtonSize.small => const EdgeInsets.symmetric(
-        horizontal: AppSpacing.md,
-        vertical: AppSpacing.sm,
-      ),
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.xs,
+        ),
       AppButtonSize.medium => const EdgeInsets.symmetric(
-        horizontal: AppSpacing.xl,
-        vertical: AppSpacing.md,
-      ),
+          horizontal: AppSpacing.xl,
+          vertical: AppSpacing.sm,
+        ),
     };
 
-    final foreground = switch (variant) {
+    final Color foreground = switch (variant) {
       AppButtonVariant.primary => AppColors.textOnPrimary,
       AppButtonVariant.secondary => AppColors.textPrimary,
-      AppButtonVariant.ghost => AppColors.primary,
+      AppButtonVariant.ghost => AppColors.textSecondary,
       AppButtonVariant.danger => AppColors.textOnPrimary,
     };
 
-    final background = switch (variant) {
+    final Color background = switch (variant) {
       AppButtonVariant.primary => AppColors.primary,
       AppButtonVariant.secondary => AppColors.surface,
       AppButtonVariant.ghost => Colors.transparent,
       AppButtonVariant.danger => AppColors.danger,
     };
 
-    final side = switch (variant) {
+    final BorderSide side = switch (variant) {
       AppButtonVariant.secondary => const BorderSide(color: AppColors.border),
       _ => BorderSide.none,
     };
 
     return ButtonStyle(
+      minimumSize: WidgetStatePropertyAll(Size(0, height)),
       textStyle: const WidgetStatePropertyAll(AppTextStyles.button),
       foregroundColor: WidgetStatePropertyAll(foreground),
       backgroundColor: WidgetStatePropertyAll(background),
       surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
-      elevation: const WidgetStatePropertyAll(AppSpacing.zero),
+      elevation: const WidgetStatePropertyAll(0.0),
       overlayColor: const WidgetStatePropertyAll(AppColors.overlay),
       padding: WidgetStatePropertyAll(padding),
       side: WidgetStatePropertyAll(side),
+      iconSize: const WidgetStatePropertyAll(AppSpacing.lg),
       shape: WidgetStatePropertyAll(
         RoundedRectangleBorder(borderRadius: AppRadius.button),
       ),
@@ -131,10 +135,13 @@ class _ButtonContent extends StatelessWidget {
       if (isLoading)
         const SizedBox.square(
           dimension: AppSpacing.lg,
-          child: CircularProgressIndicator(strokeWidth: AppSpacing.xxs),
+          child: CircularProgressIndicator(
+            strokeWidth: 2,
+            color: AppColors.textOnPrimary,
+          ),
         )
       else if (icon != null)
-        Icon(icon, size: AppSpacing.xl),
+        Icon(icon, size: AppSpacing.lg),
       Text(label),
     ];
 

@@ -8,6 +8,7 @@ import '../../../shared/theme/app_text_styles.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
 import '../../../shared/widgets/app_dialog.dart';
+import '../../../shared/widgets/app_page_header.dart';
 import '../../../shared/widgets/app_table.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/empty_state.dart';
@@ -51,11 +52,10 @@ class SettingsPage extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          SectionHeader(
+          AppPageHeader(
             title: '系统设置',
-            description: 'Excel 订单导入、数据维护和后续系统参数集中放在这里。',
+            subtitle: 'Excel 订单导入、数据维护和后续系统参数集中放在这里。',
           ),
-          const SizedBox(height: AppSpacing.xxl),
           const _ExportSection(),
           const SizedBox(height: AppSpacing.xxl),
           const _BackupSection(),
@@ -295,6 +295,7 @@ class _BackupCard extends StatelessWidget {
     final result = state.result;
 
     return AppCard(
+      showShadow: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -399,30 +400,23 @@ class _BackupResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.infoSoft,
-        borderRadius: AppRadius.card,
-        border: Border.all(color: AppColors.infoSoft),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            StatusBadge(
-              label: result.title,
-              tone: StatusBadgeTone.info,
-              icon: Icons.check_circle_outline,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Text(result.message, style: AppTextStyles.body),
-            const SizedBox(height: AppSpacing.sm),
-            Text(result.filePath, style: AppTextStyles.caption),
-            const SizedBox(height: AppSpacing.xs),
-            Text(result.createdAtText, style: AppTextStyles.caption),
-          ],
-        ),
+    return AppCard(
+      showShadow: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          StatusBadge(
+            label: result.title,
+            tone: StatusBadgeTone.info,
+            icon: Icons.check_circle_outline,
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Text(result.message, style: AppTextStyles.bodySmall),
+          const SizedBox(height: AppSpacing.sm),
+          Text(result.filePath, style: AppTextStyles.caption),
+          const SizedBox(height: AppSpacing.xs),
+          Text(result.createdAtText, style: AppTextStyles.caption),
+        ],
       ),
     );
   }
@@ -507,6 +501,7 @@ class _ExportCard extends StatelessWidget {
     final result = state.result;
 
     return AppCard(
+      showShadow: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -581,37 +576,30 @@ class _ExportResultCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.successSoft,
-        borderRadius: AppRadius.card,
-        border: Border.all(color: AppColors.successSoft),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.lg),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const StatusBadge(
-              label: '导出完成',
-              tone: StatusBadgeTone.success,
-              icon: Icons.check_circle_outline,
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Wrap(
-              spacing: AppSpacing.md,
-              runSpacing: AppSpacing.md,
-              children: [
-                _SummaryMetric(label: '导出类型', value: result.modeLabel),
-                _SummaryMetric(label: '订单数', value: '${result.orderCount}'),
-                _SummaryMetric(label: '明细行', value: '${result.rowCount}'),
-                _SummaryMetric(label: '导出时间', value: result.generatedAtText),
-              ],
-            ),
-            const SizedBox(height: AppSpacing.md),
-            Text(result.filePath, style: AppTextStyles.caption),
-          ],
-        ),
+    return AppCard(
+      showShadow: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const StatusBadge(
+            label: '导出完成',
+            tone: StatusBadgeTone.success,
+            icon: Icons.check_circle_outline,
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Wrap(
+            spacing: AppSpacing.md,
+            runSpacing: AppSpacing.md,
+            children: [
+              _SummaryMetric(label: '导出类型', value: result.modeLabel),
+              _SummaryMetric(label: '订单数', value: '${result.orderCount}'),
+              _SummaryMetric(label: '明细行', value: '${result.rowCount}'),
+              _SummaryMetric(label: '导出时间', value: result.generatedAtText),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
+          Text(result.filePath, style: AppTextStyles.caption),
+        ],
       ),
     );
   }
@@ -638,6 +626,7 @@ class _ImportControlCard extends StatelessWidget {
     final filePath = state.selectedFilePath ?? '支持 .xlsx / .xlsm / .xls';
 
     return AppCard(
+      showShadow: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -735,16 +724,11 @@ class _SummaryMetric extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: AppRadius.card,
-        border: Border.all(color: AppColors.border),
-      ),
+    return AppCard(
       child: Padding(
         padding: const EdgeInsets.symmetric(
-          horizontal: AppSpacing.xl,
-          vertical: AppSpacing.lg,
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.md,
         ),
         child: SizedBox(
           width: 128,
@@ -839,6 +823,7 @@ class _ImportResultCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return AppCard(
+      showShadow: true,
       child: Row(
         children: [
           const StatusBadge(

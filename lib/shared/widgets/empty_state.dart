@@ -24,28 +24,25 @@ class EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: AppRadius.card,
-        border: Border.all(color: AppColors.border),
-      ),
+    return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppSpacing.xxxl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            DecoratedBox(
-              decoration: const BoxDecoration(
+            Container(
+              decoration: BoxDecoration(
                 color: AppColors.surfaceAlt,
-                shape: BoxShape.circle,
+                borderRadius: AppRadius.borderLg,
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(AppSpacing.lg),
-                child: Icon(icon, color: AppColors.textMuted, size: 28),
+              padding: const EdgeInsets.all(AppSpacing.xl),
+              child: Icon(
+                icon,
+                color: AppColors.textDisabled,
+                size: 36,
               ),
             ),
-            const SizedBox(height: AppSpacing.lg),
+            const SizedBox(height: AppSpacing.xl),
             Text(title, style: AppTextStyles.cardTitle),
             if (description != null) ...[
               const SizedBox(height: AppSpacing.sm),
@@ -58,7 +55,7 @@ class EmptyState extends StatelessWidget {
                 ),
               ),
             ],
-            if (actionLabel != null) ...[
+            if (actionLabel != null && onAction != null) ...[
               const SizedBox(height: AppSpacing.xl),
               AppButton(label: actionLabel!, onPressed: onAction),
             ],

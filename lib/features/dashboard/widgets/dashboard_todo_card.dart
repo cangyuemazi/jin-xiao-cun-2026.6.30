@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../shared/theme/app_colors.dart';
+import '../../../shared/theme/app_radius.dart';
 import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/theme/app_text_styles.dart';
 import '../../../shared/widgets/app_card.dart';
@@ -27,27 +28,44 @@ class DashboardTodoCard extends StatelessWidget {
 
     return AppCard(
       onTap: onTap,
+      showShadow: true,
       child: SizedBox(
-        width: 210,
+        width: 220,
         child: Row(
           children: [
-            Icon(icon, color: colors.foreground, size: AppSpacing.xxl),
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: colors.background,
+                borderRadius: AppRadius.borderSm,
+              ),
+              child: Icon(icon, size: 22, color: colors.foreground),
+            ),
             const SizedBox(width: AppSpacing.md),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
                 children: [
                   Text(label, style: AppTextStyles.caption),
                   const SizedBox(height: AppSpacing.xs),
                   Text(
                     '$count',
-                    style: AppTextStyles.sectionTitle.copyWith(
+                    style: AppTextStyles.metricValue.copyWith(
                       color: colors.foreground,
+                      fontSize: 26,
                     ),
                   ),
                 ],
               ),
             ),
+            if (onTap != null)
+              Icon(
+                Icons.chevron_right,
+                size: 18,
+                color: colors.foreground.withValues(alpha: 0.4),
+              ),
           ],
         ),
       ),
@@ -56,10 +74,22 @@ class DashboardTodoCard extends StatelessWidget {
 
   _TodoColors _colors(DashboardTodoTone tone) {
     return switch (tone) {
-      DashboardTodoTone.warning => const _TodoColors(AppColors.warning),
-      DashboardTodoTone.danger => const _TodoColors(AppColors.danger),
-      DashboardTodoTone.info => const _TodoColors(AppColors.info),
-      DashboardTodoTone.neutral => const _TodoColors(AppColors.neutral),
+      DashboardTodoTone.warning => const _TodoColors(
+        AppColors.warning,
+        AppColors.warningSoft,
+      ),
+      DashboardTodoTone.danger => const _TodoColors(
+        AppColors.danger,
+        AppColors.dangerSoft,
+      ),
+      DashboardTodoTone.info => const _TodoColors(
+        AppColors.info,
+        AppColors.infoSoft,
+      ),
+      DashboardTodoTone.neutral => const _TodoColors(
+        AppColors.neutral,
+        AppColors.neutralSoft,
+      ),
     };
   }
 }
@@ -67,7 +97,8 @@ class DashboardTodoCard extends StatelessWidget {
 enum DashboardTodoTone { neutral, warning, danger, info }
 
 class _TodoColors {
-  const _TodoColors(this.foreground);
+  const _TodoColors(this.foreground, this.background);
 
   final Color foreground;
+  final Color background;
 }

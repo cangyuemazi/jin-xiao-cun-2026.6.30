@@ -9,9 +9,10 @@ class AppCard extends StatelessWidget {
   const AppCard({
     super.key,
     required this.child,
-    this.padding = const EdgeInsets.all(AppSpacing.xl),
+    this.padding = const EdgeInsets.all(AppSpacing.cardPadding),
     this.margin = EdgeInsets.zero,
     this.onTap,
+    this.showBorder = true,
     this.showShadow = false,
   });
 
@@ -19,31 +20,37 @@ class AppCard extends StatelessWidget {
   final EdgeInsetsGeometry padding;
   final EdgeInsetsGeometry margin;
   final VoidCallback? onTap;
+  final bool showBorder;
   final bool showShadow;
 
   @override
   Widget build(BuildContext context) {
-    final card = AnimatedContainer(
-      duration: const Duration(milliseconds: 160),
-      margin: margin,
-      decoration: BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: AppRadius.card,
-        border: Border.all(color: AppColors.border),
-        boxShadow: showShadow ? AppShadows.soft : AppShadows.none,
-      ),
-      child: ClipRRect(
-        borderRadius: AppRadius.card,
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
-            onTap: onTap,
-            child: Padding(padding: padding, child: child),
+    return MouseRegion(
+      cursor: onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 160),
+        margin: margin,
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: AppRadius.card,
+          border: showBorder
+              ? Border.all(color: AppColors.border)
+              : null,
+          boxShadow: showShadow ? AppShadows.card : AppShadows.none,
+        ),
+        child: ClipRRect(
+          borderRadius: AppRadius.card,
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: onTap,
+              borderRadius: AppRadius.card,
+              splashColor: AppColors.overlay,
+              child: Padding(padding: padding, child: child),
+            ),
           ),
         ),
       ),
     );
-
-    return card;
   }
 }

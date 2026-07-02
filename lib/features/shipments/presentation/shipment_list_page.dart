@@ -4,9 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_dialog.dart';
+import '../../../shared/widgets/app_page_header.dart';
 import '../../../shared/widgets/app_table.dart';
 import '../../../shared/widgets/empty_state.dart';
-import '../../../shared/widgets/section_header.dart';
 import '../view_models/shipment_list_view_model.dart';
 import '../widgets/shipment_status_badge.dart';
 
@@ -38,16 +38,18 @@ class ShipmentListPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SectionHeader(
+            AppPageHeader(
               title: '发货列表',
-              description: '共 ${data.shipments.length} 个发货单',
-              trailing: AppButton(
-                label: '新增发货',
-                icon: Icons.local_shipping_outlined,
-                onPressed: onCreateShipment,
-              ),
+              subtitle: '共 ${data.shipments.length} 个发货单',
+              actions: [
+                AppButton(
+                  label: '新增发货',
+                  icon: Icons.local_shipping_outlined,
+                  onPressed: onCreateShipment,
+                ),
+              ],
             ),
-            const SizedBox(height: AppSpacing.xxl),
+            const SizedBox(height: AppSpacing.md),
             AppTable<ShipmentListRowState>(
               rows: data.shipments,
               emptyTitle: '暂无发货单',

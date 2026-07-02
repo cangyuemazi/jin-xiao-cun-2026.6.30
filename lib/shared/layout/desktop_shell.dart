@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
+import '../theme/app_spacing.dart';
 import 'side_navigation.dart';
 import 'top_bar.dart';
 
@@ -46,7 +47,12 @@ class DesktopShell extends StatelessWidget {
                   searchHint: searchHint,
                   onSearchChanged: onSearchChanged,
                 ),
-                Expanded(child: child),
+                Expanded(
+                  child: Padding(
+                    padding: const EdgeInsets.all(AppSpacing.pagePadding),
+                    child: child,
+                  ),
+                ),
               ],
             ),
           ),

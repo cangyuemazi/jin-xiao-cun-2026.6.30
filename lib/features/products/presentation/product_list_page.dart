@@ -4,9 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_dialog.dart';
+import '../../../shared/widgets/app_page_header.dart';
 import '../../../shared/widgets/app_table.dart';
 import '../../../shared/widgets/empty_state.dart';
-import '../../../shared/widgets/section_header.dart';
 import '../../../shared/widgets/status_badge.dart';
 import '../view_models/product_list_view_model.dart';
 import '../widgets/product_type_badge.dart';
@@ -39,16 +39,18 @@ class ProductListPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SectionHeader(
+            AppPageHeader(
               title: '产品列表',
-              description: '共 ${data.products.length} 个产品',
-              trailing: AppButton(
-                label: '新增产品',
-                icon: Icons.add_box_outlined,
-                onPressed: onCreateProduct,
-              ),
+              subtitle: '共 ${data.products.length} 个产品',
+              actions: [
+                AppButton(
+                  label: '新增产品',
+                  icon: Icons.add_box_outlined,
+                  onPressed: onCreateProduct,
+                ),
+              ],
             ),
-            const SizedBox(height: AppSpacing.xxl),
+            const SizedBox(height: AppSpacing.md),
             AppTable<ProductListRowState>(
               rows: data.products,
               emptyTitle: '暂无产品',

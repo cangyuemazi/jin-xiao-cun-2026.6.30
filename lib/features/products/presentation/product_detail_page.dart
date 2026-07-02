@@ -4,11 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
+import '../../../shared/widgets/app_info_item.dart';
+import '../../../shared/widgets/app_page_header.dart';
 import '../../../shared/widgets/empty_state.dart';
-import '../../../shared/widgets/section_header.dart';
-import '../../../shared/widgets/status_badge.dart';
 import '../view_models/product_list_view_model.dart';
-import '../widgets/product_type_badge.dart';
 
 class ProductDetailPage extends ConsumerWidget {
   const ProductDetailPage({
@@ -47,61 +46,50 @@ class ProductDetailPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SectionHeader(
+              AppPageHeader(
                 title: detail.productName,
-                description: detail.productCode ?? '未填写货号',
-                trailing: Wrap(
-                  spacing: AppSpacing.sm,
-                  children: [
-                    AppButton(
-                      label: '返回',
-                      icon: Icons.arrow_back,
-                      variant: AppButtonVariant.secondary,
-                      onPressed: onBack,
-                    ),
-                    AppButton(
-                      label: '编辑',
-                      icon: Icons.edit_outlined,
-                      onPressed: () => onEdit(detail.uuid),
-                    ),
-                  ],
-                ),
+                subtitle: detail.productCode ?? '未填写货号',
+                actions: [
+                  AppButton(
+                    label: '返回',
+                    icon: Icons.arrow_back,
+                    variant: AppButtonVariant.secondary,
+                    onPressed: onBack,
+                  ),
+                  AppButton(
+                    label: '编辑',
+                    icon: Icons.edit_outlined,
+                    onPressed: () => onEdit(detail.uuid),
+                  ),
+                ],
               ),
-              const SizedBox(height: AppSpacing.xxl),
+              const SizedBox(height: AppSpacing.md),
               AppCard(
-                child: Wrap(
-                  spacing: AppSpacing.xxl,
-                  runSpacing: AppSpacing.lg,
+                child: Column(
                   children: [
-                    _Info(
+                    AppInfoItem(
                       label: '产品类型',
-                      child: ProductTypeBadge(label: detail.productTypeLabel),
+                      value: detail.productTypeLabel,
                     ),
-                    _Info(
+                    AppInfoItem(
                       label: '材料体系',
-                      child: Text(detail.materialCategory ?? '-'),
+                      value: detail.materialCategory,
                     ),
-                    _Info(
-                      label: '规格',
-                      child: Text(detail.specification ?? '-'),
-                    ),
-                    _Info(
-                      label: '默认单位',
-                      child: Text(detail.quantityUnit ?? '-'),
-                    ),
-                    _Info(
+                    AppInfoItem(label: '规格', value: detail.specification),
+                    AppInfoItem(label: '默认单位', value: detail.quantityUnit),
+                    AppInfoItem(
                       label: '默认厂家',
-                      child: Text(detail.defaultSupplierUuid ?? '-'),
+                      value: detail.defaultSupplierUuid,
                     ),
-                    _Info(
+                    AppInfoItem(
                       label: '定制产品',
-                      child: _FlagBadge(value: detail.isCustomProduct),
+                      value: detail.isCustomProduct ? '是' : '否',
                     ),
-                    _Info(
+                    AppInfoItem(
                       label: '纳入库存',
-                      child: _FlagBadge(value: detail.trackInventory),
+                      value: detail.trackInventory ? '是' : '否',
                     ),
-                    _Info(label: '备注', child: Text(detail.remark ?? '-')),
+                    AppInfoItem(label: '备注', value: detail.remark),
                   ],
                 ),
               ),
@@ -109,42 +97,6 @@ class ProductDetailPage extends ConsumerWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class _Info extends StatelessWidget {
-  const _Info({required this.label, required this.child});
-
-  final String label;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 180,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label),
-          const SizedBox(height: AppSpacing.xs),
-          child,
-        ],
-      ),
-    );
-  }
-}
-
-class _FlagBadge extends StatelessWidget {
-  const _FlagBadge({required this.value});
-
-  final bool value;
-
-  @override
-  Widget build(BuildContext context) {
-    return StatusBadge(
-      label: value ? '是' : '否',
-      tone: value ? StatusBadgeTone.success : StatusBadgeTone.neutral,
     );
   }
 }

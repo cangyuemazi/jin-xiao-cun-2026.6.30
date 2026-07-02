@@ -9,23 +9,25 @@ class AppTextStyles {
 
   static const TextStyle pageTitle = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 28,
-    fontWeight: FontWeight.w700,
+    fontSize: 24,
+    fontWeight: FontWeight.w600,
     height: 1.2,
+    letterSpacing: -0.3,
     color: AppColors.textPrimary,
   );
 
   static const TextStyle sectionTitle = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 20,
+    fontSize: 16,
     fontWeight: FontWeight.w600,
     height: 1.25,
+    letterSpacing: -0.1,
     color: AppColors.textPrimary,
   );
 
   static const TextStyle cardTitle = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 16,
+    fontSize: 15,
     fontWeight: FontWeight.w600,
     height: 1.3,
     color: AppColors.textPrimary,
@@ -34,7 +36,7 @@ class AppTextStyles {
   static const TextStyle bodyLarge = TextStyle(
     fontFamily: fontFamily,
     fontSize: 15,
-    fontWeight: FontWeight.w500,
+    fontWeight: FontWeight.w400,
     height: 1.45,
     color: AppColors.textPrimary,
   );
@@ -45,6 +47,14 @@ class AppTextStyles {
     fontWeight: FontWeight.w400,
     height: 1.45,
     color: AppColors.textSecondary,
+  );
+
+  static const TextStyle bodyStrong = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 14,
+    fontWeight: FontWeight.w600,
+    height: 1.45,
+    color: AppColors.textPrimary,
   );
 
   static const TextStyle bodySmall = TextStyle(
@@ -63,12 +73,21 @@ class AppTextStyles {
     color: AppColors.textMuted,
   );
 
+  static const TextStyle captionStrong = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 12,
+    fontWeight: FontWeight.w600,
+    height: 1.35,
+    color: AppColors.textSecondary,
+  );
+
   static const TextStyle tableHeader = TextStyle(
     fontFamily: fontFamily,
     fontSize: 12,
     fontWeight: FontWeight.w600,
     height: 1.3,
-    color: AppColors.textSecondary,
+    letterSpacing: 0.1,
+    color: AppColors.textMuted,
   );
 
   static const TextStyle tableCell = TextStyle(
@@ -84,14 +103,24 @@ class AppTextStyles {
     fontSize: 14,
     fontWeight: FontWeight.w600,
     height: 1.2,
+    letterSpacing: -0.1,
   );
 
   static const TextStyle label = TextStyle(
     fontFamily: fontFamily,
     fontSize: 13,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     height: 1.3,
     color: AppColors.textSecondary,
+  );
+
+  static const TextStyle metricValue = TextStyle(
+    fontFamily: fontFamily,
+    fontSize: 28,
+    fontWeight: FontWeight.w700,
+    height: 1.1,
+    letterSpacing: -0.5,
+    color: AppColors.textPrimary,
   );
 
   static const TextTheme textTheme = TextTheme(

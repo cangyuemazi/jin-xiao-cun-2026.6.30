@@ -4,12 +4,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/widgets/app_button.dart';
 import '../../../shared/widgets/app_card.dart';
+import '../../../shared/widgets/app_info_item.dart';
+import '../../../shared/widgets/app_page_header.dart';
 import '../../../shared/widgets/app_table.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/section_header.dart';
 import '../../../shared/widgets/status_badge.dart';
 import '../view_models/shipment_list_view_model.dart';
-import '../widgets/shipment_status_badge.dart';
 
 class ShipmentDetailPage extends ConsumerWidget {
   const ShipmentDetailPage({
@@ -48,60 +49,46 @@ class ShipmentDetailPage extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SectionHeader(
+              AppPageHeader(
                 title: detail.shipmentNo,
-                description: detail.orderNo == null
+                subtitle: detail.orderNo == null
                     ? '未关联订单'
                     : '关联订单 ${detail.orderNo}',
-                trailing: Wrap(
-                  spacing: AppSpacing.sm,
-                  children: [
-                    AppButton(
-                      label: '返回',
-                      icon: Icons.arrow_back,
-                      variant: AppButtonVariant.secondary,
-                      onPressed: onBack,
-                    ),
-                    AppButton(
-                      label: '编辑',
-                      icon: Icons.edit_outlined,
-                      onPressed: () => onEdit(detail.uuid),
-                    ),
-                  ],
-                ),
+                actions: [
+                  AppButton(
+                    label: '返回',
+                    icon: Icons.arrow_back,
+                    variant: AppButtonVariant.secondary,
+                    onPressed: onBack,
+                  ),
+                  AppButton(
+                    label: '编辑',
+                    icon: Icons.edit_outlined,
+                    onPressed: () => onEdit(detail.uuid),
+                  ),
+                ],
               ),
-              const SizedBox(height: AppSpacing.xxl),
+              const SizedBox(height: AppSpacing.md),
               AppCard(
-                child: Wrap(
-                  spacing: AppSpacing.xxl,
-                  runSpacing: AppSpacing.lg,
+                child: Column(
                   children: [
-                    _Info(label: '客户', child: Text(detail.customerName ?? '-')),
-                    _Info(
-                      label: '收货地址',
-                      child: Text(detail.addressText ?? '-'),
-                    ),
-                    _Info(
-                      label: '快递公司',
-                      child: Text(detail.carrierLabel ?? '-'),
-                    ),
-                    _Info(label: '快递单号', child: Text(detail.trackingNo ?? '-')),
-                    _Info(
+                    AppInfoItem(label: '客户', value: detail.customerName),
+                    AppInfoItem(label: '收货地址', value: detail.addressText),
+                    AppInfoItem(label: '快递公司', value: detail.carrierLabel),
+                    AppInfoItem(label: '快递单号', value: detail.trackingNo),
+                    AppInfoItem(
                       label: '发货时间',
-                      child: Text(_formatDate(detail.shipDate)),
+                      value: _formatDate(detail.shipDate),
                     ),
-                    _Info(
+                    AppInfoItem(
                       label: '运费',
-                      child: Text(_formatMoney(detail.shippingFee)),
+                      value: _formatMoney(detail.shippingFee),
                     ),
-                    _Info(
+                    AppInfoItem(
                       label: '发货状态',
-                      child: ShipmentStatusBadge(
-                        status: detail.shipmentStatus,
-                        label: detail.shipmentStatusLabel,
-                      ),
+                      value: detail.shipmentStatusLabel,
                     ),
-                    _Info(label: '备注', child: Text(detail.remark ?? '-')),
+                    AppInfoItem(label: '备注', value: detail.remark),
                   ],
                 ),
               ),
@@ -156,28 +143,6 @@ class ShipmentDetailPage extends ConsumerWidget {
           ),
         );
       },
-    );
-  }
-}
-
-class _Info extends StatelessWidget {
-  const _Info({required this.label, required this.child});
-
-  final String label;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 190,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label),
-          const SizedBox(height: AppSpacing.xs),
-          child,
-        ],
-      ),
     );
   }
 }

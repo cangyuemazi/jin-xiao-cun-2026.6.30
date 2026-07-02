@@ -20,6 +20,8 @@ class FinanceSummaryCards extends StatelessWidget {
             label: '销售金额',
             value:
                 '¥${FinanceViewModel.formatFenToYuan(summary.totalSaleAmount)}',
+            icon: Icons.trending_up,
+            tone: _SummaryTone.neutral,
           ),
         ),
         const SizedBox(width: AppSpacing.md),
@@ -28,6 +30,8 @@ class FinanceSummaryCards extends StatelessWidget {
             label: '总成本',
             value:
                 '¥${FinanceViewModel.formatFenToYuan(summary.totalCostAmount)}',
+            icon: Icons.payments_outlined,
+            tone: _SummaryTone.neutral,
           ),
         ),
         const SizedBox(width: AppSpacing.md),
@@ -36,9 +40,10 @@ class FinanceSummaryCards extends StatelessWidget {
             label: '毛利',
             value:
                 '¥${FinanceViewModel.formatFenToYuan(summary.totalProfitAmount)}',
-            valueColor: summary.totalProfitAmount < 0
-                ? AppColors.danger
-                : AppColors.success,
+            icon: Icons.insights_outlined,
+            tone: summary.totalProfitAmount < 0
+                ? _SummaryTone.negative
+                : _SummaryTone.positive,
           ),
         ),
         const SizedBox(width: AppSpacing.md),
@@ -46,6 +51,8 @@ class FinanceSummaryCards extends StatelessWidget {
           child: _SummaryCard(
             label: '毛利率',
             value: FinanceViewModel.formatProfitRate(summary.profitRate),
+            icon: Icons.percent_outlined,
+            tone: _SummaryTone.neutral,
           ),
         ),
       ],
@@ -53,29 +60,53 @@ class FinanceSummaryCards extends StatelessWidget {
   }
 }
 
+enum _SummaryTone { neutral, positive, negative }
+
 class _SummaryCard extends StatelessWidget {
   const _SummaryCard({
     required this.label,
     required this.value,
-    this.valueColor,
+    required this.icon,
+    this.tone = _SummaryTone.neutral,
   });
 
   final String label;
   final String value;
-  final Color? valueColor;
+  final IconData icon;
+  final _SummaryTone tone;
 
   @override
   Widget build(BuildContext context) {
+    final Color iconColor = switch (tone) {
+      _SummaryTone.positive => AppColors.success,
+      _SummaryTone.negative => AppColors.danger,
+      _SummaryTone.neutral => AppColors.textMuted,
+    };
+    final Color valueColor = switch (tone) {
+      _SummaryTone.positive => AppColors.success,
+      _SummaryTone.negative => AppColors.danger,
+      _SummaryTone.neutral => AppColors.textPrimary,
+    };
+
     return AppCard(
+      showShadow: true,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Text(label, style: AppTextStyles.caption),
-          const SizedBox(height: AppSpacing.sm),
+          Row(
+            children: [
+              Icon(icon, size: 18, color: iconColor),
+              const SizedBox(width: AppSpacing.sm),
+              Text(label, style: AppTextStyles.caption),
+            ],
+          ),
+          const SizedBox(height: AppSpacing.md),
           Text(
             value,
-            style: AppTextStyles.sectionTitle.copyWith(
-              color: valueColor ?? AppColors.textPrimary,
+            style: AppTextStyles.metricValue.copyWith(
+              color: valueColor,
+              fontSize: 24,
             ),
           ),
         ],

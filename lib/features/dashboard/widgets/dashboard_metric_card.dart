@@ -27,30 +27,34 @@ class DashboardMetricCard extends StatelessWidget {
     final colors = _colors(tone);
 
     return AppCard(
+      showShadow: true,
       child: SizedBox(
-        width: 210,
+        width: 220,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             Row(
               children: [
                 Container(
-                  width: AppSpacing.xxxl,
-                  height: AppSpacing.xxxl,
+                  width: 40,
+                  height: 40,
                   decoration: BoxDecoration(
                     color: colors.background,
-                    borderRadius: AppRadius.sm,
+                    borderRadius: AppRadius.borderSm,
                   ),
-                  child: Icon(icon, color: colors.foreground),
+                  child: Icon(icon, size: 20, color: colors.foreground),
                 ),
                 const SizedBox(width: AppSpacing.md),
-                Expanded(child: Text(label, style: AppTextStyles.caption)),
+                Expanded(
+                  child: Text(label, style: AppTextStyles.caption),
+                ),
               ],
             ),
             const SizedBox(height: AppSpacing.lg),
             Text(
               value,
-              style: AppTextStyles.sectionTitle.copyWith(
+              style: AppTextStyles.metricValue.copyWith(
                 color: colors.valueColor,
               ),
             ),

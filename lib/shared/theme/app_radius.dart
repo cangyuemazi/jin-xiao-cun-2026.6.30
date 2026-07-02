@@ -3,19 +3,33 @@ import 'package:flutter/material.dart';
 class AppRadius {
   const AppRadius._();
 
-  static const double noneValue = 0;
-  static const double xsValue = 4;
-  static const double smValue = 6;
-  static const double mdValue = 8;
+  static const double xs = 4;
+  static const double sm = 8;
+  static const double md = 10;
+  static const double lg = 12;
+  static const double xl = 16;
+  static const double xxl = 20;
+  static const double pill = 999;
 
   static const BorderRadius none = BorderRadius.zero;
-  static const BorderRadius xs = BorderRadius.all(Radius.circular(xsValue));
-  static const BorderRadius sm = BorderRadius.all(Radius.circular(smValue));
-  static const BorderRadius md = BorderRadius.all(Radius.circular(mdValue));
 
-  static const BorderRadius card = md;
-  static const BorderRadius button = sm;
-  static const BorderRadius input = sm;
-  static const BorderRadius dialog = md;
-  static const BorderRadius table = md;
+  static const BorderRadius borderXs =
+      BorderRadius.all(Radius.circular(xs));
+  static const BorderRadius borderSm =
+      BorderRadius.all(Radius.circular(sm));
+  static const BorderRadius borderMd =
+      BorderRadius.all(Radius.circular(md));
+  static const BorderRadius borderLg =
+      BorderRadius.all(Radius.circular(lg));
+  static const BorderRadius borderXl =
+      BorderRadius.all(Radius.circular(xl));
+  static const BorderRadius borderPill =
+      BorderRadius.all(Radius.circular(pill));
+
+  static const BorderRadius card = borderLg;
+  static const BorderRadius button = borderMd;
+  static const BorderRadius input = borderMd;
+  static const BorderRadius dialog = borderLg;
+  static const BorderRadius table = borderLg;
+  static const BorderRadius badge = borderSm;
 }

@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/widgets/app_button.dart';
+import '../../../shared/widgets/app_form_section.dart';
+import '../../../shared/widgets/app_page_header.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/status_badge.dart';
@@ -11,7 +13,6 @@ import '../view_models/shipment_form_view_model.dart';
 import '../view_models/shipment_list_view_model.dart';
 import '../widgets/shipment_address_select.dart';
 import '../widgets/shipment_carrier_select.dart';
-import '../widgets/shipment_form_section.dart';
 import '../widgets/shipment_items_editor.dart';
 import '../widgets/shipment_order_select.dart';
 
@@ -44,21 +45,15 @@ class ShipmentFormPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    state.isEditing ? '编辑发货单' : '新增发货单',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
+            AppPageHeader(
+              title: state.isEditing ? '编辑发货单' : '新增发货单',
+              actions: [
                 AppButton(
                   label: '取消',
                   icon: Icons.close,
                   variant: AppButtonVariant.secondary,
                   onPressed: onCancel,
                 ),
-                const SizedBox(width: AppSpacing.sm),
                 AppButton(
                   label: '保存发货单',
                   icon: Icons.save_outlined,
@@ -74,8 +69,8 @@ class ShipmentFormPage extends ConsumerWidget {
                 icon: Icons.error_outline,
               ),
             ],
-            const SizedBox(height: AppSpacing.xxl),
-            ShipmentFormSection(
+            const SizedBox(height: AppSpacing.xl),
+            AppFormSection(
               title: '发货基本信息',
               child: Column(
                 children: [
@@ -130,7 +125,7 @@ class ShipmentFormPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            ShipmentFormSection(
+            AppFormSection(
               title: '快递信息',
               child: Column(
                 children: [
@@ -189,7 +184,7 @@ class ShipmentFormPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            ShipmentFormSection(
+            AppFormSection(
               title: '发货明细',
               child: ShipmentItemsEditor(
                 items: state.items,
@@ -207,7 +202,7 @@ class ShipmentFormPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            ShipmentFormSection(
+            AppFormSection(
               title: '备注',
               child: AppTextField(
                 initialValue: state.remark,

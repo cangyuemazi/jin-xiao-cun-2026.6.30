@@ -3,13 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/widgets/app_button.dart';
+import '../../../shared/widgets/app_form_section.dart';
+import '../../../shared/widgets/app_page_header.dart';
 import '../../../shared/widgets/app_text_field.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/status_badge.dart';
 import '../view_models/product_form_view_model.dart';
 import '../view_models/product_list_view_model.dart';
 import '../widgets/product_flags_editor.dart';
-import '../widgets/product_form_section.dart';
 import '../widgets/product_type_select.dart';
 import '../widgets/product_unit_input.dart';
 
@@ -42,21 +43,15 @@ class ProductFormPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    state.isEditing ? '编辑产品' : '新增产品',
-                    style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
+            AppPageHeader(
+              title: state.isEditing ? '编辑产品' : '新增产品',
+              actions: [
                 AppButton(
                   label: '取消',
                   icon: Icons.close,
                   variant: AppButtonVariant.secondary,
                   onPressed: onCancel,
                 ),
-                const SizedBox(width: AppSpacing.sm),
                 AppButton(
                   label: '保存产品',
                   icon: Icons.save_outlined,
@@ -72,8 +67,8 @@ class ProductFormPage extends ConsumerWidget {
                 icon: Icons.error_outline,
               ),
             ],
-            const SizedBox(height: AppSpacing.xxl),
-            ProductFormSection(
+            const SizedBox(height: AppSpacing.xl),
+            AppFormSection(
               title: '产品基本信息',
               child: Column(
                 children: [
@@ -112,7 +107,7 @@ class ProductFormPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            ProductFormSection(
+            AppFormSection(
               title: '材料与规格',
               child: Column(
                 children: [
@@ -151,7 +146,7 @@ class ProductFormPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            ProductFormSection(
+            AppFormSection(
               title: '默认配置',
               child: Column(
                 children: [
@@ -177,7 +172,7 @@ class ProductFormPage extends ConsumerWidget {
               ),
             ),
             const SizedBox(height: AppSpacing.lg),
-            ProductFormSection(
+            AppFormSection(
               title: '备注',
               child: AppTextField(
                 initialValue: state.remark,

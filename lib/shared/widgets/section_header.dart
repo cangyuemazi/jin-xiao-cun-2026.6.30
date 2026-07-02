@@ -23,6 +23,7 @@ class SectionHeader extends StatelessWidget {
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
             children: [
               Text(title, style: AppTextStyles.sectionTitle),
               if (description != null) ...[

@@ -6,6 +6,7 @@ import '../../../shared/theme/app_colors.dart';
 import '../../../shared/theme/app_spacing.dart';
 import '../../../shared/theme/app_text_styles.dart';
 import '../../../shared/widgets/app_button.dart';
+import '../../../shared/widgets/app_page_header.dart';
 import '../../../shared/widgets/app_table.dart';
 import '../../../shared/widgets/empty_state.dart';
 import '../../../shared/widgets/section_header.dart';
@@ -36,18 +37,20 @@ class DashboardPage extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SectionHeader(
+            AppPageHeader(
               title: '经营概览',
-              description: '${data.monthLabel} 本地数据统计',
-              trailing: AppButton(
-                label: '刷新看板',
-                icon: Icons.refresh,
-                variant: AppButtonVariant.secondary,
-                onPressed: () =>
-                    ref.read(dashboardViewModelProvider.notifier).refresh(),
-              ),
+              subtitle: '${data.monthLabel} 本地数据统计',
+              actions: [
+                AppButton(
+                  label: '刷新看板',
+                  icon: Icons.refresh,
+                  variant: AppButtonVariant.secondary,
+                  onPressed: () =>
+                      ref.read(dashboardViewModelProvider.notifier).refresh(),
+                ),
+              ],
             ),
-            const SizedBox(height: AppSpacing.xxl),
+            const SizedBox(height: AppSpacing.md),
             Wrap(
               spacing: AppSpacing.md,
               runSpacing: AppSpacing.md,

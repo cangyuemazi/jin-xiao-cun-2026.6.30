@@ -52,7 +52,7 @@ class AppTextField extends StatelessWidget {
       textInputAction: textInputAction,
       onChanged: onChanged,
       onFieldSubmitted: onSubmitted,
-      style: AppTextStyles.body.copyWith(color: AppColors.textPrimary),
+      style: AppTextStyles.bodyLarge,
       decoration: InputDecoration(
         labelText: label,
         hintText: hintText,
@@ -62,8 +62,6 @@ class AppTextField extends StatelessWidget {
         suffixIcon: suffixIcon,
         helperMaxLines: 2,
         errorMaxLines: 2,
-        helperStyle: AppTextStyles.caption,
-        errorStyle: AppTextStyles.caption.copyWith(color: AppColors.danger),
         prefixIconConstraints: const BoxConstraints(
           minWidth: AppSpacing.xxxl,
           minHeight: AppSpacing.xxxl,

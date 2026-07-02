@@ -5,11 +5,37 @@ class AppShadows {
 
   static const List<BoxShadow> none = [];
 
-  static const List<BoxShadow> soft = [
-    BoxShadow(color: Color(0x0F17202A), blurRadius: 18, offset: Offset(0, 8)),
+  static const List<BoxShadow> card = [
+    BoxShadow(
+      color: Color(0x060F172A),
+      blurRadius: 4,
+      offset: Offset(0, 1),
+    ),
+  ];
+
+  static const List<BoxShadow> elevated = [
+    BoxShadow(
+      color: Color(0x080F172A),
+      blurRadius: 8,
+      offset: Offset(0, 2),
+    ),
+    BoxShadow(
+      color: Color(0x040F172A),
+      blurRadius: 2,
+      offset: Offset(0, 1),
+    ),
   ];
 
   static const List<BoxShadow> floating = [
-    BoxShadow(color: Color(0x1417202A), blurRadius: 28, offset: Offset(0, 14)),
+    BoxShadow(
+      color: Color(0x0F0F172A),
+      blurRadius: 16,
+      offset: Offset(0, 4),
+    ),
+    BoxShadow(
+      color: Color(0x060F172A),
+      blurRadius: 4,
+      offset: Offset(0, 2),
+    ),
   ];
 }

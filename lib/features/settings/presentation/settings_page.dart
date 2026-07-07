@@ -48,7 +48,7 @@ class SettingsPage extends ConsumerWidget {
     final preview = state.preview;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(AppSpacing.xxl),
+      padding: const EdgeInsets.all(AppSpacing.pagePadding),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [

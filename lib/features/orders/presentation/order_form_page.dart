@@ -39,27 +39,27 @@ class OrderFormPage extends ConsumerWidget {
         description: error.toString(),
       ),
       data: (state) => SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.xxl),
+        padding: const EdgeInsets.all(AppSpacing.pagePadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-              AppPageHeader(
-                title: state.isEditing ? '编辑订单' : '新增订单',
-                actions: [
-                  AppButton(
-                    label: '取消',
-                    icon: Icons.close,
-                    variant: AppButtonVariant.secondary,
-                    onPressed: onCancel,
-                  ),
-                  const SizedBox(width: AppSpacing.sm),
-                  AppButton(
-                    label: '保存订单',
-                    icon: Icons.save_outlined,
-                    onPressed: () => _save(context, ref),
-                  ),
-                ],
-              ),
+            AppPageHeader(
+              title: state.isEditing ? '编辑订单' : '新增订单',
+              actions: [
+                AppButton(
+                  label: '取消',
+                  icon: Icons.close,
+                  variant: AppButtonVariant.secondary,
+                  onPressed: onCancel,
+                ),
+                const SizedBox(width: AppSpacing.sm),
+                AppButton(
+                  label: '保存订单',
+                  icon: Icons.save_outlined,
+                  onPressed: () => _save(context, ref),
+                ),
+              ],
+            ),
             if (state.errorMessage != null) ...[
               const SizedBox(height: AppSpacing.lg),
               StatusBadge(

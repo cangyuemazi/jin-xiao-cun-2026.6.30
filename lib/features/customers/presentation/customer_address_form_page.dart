@@ -45,7 +45,7 @@ class CustomerAddressFormPage extends ConsumerWidget {
         description: error.toString(),
       ),
       data: (state) => SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.xxl),
+        padding: const EdgeInsets.all(AppSpacing.pagePadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

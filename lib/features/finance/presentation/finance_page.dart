@@ -42,7 +42,7 @@ class FinancePage extends ConsumerWidget {
         final summary = data.summary ?? FinanceAmountSummaryState.empty();
 
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.xxl),
+          padding: const EdgeInsets.all(AppSpacing.pagePadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [

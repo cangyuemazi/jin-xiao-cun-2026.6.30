@@ -9,21 +9,22 @@ class AppTheme {
   const AppTheme._();
 
   static ThemeData get light {
-    final colorScheme = ColorScheme.fromSeed(
-      seedColor: AppColors.primary,
-      brightness: Brightness.light,
-    ).copyWith(
-      primary: AppColors.primary,
-      onPrimary: AppColors.textOnPrimary,
-      secondary: AppColors.accent,
-      onSecondary: AppColors.textOnPrimary,
-      surface: AppColors.surface,
-      onSurface: AppColors.ink,
-      error: AppColors.danger,
-      onError: AppColors.textOnPrimary,
-      outline: AppColors.hairline,
-      outlineVariant: AppColors.hairlineSoft,
-    );
+    final colorScheme =
+        ColorScheme.fromSeed(
+          seedColor: AppColors.primary,
+          brightness: Brightness.light,
+        ).copyWith(
+          primary: AppColors.primary,
+          onPrimary: AppColors.textOnPrimary,
+          secondary: AppColors.accent,
+          onSecondary: AppColors.textOnPrimary,
+          surface: AppColors.surface,
+          onSurface: AppColors.ink,
+          error: AppColors.danger,
+          onError: AppColors.textOnPrimary,
+          outline: AppColors.hairline,
+          outlineVariant: AppColors.hairlineSoft,
+        );
 
     return ThemeData(
       useMaterial3: true,
@@ -32,6 +33,7 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.canvas,
       canvasColor: AppColors.canvas,
       fontFamily: AppTextStyles.fontFamily,
+      fontFamilyFallback: AppTextStyles.fontFamilyFallback,
       textTheme: AppTextStyles.textTheme,
       dividerColor: AppColors.divider,
       dividerTheme: const DividerThemeData(
@@ -39,7 +41,7 @@ class AppTheme {
         thickness: 1,
         space: 0,
       ),
-      visualDensity: VisualDensity.standard,
+      visualDensity: const VisualDensity(horizontal: -1, vertical: -1),
       splashFactory: InkRipple.splashFactory,
       splashColor: AppColors.primarySoft,
       highlightColor: AppColors.overlay,
@@ -77,8 +79,8 @@ class AppTheme {
         fillColor: AppColors.canvas,
         isDense: false,
         contentPadding: const EdgeInsets.symmetric(
-          horizontal: 14,
-          vertical: 10,
+          horizontal: AppSpacing.md,
+          vertical: AppSpacing.sm,
         ),
         hintStyle: AppTextStyles.body.copyWith(color: AppColors.mutedSoft),
         labelStyle: AppTextStyles.label,
@@ -90,23 +92,28 @@ class AppTheme {
         focusedBorder: _inputBorder(AppColors.primary, width: 1.5),
         errorBorder: _inputBorder(AppColors.danger),
         focusedErrorBorder: _inputBorder(AppColors.danger, width: 1.5),
-        errorStyle: AppTextStyles.caption.copyWith(
-          color: AppColors.danger,
-        ),
+        errorStyle: AppTextStyles.caption.copyWith(color: AppColors.danger),
         helperStyle: AppTextStyles.caption,
         helperMaxLines: 2,
         errorMaxLines: 2,
       ),
       filledButtonTheme: FilledButtonThemeData(style: _filledButtonStyle()),
-      elevatedButtonTheme: ElevatedButtonThemeData(style: _outlinedButtonStyle()),
-      outlinedButtonTheme: OutlinedButtonThemeData(style: _outlinedButtonStyle()),
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: _outlinedButtonStyle(),
+      ),
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: _outlinedButtonStyle(),
+      ),
       textButtonTheme: TextButtonThemeData(
         style: ButtonStyle(
           textStyle: const WidgetStatePropertyAll(AppTextStyles.button),
           foregroundColor: const WidgetStatePropertyAll(AppColors.ink),
           overlayColor: const WidgetStatePropertyAll(AppColors.overlay),
           padding: const WidgetStatePropertyAll(
-            EdgeInsets.symmetric(horizontal: AppSpacing.md, vertical: AppSpacing.xs),
+            EdgeInsets.symmetric(
+              horizontal: AppSpacing.md,
+              vertical: AppSpacing.xs,
+            ),
           ),
           shape: WidgetStatePropertyAll(
             RoundedRectangleBorder(borderRadius: AppRadius.button),
@@ -182,7 +189,10 @@ class AppTheme {
       elevation: const WidgetStatePropertyAll(0.0),
       overlayColor: const WidgetStatePropertyAll(AppColors.overlay),
       padding: const WidgetStatePropertyAll(
-        EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.sm,
+        ),
       ),
       minimumSize: const WidgetStatePropertyAll(Size(0, 40)),
       shape: WidgetStatePropertyAll(
@@ -199,11 +209,12 @@ class AppTheme {
       surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
       elevation: const WidgetStatePropertyAll(0.0),
       overlayColor: const WidgetStatePropertyAll(AppColors.overlay),
-      side: const WidgetStatePropertyAll(
-        BorderSide(color: AppColors.hairline),
-      ),
+      side: const WidgetStatePropertyAll(BorderSide(color: AppColors.hairline)),
       padding: const WidgetStatePropertyAll(
-        EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        EdgeInsets.symmetric(
+          horizontal: AppSpacing.lg,
+          vertical: AppSpacing.sm,
+        ),
       ),
       minimumSize: const WidgetStatePropertyAll(Size(0, 40)),
       shape: WidgetStatePropertyAll(

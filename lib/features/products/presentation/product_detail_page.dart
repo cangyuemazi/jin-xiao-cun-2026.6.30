@@ -42,7 +42,7 @@ class ProductDetailPage extends ConsumerWidget {
         }
 
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.xxl),
+          padding: const EdgeInsets.all(AppSpacing.pagePadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -67,14 +67,8 @@ class ProductDetailPage extends ConsumerWidget {
               AppCard(
                 child: Column(
                   children: [
-                    AppInfoItem(
-                      label: '产品类型',
-                      value: detail.productTypeLabel,
-                    ),
-                    AppInfoItem(
-                      label: '材料体系',
-                      value: detail.materialCategory,
-                    ),
+                    AppInfoItem(label: '产品类型', value: detail.productTypeLabel),
+                    AppInfoItem(label: '材料体系', value: detail.materialCategory),
                     AppInfoItem(label: '规格', value: detail.specification),
                     AppInfoItem(label: '默认单位', value: detail.quantityUnit),
                     AppInfoItem(

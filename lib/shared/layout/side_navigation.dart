@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
 import '../theme/app_radius.dart';
@@ -25,16 +25,23 @@ class SideNavigation extends StatelessWidget {
     SideNavigationItem(label: '厂家', icon: Icons.factory_outlined),
     SideNavigationItem(label: '发货', icon: Icons.local_shipping_outlined),
     SideNavigationItem(label: '库存', icon: Icons.inventory_2_outlined),
-    SideNavigationItem(label: '财务', icon: Icons.account_balance_wallet_outlined),
+    SideNavigationItem(
+      label: '财务',
+      icon: Icons.account_balance_wallet_outlined,
+    ),
     SideNavigationItem(label: '设置', icon: Icons.settings_outlined),
   ];
 
   static const List<String> groupLabels = [
     '经营看板',
     '业务管理',
-    '', '', '', '',
+    '',
+    '',
+    '',
+    '',
     '数据与系统',
-    '', '',
+    '',
+    '',
   ];
 
   @override
@@ -59,7 +66,7 @@ class SideNavigation extends StatelessWidget {
             child: Text(
               groupLabel,
               style: AppTextStyles.captionStrong.copyWith(
-                letterSpacing: 0.5,
+                letterSpacing: 0,
                 color: AppColors.mutedSoft,
               ),
             ),
@@ -93,7 +100,10 @@ class SideNavigation extends StatelessWidget {
               const _BrandHeader(),
               const SizedBox(height: AppSpacing.xl),
               Expanded(
-                child: ListView(padding: EdgeInsets.zero, children: groupedItems),
+                child: ListView(
+                  padding: EdgeInsets.zero,
+                  children: groupedItems,
+                ),
               ),
             ],
           ),
@@ -135,7 +145,10 @@ class _BrandHeader extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text('JinXiaoCun', style: AppTextStyles.cardTitle),
-              Text('2026', style: AppTextStyles.caption.copyWith(color: AppColors.muted)),
+              Text(
+                '2026',
+                style: AppTextStyles.caption.copyWith(color: AppColors.muted),
+              ),
             ],
           ),
         ),
@@ -164,13 +177,12 @@ class _NavigationTileState extends State<_NavigationTile> {
 
   @override
   Widget build(BuildContext context) {
-    final foreground =
-        widget.selected ? AppColors.primary : AppColors.muted;
+    final foreground = widget.selected ? AppColors.primary : AppColors.muted;
     final background = widget.selected
         ? AppColors.surfaceCard
         : _hovered
-            ? AppColors.surfaceAlt
-            : Colors.transparent;
+        ? AppColors.surfaceAlt
+        : Colors.transparent;
 
     return MouseRegion(
       onEnter: (_) => setState(() => _hovered = true),

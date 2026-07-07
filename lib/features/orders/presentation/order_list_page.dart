@@ -37,7 +37,7 @@ class OrderListPage extends ConsumerWidget {
         description: error.toString(),
       ),
       data: (data) => SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.xxl),
+        padding: const EdgeInsets.all(AppSpacing.pagePadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -66,7 +66,8 @@ class OrderListPage extends ConsumerWidget {
                 child: Row(
                   children: [
                     StatusBadge(
-                      label: '${data.qualityFilterLabel ?? '异常订单'} · ${data.qualityIssueCount} 项',
+                      label:
+                          '${data.qualityFilterLabel ?? '异常订单'} · ${data.qualityIssueCount} 项',
                       tone: StatusBadgeTone.warning,
                       icon: Icons.filter_alt_outlined,
                     ),

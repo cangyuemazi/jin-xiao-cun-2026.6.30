@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
 import '../theme/app_spacing.dart';
+import '../theme/app_text_styles.dart';
 
 class AppLoadingState extends StatelessWidget {
   const AppLoadingState({super.key, this.message = '加载中...'});
@@ -20,7 +21,10 @@ class AppLoadingState extends StatelessWidget {
             child: CircularProgressIndicator(strokeWidth: 2.5),
           ),
           const SizedBox(height: AppSpacing.lg),
-          Text(message, style: const TextStyle(fontSize: 14, color: AppColors.muted)),
+          Text(
+            message,
+            style: AppTextStyles.bodySmall.copyWith(color: AppColors.muted),
+          ),
         ],
       ),
     );

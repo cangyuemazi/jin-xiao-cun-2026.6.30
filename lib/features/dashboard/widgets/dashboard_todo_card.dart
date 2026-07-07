@@ -54,7 +54,6 @@ class DashboardTodoCard extends StatelessWidget {
                     '$count',
                     style: AppTextStyles.metricValue.copyWith(
                       color: colors.foreground,
-                      fontSize: 26,
                     ),
                   ),
                 ],

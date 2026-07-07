@@ -104,10 +104,7 @@ class _SummaryCard extends StatelessWidget {
           const SizedBox(height: AppSpacing.md),
           Text(
             value,
-            style: AppTextStyles.metricValue.copyWith(
-              color: valueColor,
-              fontSize: 24,
-            ),
+            style: AppTextStyles.metricValue.copyWith(color: valueColor),
           ),
         ],
       ),

@@ -34,7 +34,7 @@ class CustomerListPage extends ConsumerWidget {
         description: error.toString(),
       ),
       data: (data) => SingleChildScrollView(
-        padding: const EdgeInsets.all(AppSpacing.xxl),
+        padding: const EdgeInsets.all(AppSpacing.pagePadding),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [

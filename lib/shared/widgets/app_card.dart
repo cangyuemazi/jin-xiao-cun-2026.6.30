@@ -5,7 +5,7 @@ import '../theme/app_radius.dart';
 import '../theme/app_shadows.dart';
 import '../theme/app_spacing.dart';
 
-class AppCard extends StatelessWidget {
+class AppCard extends StatefulWidget {
   const AppCard({
     super.key,
     required this.child,
@@ -24,31 +24,54 @@ class AppCard extends StatelessWidget {
   final bool showShadow;
 
   @override
+  State<AppCard> createState() => _AppCardState();
+}
+
+class _AppCardState extends State<AppCard> {
+  bool _hovered = false;
+
+  @override
   Widget build(BuildContext context) {
+    final interactive = widget.onTap != null;
+    final highlight = interactive && _hovered;
+
     return MouseRegion(
-      cursor: onTap != null
-          ? SystemMouseCursors.click
-          : SystemMouseCursors.basic,
+      onEnter: (_) {
+        if (interactive) setState(() => _hovered = true);
+      },
+      onExit: (_) {
+        if (interactive) setState(() => _hovered = false);
+      },
+      cursor: interactive ? SystemMouseCursors.click : SystemMouseCursors.basic,
       child: AnimatedContainer(
-        duration: const Duration(milliseconds: 160),
-        margin: margin,
+        duration: const Duration(milliseconds: 140),
+        curve: Curves.easeOutCubic,
+        margin: widget.margin,
         decoration: BoxDecoration(
-          color: AppColors.surfaceCard,
+          color: highlight ? AppColors.surfaceHover : AppColors.surfaceCard,
           borderRadius: AppRadius.card,
-          border: showBorder
-              ? Border.all(color: AppColors.hairline)
+          border: widget.showBorder
+              ? Border.all(
+                  color: highlight
+                      ? AppColors.borderStrong
+                      : AppColors.hairline,
+                )
               : null,
-          boxShadow: showShadow ? AppShadows.card : AppShadows.none,
+          boxShadow: widget.showShadow || highlight
+              ? AppShadows.card
+              : AppShadows.none,
         ),
         child: ClipRRect(
           borderRadius: AppRadius.card,
           child: Material(
             color: Colors.transparent,
             child: InkWell(
-              onTap: onTap,
+              onTap: widget.onTap,
               borderRadius: AppRadius.card,
               splashColor: AppColors.overlay,
-              child: Padding(padding: padding, child: child),
+              hoverColor: Colors.transparent,
+              highlightColor: AppColors.overlay,
+              child: Padding(padding: widget.padding, child: widget.child),
             ),
           ),
         ),

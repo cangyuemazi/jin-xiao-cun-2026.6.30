@@ -44,7 +44,7 @@ class AppTable<T> extends StatelessWidget {
       borderRadius: AppRadius.table,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: AppColors.canvas,
+          color: AppColors.surface,
           border: Border.all(color: AppColors.hairline),
           borderRadius: AppRadius.table,
         ),
@@ -54,19 +54,17 @@ class AppTable<T> extends StatelessWidget {
             headingRowHeight: 42,
             dataRowMinHeight: AppSpacing.tableRowHeight,
             dataRowMaxHeight: AppSpacing.tableRowHeight,
-            horizontalMargin: AppSpacing.lg,
-            columnSpacing: AppSpacing.xl,
+            horizontalMargin: AppSpacing.md,
+            columnSpacing: AppSpacing.lg,
             showCheckboxColumn: false,
-            headingRowColor:
-                const WidgetStatePropertyAll(AppColors.surfaceAlt),
+            headingRowColor: const WidgetStatePropertyAll(AppColors.surfaceAlt),
             columns: [
               for (final column in columns)
                 DataColumn(
                   numeric: column.numeric,
                   label: _SizedCell(
                     width: column.width,
-                    child:
-                        Text(column.label, style: AppTextStyles.tableHeader),
+                    child: Text(column.label, style: AppTextStyles.tableHeader),
                   ),
                 ),
             ],
@@ -76,9 +74,15 @@ class AppTable<T> extends StatelessWidget {
                   onSelectChanged: onRowTap == null
                       ? null
                       : (_) => onRowTap!(rows[i]),
-                  color: i.isEven
-                      ? const WidgetStatePropertyAll(AppColors.canvas)
-                      : const WidgetStatePropertyAll(AppColors.surfaceAlt),
+                  mouseCursor: onRowTap == null
+                      ? null
+                      : const WidgetStatePropertyAll(SystemMouseCursors.click),
+                  color: WidgetStateProperty.resolveWith((states) {
+                    if (states.contains(WidgetState.hovered)) {
+                      return AppColors.surfaceHover;
+                    }
+                    return i.isEven ? AppColors.surface : AppColors.surfaceAlt;
+                  }),
                   cells: [
                     for (final column in columns)
                       DataCell(
@@ -112,7 +116,7 @@ class _LoadingTable<T> extends StatelessWidget {
       borderRadius: AppRadius.table,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: AppColors.canvas,
+          color: AppColors.surface,
           border: Border.all(color: AppColors.hairline),
           borderRadius: AppRadius.table,
         ),
@@ -122,9 +126,10 @@ class _LoadingTable<T> extends StatelessWidget {
             headingRowHeight: 42,
             dataRowMinHeight: AppSpacing.tableRowHeight,
             dataRowMaxHeight: AppSpacing.tableRowHeight,
-            horizontalMargin: AppSpacing.lg,
-            columnSpacing: AppSpacing.xl,
+            horizontalMargin: AppSpacing.md,
+            columnSpacing: AppSpacing.lg,
             showCheckboxColumn: false,
+            headingRowColor: const WidgetStatePropertyAll(AppColors.surfaceAlt),
             columns: [
               for (final column in columns)
                 DataColumn(
@@ -136,15 +141,14 @@ class _LoadingTable<T> extends StatelessWidget {
                 ),
             ],
             rows: List.generate(rowCount, (index) {
-              return DataRow(cells: [
-                for (final column in columns)
-                  DataCell(
-                    _SizedCell(
-                      width: column.width,
-                      child: _ShimmerBlock(),
+              return DataRow(
+                cells: [
+                  for (final column in columns)
+                    DataCell(
+                      _SizedCell(width: column.width, child: _ShimmerBlock()),
                     ),
-                  ),
-              ]);
+                ],
+              );
             }),
           ),
         ),

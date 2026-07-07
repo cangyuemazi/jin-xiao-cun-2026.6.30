@@ -44,7 +44,7 @@ class OrderDetailPage extends ConsumerWidget {
         }
 
         return SingleChildScrollView(
-          padding: const EdgeInsets.all(AppSpacing.xxl),
+          padding: const EdgeInsets.all(AppSpacing.pagePadding),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -69,14 +69,8 @@ class OrderDetailPage extends ConsumerWidget {
                 title: '订单概览',
                 child: Column(
                   children: [
-                    AppInfoItem(
-                      label: '订单状态',
-                      value: detail.orderStatusLabel,
-                    ),
-                    AppInfoItem(
-                      label: '订单号',
-                      value: detail.orderNo,
-                    ),
+                    AppInfoItem(label: '订单状态', value: detail.orderStatusLabel),
+                    AppInfoItem(label: '订单号', value: detail.orderNo),
                     AppInfoItem(
                       label: '客户',
                       value: detail.customerName ?? '未绑定',

@@ -1,7 +1,9 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 import '../theme/app_colors.dart';
+import '../theme/app_radius.dart';
 import '../theme/app_spacing.dart';
+import '../theme/app_text_styles.dart';
 
 class SearchInput extends StatelessWidget {
   const SearchInput({
@@ -26,32 +28,28 @@ class SearchInput extends StatelessWidget {
       textInputAction: TextInputAction.search,
       onChanged: onChanged,
       onFieldSubmitted: onSubmitted,
-      style: const TextStyle(fontSize: 14, color: AppColors.ink),
+      style: AppTextStyles.body.copyWith(color: AppColors.ink),
       decoration: InputDecoration(
         hintText: hintText,
         filled: true,
-        fillColor: AppColors.surfaceAlt,
+        fillColor: AppColors.surface,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
-          vertical: AppSpacing.sm,
+          vertical: AppSpacing.xs,
         ),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.sm),
-          borderSide: BorderSide.none,
+          borderRadius: AppRadius.input,
+          borderSide: const BorderSide(color: AppColors.hairline),
         ),
         enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.sm),
-          borderSide: BorderSide.none,
+          borderRadius: AppRadius.input,
+          borderSide: const BorderSide(color: AppColors.hairline),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(AppSpacing.sm),
+          borderRadius: AppRadius.input,
           borderSide: const BorderSide(color: AppColors.primary, width: 1.5),
         ),
-        prefixIcon: const Icon(
-          Icons.search,
-          color: AppColors.muted,
-          size: 18,
-        ),
+        prefixIcon: const Icon(Icons.search, color: AppColors.muted, size: 18),
         suffixIcon: onClear != null
             ? IconButton(
                 tooltip: '清空',

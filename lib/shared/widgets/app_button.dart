@@ -41,25 +41,25 @@ class AppButton extends StatelessWidget {
 
     final button = switch (variant) {
       AppButtonVariant.primary => FilledButton(
-          onPressed: effectiveOnPressed,
-          style: style,
-          child: child,
-        ),
+        onPressed: effectiveOnPressed,
+        style: style,
+        child: child,
+      ),
       AppButtonVariant.secondary => OutlinedButton(
-          onPressed: effectiveOnPressed,
-          style: style,
-          child: child,
-        ),
+        onPressed: effectiveOnPressed,
+        style: style,
+        child: child,
+      ),
       AppButtonVariant.ghost => TextButton(
-          onPressed: effectiveOnPressed,
-          style: style,
-          child: child,
-        ),
+        onPressed: effectiveOnPressed,
+        style: style,
+        child: child,
+      ),
       AppButtonVariant.danger => FilledButton(
-          onPressed: effectiveOnPressed,
-          style: style,
-          child: child,
-        ),
+        onPressed: effectiveOnPressed,
+        style: style,
+        child: child,
+      ),
     };
 
     if (!expanded) return button;
@@ -71,40 +71,31 @@ class AppButton extends StatelessWidget {
 
     final EdgeInsets padding = switch (size) {
       AppButtonSize.small => const EdgeInsets.symmetric(
-          horizontal: AppSpacing.md,
-          vertical: AppSpacing.xs,
-        ),
+        horizontal: AppSpacing.md,
+        vertical: AppSpacing.xxs,
+      ),
       AppButtonSize.medium => const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 12,
-        ),
-    };
-
-    final Color foreground = switch (variant) {
-      AppButtonVariant.primary => AppColors.textOnPrimary,
-      AppButtonVariant.secondary => AppColors.ink,
-      AppButtonVariant.ghost => AppColors.ink,
-      AppButtonVariant.danger => AppColors.textOnPrimary,
-    };
-
-    final Color background = switch (variant) {
-      AppButtonVariant.primary => AppColors.primary,
-      AppButtonVariant.secondary => AppColors.canvas,
-      AppButtonVariant.ghost => Colors.transparent,
-      AppButtonVariant.danger => AppColors.danger,
+        horizontal: AppSpacing.lg,
+        vertical: AppSpacing.sm,
+      ),
     };
 
     final BorderSide? side = switch (variant) {
-      AppButtonVariant.secondary =>
-        const BorderSide(color: AppColors.hairline),
+      AppButtonVariant.secondary => const BorderSide(color: AppColors.hairline),
       _ => null,
     };
 
     return ButtonStyle(
       minimumSize: WidgetStatePropertyAll(Size(0, height)),
       textStyle: const WidgetStatePropertyAll(AppTextStyles.button),
-      foregroundColor: WidgetStatePropertyAll(foreground),
-      backgroundColor: WidgetStatePropertyAll(background),
+      mouseCursor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.disabled)) {
+          return SystemMouseCursors.basic;
+        }
+        return SystemMouseCursors.click;
+      }),
+      foregroundColor: WidgetStateProperty.resolveWith(_foregroundColor),
+      backgroundColor: WidgetStateProperty.resolveWith(_backgroundColor),
       surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
       elevation: const WidgetStatePropertyAll(0.0),
       overlayColor: const WidgetStatePropertyAll(AppColors.overlay),
@@ -114,7 +105,47 @@ class AppButton extends StatelessWidget {
       shape: WidgetStatePropertyAll(
         RoundedRectangleBorder(borderRadius: AppRadius.button),
       ),
+      animationDuration: const Duration(milliseconds: 120),
     );
+  }
+
+  Color _foregroundColor(Set<WidgetState> states) {
+    if (states.contains(WidgetState.disabled)) {
+      return AppColors.textDisabled;
+    }
+
+    return switch (variant) {
+      AppButtonVariant.primary => AppColors.textOnPrimary,
+      AppButtonVariant.secondary => AppColors.ink,
+      AppButtonVariant.ghost => AppColors.ink,
+      AppButtonVariant.danger => AppColors.textOnPrimary,
+    };
+  }
+
+  Color _backgroundColor(Set<WidgetState> states) {
+    if (states.contains(WidgetState.disabled)) {
+      return variant == AppButtonVariant.ghost
+          ? Colors.transparent
+          : AppColors.surfaceMuted;
+    }
+
+    final pressed = states.contains(WidgetState.pressed);
+    final hovered = states.contains(WidgetState.hovered);
+
+    return switch (variant) {
+      AppButtonVariant.primary when pressed => AppColors.primaryPressed,
+      AppButtonVariant.primary when hovered => AppColors.primaryHover,
+      AppButtonVariant.primary => AppColors.primary,
+      AppButtonVariant.secondary when pressed => AppColors.surfacePressed,
+      AppButtonVariant.secondary when hovered => AppColors.surfaceHover,
+      AppButtonVariant.secondary => AppColors.surface,
+      AppButtonVariant.ghost when pressed => AppColors.surfacePressed,
+      AppButtonVariant.ghost when hovered => AppColors.surfaceHover,
+      AppButtonVariant.ghost => Colors.transparent,
+      AppButtonVariant.danger when pressed => const Color(0xFFB91C1C),
+      AppButtonVariant.danger when hovered => const Color(0xFFDC2626),
+      AppButtonVariant.danger => AppColors.danger,
+    };
   }
 }
 

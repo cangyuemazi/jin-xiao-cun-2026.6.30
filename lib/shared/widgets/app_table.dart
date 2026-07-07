@@ -29,10 +29,7 @@ class AppTable<T> extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (isLoading) {
-      return _LoadingTable(
-        columns: columns,
-        rowCount: loadingRowCount,
-      );
+      return _LoadingTable(columns: columns, rowCount: loadingRowCount);
     }
 
     if (rows.isEmpty) {
@@ -47,8 +44,8 @@ class AppTable<T> extends StatelessWidget {
       borderRadius: AppRadius.table,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: AppColors.surface,
-          border: Border.all(color: AppColors.border),
+          color: AppColors.canvas,
+          border: Border.all(color: AppColors.hairline),
           borderRadius: AppRadius.table,
         ),
         child: SingleChildScrollView(
@@ -58,7 +55,7 @@ class AppTable<T> extends StatelessWidget {
             dataRowMinHeight: AppSpacing.tableRowHeight,
             dataRowMaxHeight: AppSpacing.tableRowHeight,
             horizontalMargin: AppSpacing.lg,
-            columnSpacing: AppSpacing.xxl,
+            columnSpacing: AppSpacing.xl,
             showCheckboxColumn: false,
             headingRowColor:
                 const WidgetStatePropertyAll(AppColors.surfaceAlt),
@@ -68,10 +65,8 @@ class AppTable<T> extends StatelessWidget {
                   numeric: column.numeric,
                   label: _SizedCell(
                     width: column.width,
-                    child: Text(
-                      column.label,
-                      style: AppTextStyles.tableHeader,
-                    ),
+                    child:
+                        Text(column.label, style: AppTextStyles.tableHeader),
                   ),
                 ),
             ],
@@ -82,7 +77,7 @@ class AppTable<T> extends StatelessWidget {
                       ? null
                       : (_) => onRowTap!(rows[i]),
                   color: i.isEven
-                      ? const WidgetStatePropertyAll(AppColors.surface)
+                      ? const WidgetStatePropertyAll(AppColors.canvas)
                       : const WidgetStatePropertyAll(AppColors.surfaceAlt),
                   cells: [
                     for (final column in columns)
@@ -107,11 +102,7 @@ class AppTable<T> extends StatelessWidget {
 }
 
 class _LoadingTable<T> extends StatelessWidget {
-  const _LoadingTable({
-    required this.columns,
-    required this.rowCount,
-  });
-
+  const _LoadingTable({required this.columns, required this.rowCount});
   final List<AppTableColumn<T>> columns;
   final int rowCount;
 
@@ -121,8 +112,8 @@ class _LoadingTable<T> extends StatelessWidget {
       borderRadius: AppRadius.table,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: AppColors.surface,
-          border: Border.all(color: AppColors.border),
+          color: AppColors.canvas,
+          border: Border.all(color: AppColors.hairline),
           borderRadius: AppRadius.table,
         ),
         child: SingleChildScrollView(
@@ -132,7 +123,7 @@ class _LoadingTable<T> extends StatelessWidget {
             dataRowMinHeight: AppSpacing.tableRowHeight,
             dataRowMaxHeight: AppSpacing.tableRowHeight,
             horizontalMargin: AppSpacing.lg,
-            columnSpacing: AppSpacing.xxl,
+            columnSpacing: AppSpacing.xl,
             showCheckboxColumn: false,
             columns: [
               for (final column in columns)
@@ -193,7 +184,6 @@ class AppTableColumn<T> {
 
 class _SizedCell extends StatelessWidget {
   const _SizedCell({required this.child, this.width});
-
   final Widget child;
   final double? width;
 

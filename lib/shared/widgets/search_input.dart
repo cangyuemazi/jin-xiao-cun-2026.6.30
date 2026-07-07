@@ -26,17 +26,14 @@ class SearchInput extends StatelessWidget {
       textInputAction: TextInputAction.search,
       onChanged: onChanged,
       onFieldSubmitted: onSubmitted,
-      style: const TextStyle(
-        fontSize: 14,
-        color: AppColors.textPrimary,
-      ),
+      style: const TextStyle(fontSize: 14, color: AppColors.ink),
       decoration: InputDecoration(
         hintText: hintText,
         filled: true,
         fillColor: AppColors.surfaceAlt,
         contentPadding: const EdgeInsets.symmetric(
           horizontal: AppSpacing.md,
-          vertical: AppSpacing.md,
+          vertical: AppSpacing.sm,
         ),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(AppSpacing.sm),
@@ -52,19 +49,16 @@ class SearchInput extends StatelessWidget {
         ),
         prefixIcon: const Icon(
           Icons.search,
-          color: AppColors.textMuted,
+          color: AppColors.muted,
           size: 18,
         ),
         suffixIcon: onClear != null
             ? IconButton(
                 tooltip: '清空',
                 onPressed: onClear,
-                icon: const Icon(Icons.close, color: AppColors.textMuted, size: 18),
+                icon: const Icon(Icons.close, color: AppColors.muted, size: 18),
                 padding: EdgeInsets.zero,
-                constraints: const BoxConstraints(
-                  minWidth: 32,
-                  minHeight: 32,
-                ),
+                constraints: const BoxConstraints(minWidth: 32, minHeight: 32),
               )
             : null,
       ),

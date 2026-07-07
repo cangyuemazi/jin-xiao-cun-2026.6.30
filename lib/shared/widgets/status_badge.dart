@@ -31,28 +31,32 @@ class StatusBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = _toneColors(tone);
-    final padding = size == StatusBadgeSize.small
-        ? const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xxs)
-        : const EdgeInsets.symmetric(horizontal: AppSpacing.sm, vertical: AppSpacing.xs);
+    final verticalPadding = size == StatusBadgeSize.small
+        ? AppSpacing.xxs
+        : 4.0;
 
     return Container(
-      padding: padding,
+      padding: EdgeInsets.symmetric(
+        horizontal: AppSpacing.sm,
+        vertical: verticalPadding,
+      ),
       decoration: BoxDecoration(
         color: colors.background,
-        borderRadius: AppRadius.borderSm,
+        borderRadius: AppRadius.borderPill,
         border: Border.all(color: colors.border),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (icon != null) ...[
-            Icon(icon, size: AppSpacing.lg, color: colors.foreground),
-            const SizedBox(width: AppSpacing.xs),
+            Icon(icon, size: 14, color: colors.foreground),
+            const SizedBox(width: AppSpacing.xxs),
           ],
           Text(
             label,
-            style: AppTextStyles.captionStrong.copyWith(
+            style: AppTextStyles.caption.copyWith(
               color: colors.foreground,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],

@@ -32,13 +32,9 @@ class SideNavigation extends StatelessWidget {
   static const List<String> groupLabels = [
     '经营看板',
     '业务管理',
-    '',
-    '',
-    '',
-    '',
+    '', '', '', '',
     '数据与系统',
-    '',
-    '',
+    '', '',
   ];
 
   @override
@@ -64,6 +60,7 @@ class SideNavigation extends StatelessWidget {
               groupLabel,
               style: AppTextStyles.captionStrong.copyWith(
                 letterSpacing: 0.5,
+                color: AppColors.mutedSoft,
               ),
             ),
           ),
@@ -82,8 +79,10 @@ class SideNavigation extends StatelessWidget {
     return Container(
       width: 240,
       decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(right: BorderSide(color: AppColors.border, width: 0.5)),
+        color: AppColors.canvas,
+        border: Border(
+          right: BorderSide(color: AppColors.hairline, width: 0.5),
+        ),
       ),
       child: SafeArea(
         child: Padding(
@@ -92,12 +91,9 @@ class SideNavigation extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const _BrandHeader(),
-              const SizedBox(height: AppSpacing.xxl),
+              const SizedBox(height: AppSpacing.xl),
               Expanded(
-                child: ListView(
-                  padding: EdgeInsets.zero,
-                  children: groupedItems,
-                ),
+                child: ListView(padding: EdgeInsets.zero, children: groupedItems),
               ),
             ],
           ),
@@ -109,7 +105,6 @@ class SideNavigation extends StatelessWidget {
 
 class SideNavigationItem {
   const SideNavigationItem({required this.label, required this.icon});
-
   final String label;
   final IconData icon;
 }
@@ -139,12 +134,8 @@ class _BrandHeader extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('JinXiaoCun', style: AppTextStyles.cardTitle.copyWith(
-                letterSpacing: -0.2,
-              )),
-              Text('2026', style: AppTextStyles.caption.copyWith(
-                color: AppColors.textMuted,
-              )),
+              Text('JinXiaoCun', style: AppTextStyles.cardTitle),
+              Text('2026', style: AppTextStyles.caption.copyWith(color: AppColors.muted)),
             ],
           ),
         ),
@@ -174,11 +165,11 @@ class _NavigationTileState extends State<_NavigationTile> {
   @override
   Widget build(BuildContext context) {
     final foreground =
-        widget.selected ? AppColors.primary : AppColors.textSecondary;
+        widget.selected ? AppColors.primary : AppColors.muted;
     final background = widget.selected
-        ? AppColors.primarySoft
+        ? AppColors.surfaceCard
         : _hovered
-            ? AppColors.surfaceMuted
+            ? AppColors.surfaceAlt
             : Colors.transparent;
 
     return MouseRegion(
@@ -206,11 +197,7 @@ class _NavigationTileState extends State<_NavigationTile> {
               ),
               child: Row(
                 children: [
-                  Icon(
-                    widget.item.icon,
-                    size: 20,
-                    color: foreground,
-                  ),
+                  Icon(widget.item.icon, size: 20, color: foreground),
                   const SizedBox(width: AppSpacing.md),
                   Expanded(
                     child: Text(

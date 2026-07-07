@@ -13,48 +13,47 @@ class AppTextStyles {
     fontWeight: FontWeight.w600,
     height: 1.2,
     letterSpacing: -0.3,
-    color: AppColors.textPrimary,
+    color: AppColors.ink,
   );
 
   static const TextStyle sectionTitle = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: FontWeight.w600,
-    height: 1.25,
-    letterSpacing: -0.1,
-    color: AppColors.textPrimary,
+    height: 1.3,
+    color: AppColors.ink,
   );
 
   static const TextStyle cardTitle = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: FontWeight.w600,
-    height: 1.3,
-    color: AppColors.textPrimary,
+    height: 1.4,
+    color: AppColors.ink,
   );
 
   static const TextStyle bodyLarge = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 15,
+    fontSize: 16,
     fontWeight: FontWeight.w400,
-    height: 1.45,
-    color: AppColors.textPrimary,
+    height: 1.55,
+    color: AppColors.body,
   );
 
   static const TextStyle body = TextStyle(
     fontFamily: fontFamily,
     fontSize: 14,
     fontWeight: FontWeight.w400,
-    height: 1.45,
-    color: AppColors.textSecondary,
+    height: 1.55,
+    color: AppColors.body,
   );
 
   static const TextStyle bodyStrong = TextStyle(
     fontFamily: fontFamily,
     fontSize: 14,
-    fontWeight: FontWeight.w600,
-    height: 1.45,
-    color: AppColors.textPrimary,
+    fontWeight: FontWeight.w500,
+    height: 1.55,
+    color: AppColors.bodyStrong,
   );
 
   static const TextStyle bodySmall = TextStyle(
@@ -62,48 +61,48 @@ class AppTextStyles {
     fontSize: 13,
     fontWeight: FontWeight.w400,
     height: 1.4,
-    color: AppColors.textMuted,
+    color: AppColors.muted,
   );
 
   static const TextStyle caption = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 12,
-    fontWeight: FontWeight.w400,
-    height: 1.35,
-    color: AppColors.textMuted,
+    fontSize: 13,
+    fontWeight: FontWeight.w500,
+    height: 1.4,
+    color: AppColors.muted,
   );
 
   static const TextStyle captionStrong = TextStyle(
     fontFamily: fontFamily,
     fontSize: 12,
-    fontWeight: FontWeight.w600,
-    height: 1.35,
-    color: AppColors.textSecondary,
+    fontWeight: FontWeight.w500,
+    height: 1.4,
+    letterSpacing: 0.5,
+    color: AppColors.muted,
   );
 
   static const TextStyle tableHeader = TextStyle(
     fontFamily: fontFamily,
     fontSize: 12,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     height: 1.3,
-    letterSpacing: 0.1,
-    color: AppColors.textMuted,
+    letterSpacing: 0.5,
+    color: AppColors.muted,
   );
 
   static const TextStyle tableCell = TextStyle(
     fontFamily: fontFamily,
-    fontSize: 13,
+    fontSize: 14,
     fontWeight: FontWeight.w400,
-    height: 1.35,
-    color: AppColors.textPrimary,
+    height: 1.55,
+    color: AppColors.ink,
   );
 
   static const TextStyle button = TextStyle(
     fontFamily: fontFamily,
     fontSize: 14,
-    fontWeight: FontWeight.w600,
-    height: 1.2,
-    letterSpacing: -0.1,
+    fontWeight: FontWeight.w500,
+    height: 1.0,
   );
 
   static const TextStyle label = TextStyle(
@@ -111,7 +110,7 @@ class AppTextStyles {
     fontSize: 13,
     fontWeight: FontWeight.w500,
     height: 1.3,
-    color: AppColors.textSecondary,
+    color: AppColors.muted,
   );
 
   static const TextStyle metricValue = TextStyle(
@@ -120,7 +119,7 @@ class AppTextStyles {
     fontWeight: FontWeight.w700,
     height: 1.1,
     letterSpacing: -0.5,
-    color: AppColors.textPrimary,
+    color: AppColors.ink,
   );
 
   static const TextTheme textTheme = TextTheme(

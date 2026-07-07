@@ -16,10 +16,8 @@ class AppInfoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final displayValue = value == null || value!.trim().isEmpty
-        ? '—'
-        : value!.trim();
-
+    final displayValue =
+        value == null || value!.trim().isEmpty ? '—' : value!.trim();
     final isEmpty = value == null || value!.trim().isEmpty;
 
     return Padding(
@@ -29,17 +27,14 @@ class AppInfoItem extends StatelessWidget {
         children: [
           SizedBox(
             width: 104,
-            child: Text(
-              label,
-              style: AppTextStyles.label,
-            ),
+            child: Text(label, style: AppTextStyles.label),
           ),
           const SizedBox(width: AppSpacing.md),
           Expanded(
             child: Text(
               displayValue,
               style: AppTextStyles.bodyLarge.copyWith(
-                color: isEmpty ? AppColors.textDisabled : AppColors.textPrimary,
+                color: isEmpty ? AppColors.mutedSoft : AppColors.ink,
               ),
             ),
           ),

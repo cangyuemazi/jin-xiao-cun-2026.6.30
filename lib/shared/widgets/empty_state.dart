@@ -26,7 +26,7 @@ class EmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return Center(
       child: Padding(
-        padding: const EdgeInsets.all(AppSpacing.xxxl),
+        padding: const EdgeInsets.all(AppSpacing.xl),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -36,11 +36,7 @@ class EmptyState extends StatelessWidget {
                 borderRadius: AppRadius.borderLg,
               ),
               padding: const EdgeInsets.all(AppSpacing.xl),
-              child: Icon(
-                icon,
-                color: AppColors.textDisabled,
-                size: 36,
-              ),
+              child: Icon(icon, color: AppColors.mutedSoft, size: 36),
             ),
             const SizedBox(height: AppSpacing.xl),
             Text(title, style: AppTextStyles.cardTitle),
@@ -56,7 +52,7 @@ class EmptyState extends StatelessWidget {
               ),
             ],
             if (actionLabel != null && onAction != null) ...[
-              const SizedBox(height: AppSpacing.xl),
+              const SizedBox(height: AppSpacing.lg),
               AppButton(label: actionLabel!, onPressed: onAction),
             ],
           ],

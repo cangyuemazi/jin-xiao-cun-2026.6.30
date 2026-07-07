@@ -26,15 +26,17 @@ class AppCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      cursor: onTap != null ? SystemMouseCursors.click : SystemMouseCursors.basic,
+      cursor: onTap != null
+          ? SystemMouseCursors.click
+          : SystemMouseCursors.basic,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 160),
         margin: margin,
         decoration: BoxDecoration(
-          color: AppColors.surface,
+          color: AppColors.surfaceCard,
           borderRadius: AppRadius.card,
           border: showBorder
-              ? Border.all(color: AppColors.border)
+              ? Border.all(color: AppColors.hairline)
               : null,
           boxShadow: showShadow ? AppShadows.card : AppShadows.none,
         ),

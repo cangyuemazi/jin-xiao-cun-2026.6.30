@@ -24,14 +24,14 @@ class TopBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      height: 60,
+      height: 64,
       decoration: const BoxDecoration(
-        color: AppColors.surface,
-        border: Border(bottom: BorderSide(color: AppColors.border, width: 0.5)),
+        color: AppColors.canvas,
+        border: Border(
+          bottom: BorderSide(color: AppColors.hairline, width: 0.5),
+        ),
       ),
-      padding: const EdgeInsets.symmetric(
-        horizontal: AppSpacing.xxl,
-      ),
+      padding: const EdgeInsets.symmetric(horizontal: AppSpacing.xxl),
       child: Row(
         children: [
           Expanded(

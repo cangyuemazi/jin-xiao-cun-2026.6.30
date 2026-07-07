@@ -62,12 +62,12 @@ class AppTextField extends StatelessWidget {
         helperMaxLines: 2,
         errorMaxLines: 2,
         prefixIconConstraints: const BoxConstraints(
-          minWidth: AppSpacing.xxxl,
-          minHeight: AppSpacing.xxxl,
+          minWidth: AppSpacing.xl,
+          minHeight: AppSpacing.xl,
         ),
         suffixIconConstraints: const BoxConstraints(
-          minWidth: AppSpacing.xxxl,
-          minHeight: AppSpacing.xxxl,
+          minWidth: AppSpacing.xl,
+          minHeight: AppSpacing.xl,
         ),
       ),
     );

@@ -37,7 +37,6 @@ class AppButton extends StatelessWidget {
       isLoading: isLoading,
     );
     final effectiveOnPressed = isLoading ? null : onPressed;
-
     final style = _style();
 
     final button = switch (variant) {
@@ -68,7 +67,7 @@ class AppButton extends StatelessWidget {
   }
 
   ButtonStyle _style() {
-    final double height = size == AppButtonSize.small ? 32 : 38;
+    final double height = size == AppButtonSize.small ? 32 : 40;
 
     final EdgeInsets padding = switch (size) {
       AppButtonSize.small => const EdgeInsets.symmetric(
@@ -76,28 +75,29 @@ class AppButton extends StatelessWidget {
           vertical: AppSpacing.xs,
         ),
       AppButtonSize.medium => const EdgeInsets.symmetric(
-          horizontal: AppSpacing.xl,
-          vertical: AppSpacing.sm,
+          horizontal: 20,
+          vertical: 12,
         ),
     };
 
     final Color foreground = switch (variant) {
       AppButtonVariant.primary => AppColors.textOnPrimary,
-      AppButtonVariant.secondary => AppColors.textPrimary,
-      AppButtonVariant.ghost => AppColors.textSecondary,
+      AppButtonVariant.secondary => AppColors.ink,
+      AppButtonVariant.ghost => AppColors.ink,
       AppButtonVariant.danger => AppColors.textOnPrimary,
     };
 
     final Color background = switch (variant) {
       AppButtonVariant.primary => AppColors.primary,
-      AppButtonVariant.secondary => AppColors.surface,
+      AppButtonVariant.secondary => AppColors.canvas,
       AppButtonVariant.ghost => Colors.transparent,
       AppButtonVariant.danger => AppColors.danger,
     };
 
-    final BorderSide side = switch (variant) {
-      AppButtonVariant.secondary => const BorderSide(color: AppColors.border),
-      _ => BorderSide.none,
+    final BorderSide? side = switch (variant) {
+      AppButtonVariant.secondary =>
+        const BorderSide(color: AppColors.hairline),
+      _ => null,
     };
 
     return ButtonStyle(
@@ -110,7 +110,7 @@ class AppButton extends StatelessWidget {
       overlayColor: const WidgetStatePropertyAll(AppColors.overlay),
       padding: WidgetStatePropertyAll(padding),
       side: WidgetStatePropertyAll(side),
-      iconSize: const WidgetStatePropertyAll(AppSpacing.lg),
+      iconSize: const WidgetStatePropertyAll(16),
       shape: WidgetStatePropertyAll(
         RoundedRectangleBorder(borderRadius: AppRadius.button),
       ),
@@ -134,14 +134,11 @@ class _ButtonContent extends StatelessWidget {
     final content = <Widget>[
       if (isLoading)
         const SizedBox.square(
-          dimension: AppSpacing.lg,
-          child: CircularProgressIndicator(
-            strokeWidth: 2,
-            color: AppColors.textOnPrimary,
-          ),
+          dimension: 16,
+          child: CircularProgressIndicator(strokeWidth: 2),
         )
       else if (icon != null)
-        Icon(icon, size: AppSpacing.lg),
+        Icon(icon, size: 16),
       Text(label),
     ];
 
@@ -150,7 +147,7 @@ class _ButtonContent extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         for (var index = 0; index < content.length; index++) ...[
-          if (index > 0) const SizedBox(width: AppSpacing.sm),
+          if (index > 0) const SizedBox(width: AppSpacing.xs),
           content[index],
         ],
       ],
